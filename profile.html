@@ -1,0 +1,2227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAHARA — Personal Safety Profile</title>
+  <link rel="shortcut icon" href="ambulance.png" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="testp.css">
+
+  <style>
+    :root {
+      --primary-bg: #e4eaf1;
+      --card-bg: #ffffff;
+      --text-main: #2c3e50;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --accent-red: #e63946;
+      --accent-red-hover: #c1121f;
+      --accent-blue: #369ef9;
+      --accent-blue-hover: #2563eb;
+      --accent-green: #10b981;
+      --accent-green-hover: #059669;
+      --accent-amber: #f59e0b;
+      --accent-purple: #8b5cf6;
+      --accent-rose: #f43f5e;
+      --border-light: rgba(0, 0, 0, 0.06);
+      --border-card: #f0f4f8;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 25px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 35px rgba(0, 0, 0, 0.08);
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: var(--primary-bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(244, 63, 94, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 85% 25%, rgba(54, 158, 249, 0.05) 0%, transparent 45%),
+        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    /* ─── Top Navbar (Matched to sos-emergency.html & wearable.html) ─── */
+    .top-navbar-card {
+      background: var(--card-bg);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
+      padding: 12px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .brand-letters {
+      display: flex;
+      font-weight: 800;
+      font-size: 1.6rem;
+      letter-spacing: 1px;
+    }
+
+    .brand-letters .red {
+      color: var(--accent-red);
+    }
+
+    .nav-pill-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      list-style: none;
+    }
+
+    .nav-pill-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: var(--radius-full);
+      background: #f0f4f8;
+      color: #4a5568;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      border: 1px solid var(--border-light);
+    }
+
+    .nav-pill-btn:hover {
+      background: var(--accent-blue);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .nav-pill-btn.active {
+      background: var(--accent-blue);
+      color: #ffffff;
+    }
+
+    .nav-pill-btn.primary-vol {
+      background: var(--accent-green);
+      color: #ffffff;
+    }
+
+    .nav-pill-btn.primary-vol:hover {
+      background: var(--accent-green-hover);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+    }
+
+    .nav-pill-btn.danger-sos {
+      background: var(--accent-red);
+      color: #ffffff;
+    }
+
+    .nav-pill-btn.danger-sos:hover {
+      background: var(--accent-red-hover);
+      box-shadow: 0 4px 14px rgba(230, 57, 70, 0.35);
+    }
+
+    /* ─── Status Banner (Matched to sos-emergency.html) ─── */
+    .sos-banner-bar {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .sos-banner-bar.protected {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-bottom: 1px solid #c8e6c9;
+    }
+
+    .pulse-beacon {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulseDot 1.4s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.6); opacity: 0.4; }
+    }
+
+    /* ─── Profile Container ─── */
+    .profile-page-container {
+      max-width: 1400px;
+      margin: 24px auto;
+      padding: 0 24px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      flex: 1;
+    }
+
+    /* ─── Page Title Header Row ─── */
+    .profile-page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 4px 0;
+    }
+
+    .page-title-group h1 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .page-title-group p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    .header-action-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-sahara {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-sahara.primary {
+      background: var(--accent-blue);
+      color: #ffffff;
+    }
+
+    .btn-sahara.primary:hover {
+      background: var(--accent-blue-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(54, 158, 249, 0.35);
+    }
+
+    .btn-sahara.outline {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid #cbd5e1;
+    }
+
+    .btn-sahara.outline:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+      transform: translateY(-2px);
+    }
+
+    .btn-sahara.danger {
+      background: var(--accent-red);
+      color: #ffffff;
+    }
+
+    .btn-sahara.danger:hover {
+      background: var(--accent-red-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(230, 57, 70, 0.35);
+    }
+
+    /* ─── Hero Profile Card ─── */
+    .hero-profile-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      padding: 32px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 36px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-profile-card::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(244, 63, 94, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-profile-card::after {
+      content: '';
+      position: absolute;
+      bottom: -50px;
+      left: 20%;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(54, 158, 249, 0.06) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Avatar Showcase */
+    .avatar-showcase {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-halo-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.35), rgba(54, 158, 249, 0.35), rgba(16, 185, 129, 0.35));
+      filter: blur(4px);
+      animation: haloSpin 12s linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes haloSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .profile-avatar-img {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #ffffff;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+      position: relative;
+      z-index: 2;
+      background: #f1f5f9;
+      transition: transform 0.3s ease;
+    }
+
+    .avatar-showcase:hover .profile-avatar-img {
+      transform: scale(1.03);
+    }
+
+    .avatar-edit-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #ffffff;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+      font-size: 0.85rem;
+      z-index: 3;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .avatar-edit-badge:hover {
+      background: var(--accent-blue-hover);
+      transform: scale(1.12);
+    }
+
+    /* Hero Main Info */
+    .hero-main-info {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-name-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-profile-name {
+      font-size: 1.95rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+
+    .sahara-member-badge {
+      background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+      border: 1px solid #bfdbfe;
+      color: var(--accent-blue);
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .sahara-member-badge i {
+      color: var(--accent-green);
+    }
+
+    .hero-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px 20px;
+      margin-top: 4px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--text-main);
+    }
+
+    .meta-item-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: #f8fafc;
+      border: 1px solid var(--border-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: var(--accent-blue);
+      flex-shrink: 0;
+    }
+
+    .meta-item-content {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.25;
+    }
+
+    .meta-item-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .meta-item-value {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .last-active-indicator {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .last-active-indicator .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      display: inline-block;
+    }
+
+    /* Hero Right Actions Card */
+    .hero-status-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 250px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .status-badge-compact {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .status-label-text {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .status-pill-green {
+      background: #d1fae5;
+      color: #065f46;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-supporting-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .hero-action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* ─── Safety Overview (4 Metric Cards) ─── */
+    .safety-overview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .metric-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      padding: 22px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .metric-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .metric-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .metric-icon-box {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .metric-icon-box.rose { background: #ffe4e6; color: var(--accent-rose); }
+    .metric-icon-box.blue { background: #e0f2fe; color: var(--accent-blue); }
+    .metric-icon-box.green { background: #d1fae5; color: var(--accent-green); }
+    .metric-icon-box.purple { background: #ede9fe; color: var(--accent-purple); }
+
+    .metric-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .metric-main-num {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .metric-sub-num {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .metric-footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .metric-badge-tag {
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+    }
+
+    .metric-badge-tag.green { background: #ecfdf5; color: #047857; }
+    .metric-badge-tag.blue { background: #f0f9ff; color: #0369a1; }
+
+    /* ─── Two-Column Content Layout ─── */
+    .content-two-columns {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .content-two-columns.equal {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* ─── Standard Card Wrapper ─── */
+    .card-wrapper {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .card-header-bar {
+      padding: 18px 24px;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-card);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .card-header-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-action-link {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s;
+    }
+
+    .header-action-link:hover {
+      color: var(--accent-blue-hover);
+      text-decoration: underline;
+    }
+
+    .card-body-section {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ─── Personal Safety Index Showcase Card ─── */
+    .safety-index-showcase {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-card);
+    }
+
+    .circular-score-meter {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      min-width: 100px;
+      min-height: 100px;
+      flex-shrink: 0;
+    }
+
+    .circular-score-svg {
+      width: 100px;
+      height: 100px;
+      display: block;
+      transform: rotate(-90deg);
+    }
+
+    .circular-score-bg {
+      fill: none;
+      stroke: #e2e8f0;
+      stroke-width: 8;
+    }
+
+    .circular-score-fill {
+      fill: none;
+      stroke: #10b981;
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 251.2;
+      stroke-dashoffset: 35.16; /* 86% of 251.2 */
+      transition: stroke-dashoffset 1s ease;
+    }
+
+    .score-meter-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .score-meter-num {
+      font-size: 1.6rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-main);
+    }
+
+    .score-meter-max {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .safety-index-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .index-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .index-title-label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .status-pill-stable {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .safety-index-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .safety-index-note {
+      font-size: 0.72rem;
+      color: var(--text-light);
+      font-style: italic;
+      margin-top: 2px;
+    }
+
+    /* ─── Recent Trips List ─── */
+    .trip-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .trip-card-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      background: #f8fafc;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-card);
+      transition: all 0.2s ease;
+    }
+
+    .trip-card-item:hover {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      transform: translateX(4px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .trip-route-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .trip-icon-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #eff6ff;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .trip-details {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .trip-route-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .trip-route-title i {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .trip-meta-info {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .trip-score-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .trip-score-val {
+      font-size: 0.88rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-green);
+      background: #ecfdf5;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    .trip-status-tag {
+      font-size: 0.7rem;
+      color: var(--accent-green);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ─── Recent Safety Activity Timeline ─── */
+    .activity-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .activity-timeline::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      bottom: 8px;
+      left: 6px;
+      width: 2px;
+      background: #e2e8f0;
+    }
+
+    .timeline-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -20px;
+      top: 4px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 0 2px var(--border-card);
+    }
+
+    .timeline-item.success::before {
+      background: var(--accent-green);
+    }
+
+    .timeline-item.pulse::before {
+      background: var(--accent-purple);
+      animation: pulseDot 1.6s infinite;
+    }
+
+    .timeline-time-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .timeline-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .timeline-subtext {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    /* ─── Trusted Contacts Section ─── */
+    .contacts-grid-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contact-card-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: #f8fafc;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-card);
+      transition: all 0.2s ease;
+    }
+
+    .contact-card-item:hover {
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+      border-color: #cbd5e1;
+    }
+
+    .contact-profile-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .contact-avatar-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: 1px solid #bfdbfe;
+    }
+
+    .contact-text-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .contact-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .contact-relation {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .contact-phone {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .contact-status-chip {
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .contact-status-chip.active {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    /* ─── Safety Preferences (Toggles & Sliders) ─── */
+    .preferences-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .preference-row-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      background: #f8fafc;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-card);
+      transition: all 0.2s ease;
+    }
+
+    .preference-row-card:hover {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .preference-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .pref-icon-box {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+      background: #ffffff;
+      border: 1px solid var(--border-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      color: var(--accent-blue);
+      flex-shrink: 0;
+    }
+
+    .pref-text-box {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .pref-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .pref-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Polished Switch Toggle */
+    .toggle-switch-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .switch-label-status {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-green);
+      min-width: 30px;
+      text-align: right;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #cbd5e1;
+      transition: .3s ease;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s ease;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    input:checked + .toggle-slider {
+      background-color: var(--accent-green);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+
+    /* ─── Account & Privacy Navigation Rows ─── */
+    .account-privacy-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .account-nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: #f8fafc;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-card);
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+
+    .account-nav-row:hover {
+      background: #ffffff;
+      border-color: var(--accent-blue);
+      transform: translateX(3px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .account-row-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .account-row-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      border: 1px solid var(--border-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: var(--accent-blue);
+      flex-shrink: 0;
+    }
+
+    .account-row-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .account-row-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .account-row-subtitle {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .account-row-arrow {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      transition: transform 0.2s;
+    }
+
+    .account-nav-row:hover .account-row-arrow {
+      color: var(--accent-blue);
+      transform: translateX(4px);
+    }
+
+    /* ─── Recent Notifications ─── */
+    .notifications-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .notif-card-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #f8fafc;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-card);
+      font-size: 0.82rem;
+    }
+
+    .notif-icon-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #eff6ff;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .notif-body {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .notif-text {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .notif-time {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* ─── Quick Actions Dock ─── */
+    .quick-actions-dock-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .quick-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: var(--radius-md);
+      background: #f8fafc;
+      border: 1px solid var(--border-card);
+      text-decoration: none;
+      color: var(--text-main);
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: all 0.25s ease;
+    }
+
+    .quick-action-btn:hover {
+      background: #ffffff;
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .quick-action-btn.emergency {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: var(--accent-red);
+    }
+
+    .quick-action-btn.emergency:hover {
+      background: #fee2e2;
+      border-color: var(--accent-red);
+      box-shadow: 0 4px 14px rgba(230, 57, 70, 0.15);
+    }
+
+    .quick-action-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: var(--accent-blue);
+      flex-shrink: 0;
+    }
+
+    .quick-action-btn.emergency .quick-action-icon {
+      background: #ffffff;
+      color: var(--accent-red);
+    }
+
+    /* ─── Bottom Ecosystem Bar ─── */
+    .bottom-status-bar {
+      background: var(--card-bg);
+      border-top: 1px solid #edf2f7;
+      padding: 16px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: auto;
+    }
+
+    .bottom-info-tags {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .bottom-tag {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .bottom-tag i {
+      color: var(--accent-blue);
+    }
+
+    /* ─── Responsive Adjustments ─── */
+    @media (max-width: 1200px) {
+      .safety-overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .content-two-columns,
+      .content-two-columns.equal {
+        grid-template-columns: 1fr;
+      }
+      .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero-profile-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 24px;
+        padding: 24px;
+      }
+      .avatar-showcase {
+        margin: 0 auto;
+      }
+      .hero-name-row {
+        justify-content: center;
+      }
+      .hero-meta-grid {
+        grid-template-columns: 1fr;
+        text-align: left;
+      }
+      .last-active-indicator {
+        justify-content: center;
+      }
+      .hero-status-card {
+        min-width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .top-navbar-card {
+        padding: 12px 16px;
+      }
+      .nav-pill-links {
+        display: none;
+      }
+      .profile-page-container {
+        padding: 0 16px;
+        margin: 16px auto;
+      }
+      .safety-overview-grid {
+        grid-template-columns: 1fr;
+      }
+      .quick-actions-grid {
+        grid-template-columns: 1fr;
+      }
+      .bottom-status-bar {
+        padding: 14px 16px;
+      }
+    }
+  </style>
+  <script src="testp.js" defer></script>
+</head>
+<body>
+
+  <!-- Top Navigation Bar (Matched to sos-emergency.html & wearable.html) -->
+  <header class="top-navbar-card">
+    <a href="index.html" class="brand-box">
+      <div class="brand-letters">
+        <span class="red">S</span>
+        <span class="red">A</span>
+        <span class="red">H</span>
+        <span class="red">A</span>
+        <span class="red">R</span>
+        <span class="red">A</span>
+      </div>
+      <img src="images/logo2-w.webp" alt="Logo" style="width: 45px; height: auto;" />
+    </a>
+
+    <ul class="nav-pill-links">
+      <li><a href="index.html" class="nav-pill-btn"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="map.html" class="nav-pill-btn"><i class="fa-solid fa-map-location-dot"></i> SafeMap</a></li>
+      <li><a href="wearable.html" class="nav-pill-btn"><i class="fa-solid fa-clock"></i> Wearable</a></li>
+      <li><a href="volunteer-portal.html" target="_blank" class="nav-pill-btn primary-vol"><i class="fa-solid fa-users"></i> Volunteer Portal</a></li>
+      <li><a href="profile.html" class="nav-pill-btn active"><i class="fa-solid fa-user"></i> Profile</a></li>
+      <li><a href="sos-emergency.html" class="nav-pill-btn danger-sos"><i class="fa-solid fa-triangle-exclamation"></i> Emergency SOS</a></li>
+    </ul>
+  </header>
+
+  <!-- Status Banner (Matched to sos-emergency.html) -->
+  <div class="sos-banner-bar protected" id="profileBanner">
+    <span class="pulse-beacon"></span>
+    <span id="profileStatusBannerText">SAFETY STATUS: PROTECTED — Your personal safety profile is active and synced with SAHARA Ecosystem</span>
+  </div>
+
+  <!-- Main Profile Page Container -->
+  <main class="profile-page-container">
+
+    <!-- Page Header Row -->
+    <section class="profile-page-header">
+      <div class="page-title-group">
+        <h1><i class="fa-solid fa-shield-heart" style="color: #e63946;"></i> Your Profile</h1>
+        <p>Your personal safety space.</p>
+      </div>
+
+      <div class="header-action-group">
+        <a href="map.html" class="btn-sahara outline">
+          <i class="fa-solid fa-location-crosshairs"></i> SafeMap
+        </a>
+        <a href="profileedit.html" class="btn-sahara primary">
+          <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+        </a>
+      </div>
+    </section>
+
+    <!-- Hero Profile Card (Feminine, Premium & Safety-Focused) -->
+    <section class="hero-profile-card">
+      
+      <!-- Left: Woman Profile Photo Showcase -->
+      <div class="avatar-showcase">
+        <div class="avatar-halo-ring"></div>
+        <img 
+          id="profileImage" 
+          src="images/woman_avatar.png" 
+          onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop';" 
+          alt="Joan Reed - Profile" 
+          class="profile-avatar-img"
+        />
+        <a href="profileedit.html" class="avatar-edit-badge" title="Change Avatar">
+          <i class="fa-solid fa-camera"></i>
+        </a>
+      </div>
+
+      <!-- Center: Personal & Safety Identity Details -->
+      <div class="hero-main-info">
+        <div class="hero-name-row">
+          <h2 id="profileName" class="hero-profile-name">Joan Reed</h2>
+          <span class="sahara-member-badge">
+            <i class="fa-solid fa-shield-halved"></i> SAHARA MEMBER
+          </span>
+        </div>
+
+        <div class="hero-meta-grid">
+          <div class="meta-item">
+            <div class="meta-item-icon"><i class="fa-solid fa-envelope"></i></div>
+            <div class="meta-item-content">
+              <span class="meta-item-label">Email</span>
+              <span id="profileEmail" class="meta-item-value">joan.reed@example.com</span>
+            </div>
+          </div>
+
+          <div class="meta-item">
+            <div class="meta-item-icon"><i class="fa-solid fa-phone"></i></div>
+            <div class="meta-item-content">
+              <span class="meta-item-label">Phone</span>
+              <span id="profilePhone" class="meta-item-value">+987 654 3210</span>
+            </div>
+          </div>
+
+          <div class="meta-item">
+            <div class="meta-item-icon" style="color: #e63946;"><i class="fa-solid fa-heart-pulse"></i></div>
+            <div class="meta-item-content">
+              <span class="meta-item-label">Emergency Contact</span>
+              <span id="profileEmergencyContact" class="meta-item-value">+983 928 1988</span>
+            </div>
+          </div>
+
+          <div class="meta-item">
+            <div class="meta-item-icon" style="color: #10b981;"><i class="fa-solid fa-language"></i></div>
+            <div class="meta-item-content">
+              <span class="meta-item-label">Preferred Language</span>
+              <span id="profileLanguage" class="meta-item-value">Hindi</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="last-active-indicator">
+          <span class="dot"></span>
+          <span id="last-active">Last active: <strong>Just now</strong></span>
+        </div>
+      </div>
+
+      <!-- Right: Compact Safety Status Box & Quick Edit Action -->
+      <div class="hero-status-card">
+        <div class="status-badge-compact">
+          <span class="status-label-text">SAFETY STATUS</span>
+          <span class="status-pill-green"><i class="fa-solid fa-circle-check"></i> Protected</span>
+        </div>
+        <p class="status-supporting-text">Your safety profile is active and ready.</p>
+        <div class="hero-action-buttons">
+          <a href="profileedit.html" class="btn-sahara primary" style="width: 100%; justify-content: center;">
+            <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+          </a>
+          <a href="sos-emergency.html" class="btn-sahara danger" style="width: 100%; justify-content: center;">
+            <i class="fa-solid fa-triangle-exclamation"></i> Emergency SOS
+          </a>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Safety Overview (4 Elegant Metric Cards) -->
+    <section>
+      <div class="safety-overview-grid">
+        
+        <!-- 1. Safety Index -->
+        <div class="metric-card">
+          <div class="metric-header-row">
+            <span class="metric-title">SAFETY INDEX</span>
+            <div class="metric-icon-box blue"><i class="fa-solid fa-shield-halved"></i></div>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-main-num">86</span>
+            <span class="metric-sub-num">/ 100</span>
+          </div>
+          <div class="metric-footer-row">
+            <span>Overall Score</span>
+            <span class="metric-badge-tag green"><i class="fa-solid fa-arrow-trend-up"></i> Stable</span>
+          </div>
+        </div>
+
+        <!-- 2. Safe Journeys -->
+        <div class="metric-card">
+          <div class="metric-header-row">
+            <span class="metric-title">SAFE JOURNEYS</span>
+            <div class="metric-icon-box green"><i class="fa-solid fa-route"></i></div>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-main-num">24</span>
+          </div>
+          <div class="metric-footer-row">
+            <span>This month</span>
+            <span class="metric-badge-tag green"><i class="fa-solid fa-circle-check"></i> 100% Safe</span>
+          </div>
+        </div>
+
+        <!-- 3. Safety Checks -->
+        <div class="metric-card">
+          <div class="metric-header-row">
+            <span class="metric-title">SAFETY CHECKS</span>
+            <div class="metric-icon-box purple"><i class="fa-solid fa-user-check"></i></div>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-main-num">18</span>
+          </div>
+          <div class="metric-footer-row">
+            <span>Completed</span>
+            <span class="metric-badge-tag blue"><i class="fa-solid fa-clock"></i> Routine</span>
+          </div>
+        </div>
+
+        <!-- 4. Trusted Contacts -->
+        <div class="metric-card">
+          <div class="metric-header-row">
+            <span class="metric-title">TRUSTED CONTACTS</span>
+            <div class="metric-icon-box rose"><i class="fa-solid fa-users"></i></div>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-main-num">3</span>
+          </div>
+          <div class="metric-footer-row">
+            <span>Active</span>
+            <span class="metric-badge-tag green"><i class="fa-solid fa-signal"></i> Synced</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Two-Column Section 1: Safety Index & Recent Trips + Activity & Contacts -->
+    <div class="content-two-columns">
+
+      <!-- Left Column: Safety Index Score Details & Recent Trips -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+
+        <!-- Personal Safety Index Deep Card -->
+        <div class="card-wrapper">
+          <div class="card-header-bar">
+            <div class="card-header-title">
+              <i class="fa-solid fa-shield-halved" style="color: #369ef9;"></i> Personal Safety Index
+            </div>
+            <span class="status-pill-stable"><i class="fa-solid fa-circle-check"></i> STABLE</span>
+          </div>
+          
+          <div class="card-body-section">
+            <div class="safety-index-showcase">
+              <div class="circular-score-meter">
+                <svg class="circular-score-svg" viewBox="0 0 100 100" width="100" height="100">
+                  <circle class="circular-score-bg" cx="50" cy="50" r="40" />
+                  <circle class="circular-score-fill" cx="50" cy="50" r="40" />
+                </svg>
+                <div class="score-meter-inner">
+                  <span class="score-meter-num">86</span>
+                  <span class="score-meter-max">/ 100</span>
+                </div>
+              </div>
+
+              <div class="safety-index-info">
+                <div class="index-title-row">
+                  <span class="index-title-label">PERSONAL SAFETY INDEX</span>
+                </div>
+                <p class="safety-index-desc">
+                  Based on your recent journeys, safety checks, wearable activity and saved safety preferences.
+                </p>
+                <p class="safety-index-note">
+                  * Prototype score for personal awareness · Does not imply medical or absolute physical safety guarantee.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Trips -->
+        <div class="card-wrapper">
+          <div class="card-header-bar">
+            <div class="card-header-title">
+              <i class="fa-solid fa-map-location-dot" style="color: #10b981;"></i> Recent Trips
+            </div>
+            <a href="map.html" class="header-action-link">
+              VIEW ALL TRIPS <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+
+          <div class="card-body-section">
+            <div class="trip-items-list">
+
+              <!-- Trip 1 -->
+              <div class="trip-card-item">
+                <div class="trip-route-group">
+                  <div class="trip-icon-circle"><i class="fa-solid fa-person-walking"></i></div>
+                  <div class="trip-details">
+                    <div class="trip-route-title">
+                      Home <i class="fa-solid fa-arrow-right-long"></i> GGSIPU
+                    </div>
+                    <div class="trip-meta-info">
+                      <span><i class="fa-regular fa-clock"></i> 18 min</span>
+                      <span><i class="fa-regular fa-calendar"></i> Today, 08:30 AM</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="trip-score-badge">
+                  <span class="trip-score-val">Safety Index 91</span>
+                  <span class="trip-status-tag"><i class="fa-solid fa-check"></i> Completed</span>
+                </div>
+              </div>
+
+              <!-- Trip 2 -->
+              <div class="trip-card-item">
+                <div class="trip-route-group">
+                  <div class="trip-icon-circle" style="background: #ecfdf5; color: #10b981;"><i class="fa-solid fa-train-subway"></i></div>
+                  <div class="trip-details">
+                    <div class="trip-route-title">
+                      GGSIPU <i class="fa-solid fa-arrow-right-long"></i> Dwarka Metro
+                    </div>
+                    <div class="trip-meta-info">
+                      <span><i class="fa-regular fa-clock"></i> 24 min</span>
+                      <span><i class="fa-regular fa-calendar"></i> Yesterday, 05:45 PM</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="trip-score-badge">
+                  <span class="trip-score-val" style="color: #0284c7; background: #e0f2fe;">Safety Index 84</span>
+                  <span class="trip-status-tag"><i class="fa-solid fa-check"></i> Completed</span>
+                </div>
+              </div>
+
+              <!-- Trip 3 -->
+              <div class="trip-card-item">
+                <div class="trip-route-group">
+                  <div class="trip-icon-circle" style="background: #fdf2f8; color: #f43f5e;"><i class="fa-solid fa-car"></i></div>
+                  <div class="trip-details">
+                    <div class="trip-route-title">
+                      Dwarka Metro <i class="fa-solid fa-arrow-right-long"></i> Home
+                    </div>
+                    <div class="trip-meta-info">
+                      <span><i class="fa-regular fa-clock"></i> 21 min</span>
+                      <span><i class="fa-regular fa-calendar"></i> 2 days ago, 07:15 PM</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="trip-score-badge">
+                  <span class="trip-score-val">Safety Index 88</span>
+                  <span class="trip-status-tag"><i class="fa-solid fa-check"></i> Completed</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Recent Safety Activity & Trusted Contacts -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+
+        <!-- Recent Safety Activity Timeline -->
+        <div class="card-wrapper">
+          <div class="card-header-bar">
+            <div class="card-header-title">
+              <i class="fa-solid fa-clock-rotate-left" style="color: #8b5cf6;"></i> Recent Safety Activity
+            </div>
+            <span class="metric-badge-tag blue">Live Stream</span>
+          </div>
+
+          <div class="card-body-section">
+            <div class="activity-timeline">
+              <div class="timeline-item success">
+                <span class="timeline-time-badge">Today · 08:48 AM</span>
+                <span class="timeline-title">✓ SafeJourney completed</span>
+                <span class="timeline-subtext">Route Home → GGSIPU completed with zero anomalies</span>
+              </div>
+
+              <div class="timeline-item success">
+                <span class="timeline-time-badge">Yesterday · 06:10 PM</span>
+                <span class="timeline-title">✓ Safety check completed</span>
+                <span class="timeline-subtext">Automated arrival alert transmitted to emergency contact</span>
+              </div>
+
+              <div class="timeline-item pulse">
+                <span class="timeline-time-badge">2 days ago · 09:30 PM</span>
+                <span class="timeline-title">◉ Wearable simulation tested</span>
+                <span class="timeline-subtext">Telemetry and biometric escalation calibrated</span>
+              </div>
+
+              <div class="timeline-item success">
+                <span class="timeline-time-badge">3 days ago · 02:15 PM</span>
+                <span class="timeline-title">✓ Trusted contact verified</span>
+                <span class="timeline-subtext">Dad (+983 928 1988) designated as Primary SOS Responder</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trusted Contacts -->
+        <div class="card-wrapper">
+          <div class="card-header-bar">
+            <div class="card-header-title">
+              <i class="fa-solid fa-user-group" style="color: #e63946;"></i> Trusted Contacts
+            </div>
+            <a href="profileedit.html" class="header-action-link">
+              <i class="fa-solid fa-plus"></i> Add Contact
+            </a>
+          </div>
+
+          <div class="card-body-section">
+            <div class="contacts-grid-list">
+
+              <!-- Contact 1 -->
+              <div class="contact-card-item">
+                <div class="contact-profile-info">
+                  <div class="contact-avatar-badge">D</div>
+                  <div class="contact-text-meta">
+                    <span class="contact-name">Dad</span>
+                    <span class="contact-relation">Primary contact</span>
+                    <span class="contact-phone">+983 928 1988</span>
+                  </div>
+                </div>
+                <span class="contact-status-chip active"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Active</span>
+              </div>
+
+              <!-- Contact 2 -->
+              <div class="contact-card-item">
+                <div class="contact-profile-info">
+                  <div class="contact-avatar-badge" style="background: #fdf2f8; color: #f43f5e; border-color: #fbcfe8;">M</div>
+                  <div class="contact-text-meta">
+                    <span class="contact-name">Mom</span>
+                    <span class="contact-relation">Emergency contact</span>
+                    <span class="contact-phone">+987 654 3211</span>
+                  </div>
+                </div>
+                <span class="contact-status-chip active"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Active</span>
+              </div>
+
+              <!-- Contact 3 -->
+              <div class="contact-card-item">
+                <div class="contact-profile-info">
+                  <div class="contact-avatar-badge" style="background: #ecfdf5; color: #10b981; border-color: #a7f3d0;">P</div>
+                  <div class="contact-text-meta">
+                    <span class="contact-name">Priya Sharma</span>
+                    <span class="contact-relation">Community Volunteer</span>
+                    <span class="contact-phone">+91 98112-44321</span>
+                  </div>
+                </div>
+                <span class="contact-status-chip active"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Active</span>
+              </div>
+
+            </div>
+
+            <a href="profileedit.html" class="btn-sahara outline" style="width: 100%; justify-content: center; margin-top: 4px;">
+              <i class="fa-solid fa-user-plus"></i> Manage Trusted Contacts
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Two-Column Section 2: Safety Preferences & Account/Privacy + Notifications -->
+    <div class="content-two-columns equal">
+
+      <!-- Left: Safety Preferences -->
+      <div class="card-wrapper">
+        <div class="card-header-bar">
+          <div class="card-header-title">
+            <i class="fa-solid fa-sliders" style="color: #369ef9;"></i> Safety Preferences
+          </div>
+          <span class="metric-badge-tag green"><i class="fa-solid fa-shield-check"></i> Customized</span>
+        </div>
+
+        <div class="card-body-section">
+          <div class="preferences-list">
+
+            <!-- Pref 1 -->
+            <div class="preference-row-card">
+              <div class="preference-info">
+                <div class="pref-icon-box" style="color: #e63946;"><i class="fa-solid fa-bell"></i></div>
+                <div class="pref-text-box">
+                  <span class="pref-title">Emergency Notifications</span>
+                  <span class="pref-desc">Instant SOS dispatches via SMS, push alert and beacon</span>
+                </div>
+              </div>
+              <div class="toggle-switch-wrapper">
+                <span class="switch-label-status">ON</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked onchange="handlePrefToggle(this, 'Emergency Notifications')">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Pref 2 -->
+            <div class="preference-row-card">
+              <div class="preference-info">
+                <div class="pref-icon-box" style="color: #10b981;"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="pref-text-box">
+                  <span class="pref-title">Location Sharing</span>
+                  <span class="pref-desc">Authorized contacts only during active SafeJourney</span>
+                </div>
+              </div>
+              <div class="toggle-switch-wrapper">
+                <span class="switch-label-status">ON</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked onchange="handlePrefToggle(this, 'Location Sharing')">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Pref 3 -->
+            <div class="preference-row-card">
+              <div class="preference-info">
+                <div class="pref-icon-box" style="color: #8b5cf6;"><i class="fa-solid fa-clock"></i></div>
+                <div class="pref-text-box">
+                  <span class="pref-title">Wearable Monitoring</span>
+                  <span class="pref-desc">Biometric telemetry & autonomous distress trigger sync</span>
+                </div>
+              </div>
+              <div class="toggle-switch-wrapper">
+                <span class="switch-label-status">ON</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked onchange="handlePrefToggle(this, 'Wearable Monitoring')">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Pref 4 -->
+            <div class="preference-row-card">
+              <div class="preference-info">
+                <div class="pref-icon-box" style="color: #f59e0b;"><i class="fa-solid fa-users-viewfinder"></i></div>
+                <div class="pref-text-box">
+                  <span class="pref-title">Community Alerts</span>
+                  <span class="pref-desc">Receive real-time safe zone updates and alerts</span>
+                </div>
+              </div>
+              <div class="toggle-switch-wrapper">
+                <span class="switch-label-status">ON</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked onchange="handlePrefToggle(this, 'Community Alerts')">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Pref 5 -->
+            <div class="preference-row-card">
+              <div class="preference-info">
+                <div class="pref-icon-box" style="color: #06b6d4;"><i class="fa-solid fa-shield-virus"></i></div>
+                <div class="pref-text-box">
+                  <span class="pref-title">Cyber Safety Alerts</span>
+                  <span class="pref-desc">Phishing filters & emergency dispatch verification</span>
+                </div>
+              </div>
+              <div class="toggle-switch-wrapper">
+                <span class="switch-label-status">ON</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked onchange="handlePrefToggle(this, 'Cyber Safety Alerts')">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Account & Privacy Navigation + Recent Notifications -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+
+        <!-- Account & Privacy -->
+        <div class="card-wrapper">
+          <div class="card-header-bar">
+            <div class="card-header-title">
+              <i class="fa-solid fa-lock" style="color: #64748b;"></i> Account & Privacy
+            </div>
+            <span class="metric-badge-tag blue">Verified</span>
+          </div>
+
+          <div class="card-body-section">
+            <div class="account-privacy-list">
+
+              <a href="profileedit.html" class="account-nav-row">
+                <div class="account-row-left">
+                  <div class="account-row-icon"><i class="fa-solid fa-user"></i></div>
+                  <div class="account-row-text">
+                    <span class="account-row-title">Personal Information</span>
+                    <span class="account-row-subtitle">Update name, contact details and language</span>
+                  </div>
+                </div>
+                <span class="account-row-arrow">Edit Profile →</span>
+              </a>
+
+              <a href="profileedit.html" class="account-nav-row">
+                <div class="account-row-left">
+                  <div class="account-row-icon" style="color: #e63946;"><i class="fa-solid fa-phone-volume"></i></div>
+                  <div class="account-row-text">
+                    <span class="account-row-title">Emergency Contacts</span>
+                    <span class="account-row-subtitle">Manage prioritized responder phone numbers</span>
+                  </div>
+                </div>
+                <span class="account-row-arrow">Manage →</span>
+              </a>
+
+              <a href="map.html" class="account-nav-row">
+                <div class="account-row-left">
+                  <div class="account-row-icon" style="color: #10b981;"><i class="fa-solid fa-location-arrow"></i></div>
+                  <div class="account-row-text">
+                    <span class="account-row-title">Privacy & Location</span>
+                    <span class="account-row-subtitle">GPS permissions and journey data visibility</span>
+                  </div>
+                </div>
+                <span class="account-row-arrow">Manage →</span>
+              </a>
+
+              <a href="#" class="account-nav-row" onclick="alert('Notification alert preferences are saved to your SAHARA profile.'); return false;">
+                <div class="account-row-left">
+                  <div class="account-row-icon" style="color: #8b5cf6;"><i class="fa-solid fa-bell-concierge"></i></div>
+                  <div class="account-row-text">
+                    <span class="account-row-title">Notifications</span>
+                    <span class="account-row-subtitle">Sound alerts, push channels and quiet hours</span>
+                  </div>
+                </div>
+                <span class="account-row-arrow">Manage →</span>
+              </a>
+
+              <a href="#" class="account-nav-row" onclick="alert('Security settings: Password and 2FA authentication active.'); return false;">
+                <div class="account-row-left">
+                  <div class="account-row-icon" style="color: #f59e0b;"><i class="fa-solid fa-key"></i></div>
+                  <div class="account-row-text">
+                    <span class="account-row-title">Security</span>
+                    <span class="account-row-subtitle">Password update, 2-factor authentication & devices</span>
+                  </div>
+                </div>
+                <span class="account-row-arrow">Change Password →</span>
+              </a>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Notifications -->
+        <div class="card-wrapper">
+          <div class="card-header-bar">
+            <div class="card-header-title">
+              <i class="fa-solid fa-bell" style="color: #f59e0b;"></i> Recent Notifications
+            </div>
+            <span class="metric-badge-tag green">3 New</span>
+          </div>
+
+          <div class="card-body-section">
+            <div class="notifications-list">
+
+              <div class="notif-card-item">
+                <div class="notif-icon-circle"><i class="fa-solid fa-shield-check"></i></div>
+                <div class="notif-body">
+                  <span class="notif-text">Safety profile updated successfully.</span>
+                  <span class="notif-time">Today · 08:30 AM</span>
+                </div>
+              </div>
+
+              <div class="notif-card-item">
+                <div class="notif-icon-circle" style="background: #ecfdf5; color: #10b981;"><i class="fa-solid fa-user-plus"></i></div>
+                <div class="notif-body">
+                  <span class="notif-text">Trusted contact verified and synced with Emergency SOS.</span>
+                  <span class="notif-time">Yesterday · 04:15 PM</span>
+                </div>
+              </div>
+
+              <div class="notif-card-item">
+                <div class="notif-icon-circle" style="background: #ede9fe; color: #8b5cf6;"><i class="fa-solid fa-route"></i></div>
+                <div class="notif-body">
+                  <span class="notif-text">SafeJourney to GGSIPU completed with Safety Index 91.</span>
+                  <span class="notif-time">2 days ago · 07:15 PM</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Quick Actions Bar (Matched to SAHARA Ecosystem) -->
+    <section class="quick-actions-dock-card">
+      <div class="card-header-title" style="font-size: 1.05rem;">
+        <i class="fa-solid fa-bolt" style="color: #369ef9;"></i> Quick Actions
+      </div>
+      <div class="quick-actions-grid">
+        
+        <a href="map.html" class="quick-action-btn">
+          <div class="quick-action-icon"><i class="fa-solid fa-route"></i></div>
+          <span>Start SafeJourney</span>
+        </a>
+
+        <a href="map.html" class="quick-action-btn">
+          <div class="quick-action-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+          <span>View SafeMap</span>
+        </a>
+
+        <a href="wearable.html" class="quick-action-btn">
+          <div class="quick-action-icon"><i class="fa-solid fa-clock"></i></div>
+          <span>Wearable Safety</span>
+        </a>
+
+        <a href="sos-emergency.html" class="quick-action-btn emergency">
+          <div class="quick-action-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <span>Emergency SOS</span>
+        </a>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Ecosystem Bar (Matched to sos-emergency.html & wearable.html) -->
+  <footer class="bottom-status-bar">
+    <div class="bottom-info-tags">
+      <div class="bottom-tag"><i class="fa-solid fa-shield-heart"></i> SAHARA Personal Safety Companion</div>
+      <div class="bottom-tag"><i class="fa-solid fa-circle-check"></i> Profile Synced & Secure</div>
+    </div>
+    <div>
+      <a href="sos-emergency.html" class="nav-pill-btn danger-sos" style="display: inline-flex; text-decoration: none;">
+        <i class="fa-solid fa-satellite-dish"></i> Open Emergency Radar
+      </a>
+    </div>
+  </footer>
+
+  <!-- LocalStorage Integration & Dynamic Profile Population Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // 1. Read localStorage profile keys
+      const savedName = localStorage.getItem("profileName");
+      const savedEmail = localStorage.getItem("profileEmail");
+      const savedPhone = localStorage.getItem("profilePhone");
+      const savedEmergencyContact = localStorage.getItem("emergencyContact");
+      const savedPreferredLanguage = localStorage.getItem("preferredLanguage");
+      const savedAvatar = localStorage.getItem("selectedAvatar");
+
+      // 2. Safely populate UI elements if stored, otherwise keep elegant default
+      if (savedName && savedName.trim() !== "") {
+        const nameEl = document.getElementById("profileName");
+        if (nameEl) nameEl.textContent = savedName.trim();
+      }
+
+      if (savedEmail && savedEmail.trim() !== "") {
+        const emailEl = document.getElementById("profileEmail");
+        if (emailEl) emailEl.textContent = savedEmail.trim();
+      }
+
+      if (savedPhone && savedPhone.trim() !== "") {
+        const phoneEl = document.getElementById("profilePhone");
+        if (phoneEl) phoneEl.textContent = savedPhone.trim();
+      }
+
+      if (savedEmergencyContact && savedEmergencyContact.trim() !== "") {
+        const emContactEl = document.getElementById("profileEmergencyContact");
+        if (emContactEl) emContactEl.textContent = savedEmergencyContact.trim();
+      }
+
+      if (savedPreferredLanguage && savedPreferredLanguage.trim() !== "") {
+        const langEl = document.getElementById("profileLanguage");
+        if (langEl) langEl.textContent = savedPreferredLanguage.trim();
+      }
+
+      // Check if user selected avatar from profileedit or use default woman portrait
+      if (savedAvatar && savedAvatar.trim() !== "" && !savedAvatar.includes("xnz-Mst5-V") && !savedAvatar.includes("6833605") && !savedAvatar.includes("4140061") && !savedAvatar.includes("6997484")) {
+        const imgEl = document.getElementById("profileImage");
+        if (imgEl) imgEl.src = savedAvatar.trim();
+      }
+    });
+
+    // Interactive preference toggle helper
+    function handlePrefToggle(checkbox, prefName) {
+      const statusSpan = checkbox.closest('.toggle-switch-wrapper').querySelector('.switch-label-status');
+      if (statusSpan) {
+        statusSpan.textContent = checkbox.checked ? 'ON' : 'OFF';
+        statusSpan.style.color = checkbox.checked ? '#10b981' : '#94a3b8';
+      }
+      try {
+        localStorage.setItem(`sahara_pref_${prefName.toLowerCase().replace(/\s+/g, '_')}`, checkbox.checked ? '1' : '0');
+      } catch(e) {}
+    }
+  </script>
+
+</body>
+</html>

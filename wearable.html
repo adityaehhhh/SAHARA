@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAHARA — Smart Wearable Safety Intelligence</title>
+  <link rel="shortcut icon" href="ambulance.png" type="image/x-icon" />
+  <link rel="stylesheet" href="src/css/indexmain.css">
+  <link rel="stylesheet" href="src/css/navbar.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #e4eaf1;
+      color: #2c3e50;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Top Brand Header (Matched to sos-emergency.html) ─── */
+    .top-navbar-card {
+      background: #ffffff;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
+      padding: 12px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .brand-letters {
+      display: flex;
+      font-weight: 800;
+      font-size: 1.6rem;
+      letter-spacing: 1px;
+    }
+
+    .brand-letters .red { color: #e63946; }
+
+    .nav-pill-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      list-style: none;
+    }
+
+    .nav-pill-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 50px;
+      background: #f0f4f8;
+      color: #4a5568;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-pill-btn:hover {
+      background: #369ef9;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .nav-pill-btn.active {
+      background: #369ef9;
+      color: #ffffff;
+    }
+
+    .nav-pill-btn.danger-sos {
+      background: #e63946;
+      color: #ffffff;
+    }
+
+    .nav-pill-btn.danger-sos:hover {
+      background: #c1121f;
+      box-shadow: 0 4px 14px rgba(230, 57, 70, 0.35);
+    }
+
+    .nav-pill-btn.primary-vol {
+      background: #10b981;
+      color: #ffffff;
+    }
+
+    .nav-pill-btn.primary-vol:hover {
+      background: #059669;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+    }
+
+    /* ─── Status Banner (Matched to sos-emergency.html) ─── */
+    .sos-banner-bar {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .sos-banner-bar.standby {
+      background: #e7f3fe;
+      color: #2980b9;
+      border-bottom: 1px solid #c4d7ff;
+    }
+
+    .sos-banner-bar.active {
+      background: #ffebee;
+      color: #c62828;
+      border-bottom: 1px solid #ffcdd2;
+      animation: alertPulse 1.8s infinite;
+    }
+
+    .sos-banner-bar.responding {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-bottom: 1px solid #c8e6c9;
+    }
+
+    .sos-banner-bar.resolved {
+      background: #f3e5f5;
+      color: #6a1b9a;
+      border-bottom: 1px solid #e1bee7;
+    }
+
+    @keyframes alertPulse {
+      0%, 100% { background: #ffebee; }
+      50% { background: #ffcdd2; }
+    }
+
+    .pulse-beacon {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulseDot 1.4s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.6); opacity: 0.4; }
+    }
+
+    /* ─── Main Content Container Grid ─── */
+    .dashboard-container {
+      max-width: 1440px;
+      margin: 20px auto;
+      padding: 0 20px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 350px 1fr 350px;
+      gap: 24px;
+      flex: 1;
+      align-items: start;
+    }
+
+    /* ─── Card Wrapper (Matched to sos-emergency.html) ─── */
+    .card-wrapper {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .card-header-bar {
+      padding: 16px 20px;
+      background: #ffffff;
+      border-bottom: 1px solid #f0f4f8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .card-header-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .location-badge {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 6px 14px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+
+    .card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ─── Center Watch Stage ─── */
+    .watch-stage-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+      background: #f8fafc;
+      min-height: 480px;
+    }
+
+    .watch-stage {
+      position: relative;
+      display: block;
+      width: 100%;
+      max-width: 950px;
+      margin: 0 auto;
+      user-select: none;
+    }
+
+    .watch-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      position: relative;
+      z-index: 0;
+      filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.22));
+      pointer-events: none;
+    }
+
+    /* ─── Watch Screen Geometry ─── */
+    .watch-screen {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 18.82%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      overflow: hidden;
+      z-index: 2;
+      background: radial-gradient(circle at 50% 38%, #0f172a 0%, #030712 95%);
+      box-shadow: 
+        inset 0 0 25px rgba(0, 0, 0, 0.95),
+        inset 0 0 6px rgba(255, 255, 255, 0.12),
+        0 0 20px rgba(0, 0, 0, 0.8);
+      container-type: inline-size;
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .watch-screen.distress-mode {
+      background: radial-gradient(circle at 50% 38%, #2e080b 0%, #080102 95%);
+      box-shadow: 
+        inset 0 0 25px rgba(239, 68, 68, 0.6),
+        inset 0 0 8px rgba(239, 68, 68, 0.4),
+        0 0 30px rgba(239, 68, 68, 0.35);
+      animation: screenUrgentPulse 1.2s infinite ease-in-out;
+    }
+
+    .watch-screen.calling-mode {
+      background: radial-gradient(circle at 50% 38%, #1e1b4b 0%, #030712 95%);
+      box-shadow: 
+        inset 0 0 25px rgba(56, 189, 248, 0.6),
+        0 0 30px rgba(56, 189, 248, 0.3);
+    }
+
+    .watch-screen.workout-mode {
+      background: radial-gradient(circle at 50% 38%, #0c2538 0%, #030712 95%);
+      box-shadow: 
+        inset 0 0 25px rgba(56, 189, 248, 0.5),
+        0 0 25px rgba(56, 189, 248, 0.25);
+    }
+
+    @keyframes screenUrgentPulse {
+      0%, 100% {
+        box-shadow: 
+          inset 0 0 25px rgba(239, 68, 68, 0.5),
+          0 0 20px rgba(239, 68, 68, 0.25);
+      }
+      50% {
+        box-shadow: 
+          inset 0 0 35px rgba(239, 68, 68, 0.85),
+          0 0 35px rgba(239, 68, 68, 0.5);
+      }
+    }
+
+    /* ─── Watch Internal Viewport (Zero Overlap) ─── */
+    .watch-screen-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      text-align: center;
+      color: #ffffff;
+      user-select: none;
+    }
+
+    .watch-brand {
+      position: absolute;
+      top: 7%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 6.5cqw;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: #94a3b8;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .watch-time {
+      position: absolute;
+      top: 17%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 8.8cqw;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.04em;
+      color: #f8fafc;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+      white-space: nowrap;
+    }
+
+    .heart-rate {
+      position: absolute;
+      top: 29%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 0.95;
+      cursor: pointer;
+    }
+
+    .hr-val-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 1.2cqw;
+    }
+
+    .hr-val {
+      font-size: 22cqw;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #ef4444;
+      letter-spacing: -0.03em;
+      text-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
+      transition: color 0.3s ease;
+    }
+
+    .hr-unit {
+      font-size: 5.8cqw;
+      font-weight: 800;
+      color: #94a3b8;
+      letter-spacing: 0.1em;
+      margin-top: 0.5cqw;
+    }
+
+    .hr-pulse-dot {
+      display: inline-block;
+      width: 3.5cqw;
+      height: 3.5cqw;
+      border-radius: 50%;
+      background: #ef4444;
+      margin-bottom: 1cqw;
+      animation: heartPulse 0.85s infinite ease-in-out;
+    }
+
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 8px #ef4444; }
+    }
+
+    .status {
+      position: absolute;
+      top: 57%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 6.8cqw;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: #10b981;
+      padding: 1.2% 4.5%;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      text-transform: uppercase;
+      white-space: nowrap;
+      max-width: 82%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all 0.3s ease;
+    }
+
+    .status.distress {
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.25);
+      border-color: rgba(239, 68, 68, 0.6);
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+      animation: statusBlink 0.8s infinite ease-in-out;
+    }
+
+    .status.workout {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    @keyframes statusBlink {
+      0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+      50% { opacity: 0.8; transform: translateX(-50%) scale(1.03); }
+    }
+
+    .health-stats {
+      position: absolute;
+      top: 70%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: space-between;
+      width: 74%;
+      font-size: 5.8cqw;
+      font-family: 'JetBrains Mono', monospace;
+      color: #e2e8f0;
+    }
+
+    .stat-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.15;
+    }
+
+    .stat-val {
+      font-weight: 700;
+      color: #f8fafc;
+      font-size: 6cqw;
+    }
+
+    .stat-lbl {
+      font-size: 4.6cqw;
+      color: #94a3b8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .gps-status {
+      position: absolute;
+      bottom: 7.5%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 1.5cqw;
+      font-size: 5.2cqw;
+      color: #64748b;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .gps-dot {
+      color: #10b981;
+      font-size: 6cqw;
+      animation: gpsBlink 2s infinite ease-in-out;
+    }
+
+    @keyframes gpsBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ─── Escalation Calling Overlay ─── */
+    .watch-calling-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 40%, rgba(220, 38, 38, 0.95), rgba(15, 23, 42, 0.98));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      padding: 10%;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .watch-calling-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .calling-icon {
+      font-size: 11cqw;
+      color: #ffffff;
+      margin-bottom: 2cqw;
+      animation: phoneRing 0.6s infinite alternate ease-in-out;
+    }
+
+    @keyframes phoneRing {
+      0% { transform: rotate(-12deg) scale(1); }
+      100% { transform: rotate(12deg) scale(1.12); }
+    }
+
+    .calling-title {
+      font-size: 8cqw;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.04em;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      line-height: 1.2;
+      max-width: 85%;
+    }
+
+    .calling-subtitle {
+      font-size: 5.2cqw;
+      color: #fecaca;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      margin-top: 1.5cqw;
+      text-transform: uppercase;
+    }
+
+    .calling-timer-pill {
+      margin-top: 3cqw;
+      font-size: 5.6cqw;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: #ffffff;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 1.2% 5%;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* ─── Quick Actions Dock in Center Card (Matched to sos-emergency.html) ─── */
+    .sos-dock-area {
+      padding: 18px 20px;
+      background: #fafcff;
+      border-top: 1px solid #edf2f7;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .action-pill {
+      padding: 9px 18px;
+      border-radius: 50px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: #334155;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: all 0.2s ease;
+    }
+
+    .action-pill:hover {
+      background: #f8fafc;
+      transform: translateY(-1px);
+    }
+
+    .action-pill.danger {
+      border-color: #fecaca;
+      color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .action-pill.danger:hover {
+      background: #fee2e2;
+    }
+
+    .action-pill.success {
+      border-color: #a7f3d0;
+      color: #059669;
+      background: #ecfdf5;
+    }
+
+    .action-pill.success:hover {
+      background: #d1fae5;
+    }
+
+    /* ─── Metric Chips (Matched to sos-emergency.html) ─── */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .metric-chip {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .metric-chip-lbl {
+      font-size: 0.74rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .metric-chip-val {
+      font-size: 1.25rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: #1e293b;
+    }
+
+    /* ─── Live ECG Box (Dark Medical Monitor Display) ─── */
+    .ecg-box {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 14px;
+      padding: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ecg-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: #94a3b8;
+      margin-bottom: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .ecg-canvas {
+      width: 100%;
+      height: 72px;
+      display: block;
+    }
+
+    /* ─── Scenario Buttons Grid ─── */
+    .sim-btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .sim-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 16px;
+      border-radius: 12px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      color: #334155;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .sim-btn:hover {
+      background: #f1f5f9;
+      transform: translateX(3px);
+      border-color: #cbd5e1;
+    }
+
+    .sim-btn.active {
+      border-color: #3b82f6;
+      background: #eff6ff;
+      color: #1d4ed8;
+      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.15);
+    }
+
+    .sim-btn.danger {
+      border-color: #fecaca;
+      color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .sim-btn.danger:hover, .sim-btn.danger.active {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #b91c1c;
+      box-shadow: 0 3px 12px rgba(239, 68, 68, 0.15);
+    }
+
+    .sim-btn.warning {
+      border-color: #fde68a;
+      color: #d97706;
+      background: #fffbeb;
+    }
+
+    .sim-btn.warning:hover, .sim-btn.warning.active {
+      background: #fef3c7;
+      border-color: #f59e0b;
+      color: #b45309;
+      box-shadow: 0 3px 12px rgba(245, 158, 11, 0.15);
+    }
+
+    .sim-btn.info {
+      border-color: #bae6fd;
+      color: #0284c7;
+      background: #f0f9ff;
+    }
+
+    .sim-btn.info:hover, .sim-btn.info.active {
+      background: #e0f2fe;
+      border-color: #0ea5e9;
+      color: #0369a1;
+      box-shadow: 0 3px 12px rgba(14, 165, 233, 0.15);
+    }
+
+    .sim-btn.purple {
+      border-color: #e9d5ff;
+      color: #7e22ce;
+      background: #faf5ff;
+    }
+
+    .sim-btn.purple:hover, .sim-btn.purple.active {
+      background: #f3e8ff;
+      border-color: #a855f7;
+      color: #6b21a8;
+      box-shadow: 0 3px 12px rgba(168, 85, 247, 0.15);
+    }
+
+    .sim-btn.success {
+      border-color: #a7f3d0;
+      color: #059669;
+      background: #ecfdf5;
+    }
+
+    .sim-btn.success:hover, .sim-btn.success.active {
+      background: #d1fae5;
+      border-color: #10b981;
+      color: #047857;
+      box-shadow: 0 3px 12px rgba(16, 185, 129, 0.15);
+    }
+
+    /* ─── Event Log Stream ─── */
+    .event-log-box {
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      padding: 12px;
+      max-height: 160px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .log-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      color: #334155;
+      line-height: 1.35;
+    }
+
+    .log-time {
+      color: #94a3b8;
+      flex-shrink: 0;
+    }
+
+    .log-item.alert { color: #dc2626; font-weight: 600; }
+    .log-item.ok { color: #059669; }
+    .log-item.info { color: #0284c7; }
+
+    /* ─── Bottom Bar ─── */
+    .bottom-status-bar {
+      background: #ffffff;
+      border-top: 1px solid #edf2f7;
+      padding: 16px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: auto;
+    }
+
+    .bottom-info-tags {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .bottom-tag {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .bottom-tag i { color: #369ef9; }
+
+    /* ─── Responsive Adjustments ─── */
+    @media (max-width: 1200px) {
+      .dashboard-container {
+        grid-template-columns: 1fr;
+      }
+      .watch-card-wrapper {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .top-navbar-card { padding: 12px 16px; }
+      .nav-pill-links { display: none; }
+      .dashboard-container { padding: 0 12px; margin: 12px auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar (Matched to sos-emergency.html) -->
+  <header class="top-navbar-card">
+    <a href="index.html" class="brand-box">
+      <div class="brand-letters">
+        <span class="red">S</span>
+        <span class="red">A</span>
+        <span class="red">H</span>
+        <span class="red">A</span>
+        <span class="red">R</span>
+        <span class="red">A</span>
+      </div>
+      <img src="images/logo2-w.webp" alt="Logo" style="width: 45px; height: auto;" />
+    </a>
+
+    <ul class="nav-pill-links">
+      <li><a href="index.html" class="nav-pill-btn"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="map.html" class="nav-pill-btn"><i class="fa-solid fa-map-location-dot"></i> SafeMap</a></li>
+      <li><a href="wearable.html" class="nav-pill-btn active"><i class="fa-solid fa-clock"></i> Wearable</a></li>
+      <li><a href="volunteer-portal.html" target="_blank" class="nav-pill-btn primary-vol"><i class="fa-solid fa-users"></i> Volunteer Portal</a></li>
+    </ul>
+  </header>
+
+  <!-- Status Banner (Matched to sos-emergency.html) -->
+  <div class="sos-banner-bar standby" id="sosBanner">
+    <span class="pulse-beacon"></span>
+    <span id="sosStatusText">WEARABLE TELEMETRY LINKED — Physiological Monitoring & Safety Fusion Active</span>
+  </div>
+
+  <!-- Main Grid Dashboard (Matched to sos-emergency.html) -->
+  <main class="dashboard-container">
+
+    <!-- Left Card: Biometrics & AI Safety Fusion Stream -->
+    <div class="card-wrapper">
+      <div class="card-header-bar">
+        <div class="card-header-title">
+          <i class="fa-solid fa-wave-square" style="color: #369ef9;"></i> Biometric Radar
+        </div>
+        <div class="location-badge" id="ecgStatusBadge">
+          <span class="pulse-beacon" style="color: #10b981; width: 8px; height: 8px;"></span> Normal Rhythm
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- Live ECG Waveform Display -->
+        <div class="ecg-box">
+          <div class="ecg-header">
+            <span>Lead II • 25mm/s</span>
+            <span id="ecgGain">10mm/mV • 60Hz</span>
+          </div>
+          <canvas id="ecgCanvas" class="ecg-canvas"></canvas>
+        </div>
+
+        <!-- Metric Chips -->
+        <div class="metric-grid">
+          <div class="metric-chip">
+            <span class="metric-chip-lbl">Heart Rate</span>
+            <span class="metric-chip-val" id="chipBpm">78 <small style="font-size: 0.72rem; color: #64748b;">BPM</small></span>
+          </div>
+          <div class="metric-chip">
+            <span class="metric-chip-lbl">Blood Pressure</span>
+            <span class="metric-chip-val" id="chipBp">118/76 <small style="font-size: 0.72rem; color: #64748b;">mmHg</small></span>
+          </div>
+          <div class="metric-chip">
+            <span class="metric-chip-lbl">Blood Oxygen (SpO₂)</span>
+            <span class="metric-chip-val" id="chipSpo2">98%</span>
+          </div>
+          <div class="metric-chip">
+            <span class="metric-chip-lbl">Stress Index (SDNN)</span>
+            <span class="metric-chip-val" id="chipStress">18 <small style="font-size: 0.72rem; color: #10b981;">LOW</small></span>
+          </div>
+        </div>
+
+        <!-- Safety Fusion Model 3 Box -->
+        <div class="metric-chip" style="background: #ffffff; border: 1px solid #e2e8f0;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: #2c3e50;">
+              <i class="fa-solid fa-shield-halved" style="color: #369ef9; margin-right: 4px;"></i> Safety Fusion #3
+            </span>
+            <span id="fusionProb" style="font-weight: 800; font-size: 0.95rem; color: #10b981;">4.2%</span>
+          </div>
+          <div style="width: 100%; height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+            <div id="fusionBar" style="width: 4.2%; height: 100%; background: #10b981; transition: width 0.3s ease, background 0.3s ease;"></div>
+          </div>
+          <div id="fusionSignalDetail" style="font-size: 0.74rem; color: #64748b; margin-top: 8px; line-height: 1.4;">
+            Telemetry steady. Baseline vital signs within standard reference intervals.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Card: Large Physical Watch Showcase with Calibrated Overlay -->
+    <div class="card-wrapper watch-card-wrapper">
+      <div class="card-header-bar">
+        <div class="card-header-title">
+          <i class="fa-solid fa-clock" style="color: #e63946;"></i> SAHARA Smartwatch Live Telemetry
+        </div>
+        <div class="location-badge">
+          <i class="fa-solid fa-satellite-dish" style="color: #10b981;"></i> 24h Live Stream
+        </div>
+      </div>
+
+      <div class="watch-stage-container">
+        <div class="watch-stage">
+          <!-- Physical Watch Base Asset -->
+          <img src="./images/watch.png" alt="SAHARA Physical Smartwatch" class="watch-image">
+
+          <!-- Dedicated Viewport Overlay inside physical circular display -->
+          <div class="watch-screen" id="watchScreen">
+            <div class="watch-screen-inner">
+              
+              <!-- Top: Brand -->
+              <div class="watch-brand">SAHARA</div>
+
+              <!-- Below: Continuously running 24h digital clock (HH:MM:SS) -->
+              <div class="watch-time" id="watchTime">00:00:00</div>
+
+              <!-- Center: Heart Rate (BPM) -->
+              <div class="heart-rate" id="watchHeartRate" title="Click to trigger physiological distress simulation">
+                <div class="hr-val-row">
+                  <span class="hr-pulse-dot" id="hrDot"></span>
+                  <span class="hr-val" id="watchBpmVal">78</span>
+                </div>
+                <div class="hr-unit">BPM</div>
+              </div>
+
+              <!-- Below: Status Badge -->
+              <div class="status" id="watchStatus">NORMAL</div>
+
+              <!-- Bottom Area: BP and SpO2 -->
+              <div class="health-stats">
+                <div class="stat-col">
+                  <span class="stat-val" id="watchBpVal">118/76</span>
+                  <span class="stat-lbl">BP</span>
+                </div>
+                <div class="stat-col">
+                  <span class="stat-val" id="watchSpo2Val">98%</span>
+                  <span class="stat-lbl">SpO₂</span>
+                </div>
+              </div>
+
+              <!-- Footer: GPS Status -->
+              <div class="gps-status" id="watchGps">
+                GPS <span class="gps-dot">●</span>
+              </div>
+
+              <!-- Distress Escalation Calling Overlay -->
+              <div class="watch-calling-overlay" id="watchCallingOverlay">
+                <i class="fa-solid fa-phone-volume calling-icon"></i>
+                <div class="calling-title" id="callingTitle">CALLING DAD...</div>
+                <div class="calling-subtitle" id="callingSubtitle">SOS DISPATCH READY</div>
+                <div class="calling-timer-pill" id="callingTimer">Auto-SOS: 5s</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Pills Dock (Matched to sos-emergency.html) -->
+      <div class="sos-dock-area">
+        <button class="action-pill success" id="btnQuickNormal">
+          <i class="fa-solid fa-rotate-left"></i> Reset Normal Baseline
+        </button>
+        <button class="action-pill danger" id="btnQuickSos">
+          <i class="fa-solid fa-triangle-exclamation"></i> Trigger Emergency Dispatch
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Card: Scenario Controls & Audit Log -->
+    <div class="card-wrapper">
+      <div class="card-header-bar">
+        <div class="card-header-title">
+          <i class="fa-solid fa-sliders" style="color: #2c3e50;"></i> Scenario Simulator
+        </div>
+        <div class="location-badge" id="simStatusBadge">
+          Live Baseline
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="sim-btn-group">
+          <button class="sim-btn success active" id="btnNormalWalk">
+            <span><i class="fa-solid fa-person-walking" style="margin-right: 8px;"></i> Normal Walk</span>
+            <span style="font-size: 0.72rem; opacity: 0.85;">4.2%</span>
+          </button>
+          <button class="sim-btn info" id="btnRunning">
+            <span><i class="fa-solid fa-person-running" style="margin-right: 8px;"></i> Running Workout</span>
+            <span style="font-size: 0.72rem; opacity: 0.85;">14.8%</span>
+          </button>
+          <button class="sim-btn danger" id="btnTriggerStress">
+            <span><i class="fa-solid fa-bolt-lightning" style="margin-right: 8px;"></i> Acute Distress</span>
+            <span style="font-size: 0.72rem; opacity: 0.85;">88.7%</span>
+          </button>
+          <button class="sim-btn warning" id="btnTriggerFall">
+            <span><i class="fa-solid fa-person-falling-burst" style="margin-right: 8px;"></i> Hard Fall Event</span>
+            <span style="font-size: 0.72rem; opacity: 0.85;">92.4%</span>
+          </button>
+          <button class="sim-btn purple" id="btnNightDistress">
+            <span><i class="fa-solid fa-moon" style="margin-right: 8px;"></i> Night Journey Risk</span>
+            <span style="font-size: 0.72rem; opacity: 0.85;">85.2%</span>
+          </button>
+          <button class="sim-btn danger" id="btnFullSos">
+            <span><i class="fa-solid fa-triangle-exclamation" style="margin-right: 8px;"></i> Full Safety Response</span>
+            <span style="font-size: 0.72rem; opacity: 0.85;">98.5%</span>
+          </button>
+        </div>
+
+        <!-- Emergency Escalation Contacts -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 0.78rem; font-weight: 700; color: #2c3e50; display: flex; align-items: center; justify-content: space-between;">
+            <span><i class="fa-solid fa-address-book" style="color: #369ef9; margin-right: 6px;"></i> Emergency Contacts</span>
+            <span style="color: #10b981; font-size: 0.72rem;"><i class="fa-solid fa-circle-check"></i> Ready</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;">
+            <span style="color: #64748b;">Primary:</span>
+            <strong style="color: #2c3e50;">Dad (+91 98765-43210)</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;">
+            <span style="color: #64748b;">Ecosystem:</span>
+            <strong style="color: #e63946;">SAHARA SOS Network</strong>
+          </div>
+        </div>
+
+        <!-- Telemetry Audit Log -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2px;">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #2c3e50;"><i class="fa-solid fa-list-ul" style="margin-right: 6px;"></i> Audit Log</span>
+          <button id="btnClearLog" style="background: none; border: none; color: #94a3b8; font-size: 0.72rem; cursor: pointer;">Clear</button>
+        </div>
+
+        <div class="event-log-box" id="eventLogBox">
+          <div class="log-item ok">
+            <span class="log-time" id="initialLogTime">--:--:--</span>
+            <span>Wearable synced with SAHARA emergency suite.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Ecosystem Bar (Matched to sos-emergency.html) -->
+  <footer class="bottom-status-bar">
+    <div class="bottom-info-tags">
+      <div class="bottom-tag"><i class="fa-solid fa-circle-nodes"></i> SAHARA Safety Fusion Ecosystem</div>
+      <div class="bottom-tag"><i class="fa-solid fa-tower-broadcast"></i> BroadcastChannel 'sahara_emergency_sync' Active</div>
+    </div>
+    <div>
+      <a href="sos-emergency.html" class="nav-pill-btn danger-sos" style="display: inline-flex; text-decoration: none;">
+        <i class="fa-solid fa-satellite-dish"></i> Open Emergency Radar
+      </a>
+    </div>
+  </footer>
+
+  <!-- JavaScript Logic -->
+  <script>
+    /* ==================================================
+       1. LIVE RUNNING CLOCK (HH:MM:SS)
+       - Local browser 24-hour time
+       - Leading zeroes
+       - Updates every second
+       - NEVER freezes or stops during stress simulation
+       ================================================== */
+    function updateWatchClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const timeStr = `${hours}:${minutes}:${seconds}`;
+
+      const watchTimeEl = document.getElementById('watchTime');
+      if (watchTimeEl) {
+        watchTimeEl.textContent = timeStr;
+      }
+      return timeStr;
+    }
+
+    const initialTime = updateWatchClock();
+    setInterval(updateWatchClock, 1000);
+
+    const initialLogEl = document.getElementById('initialLogTime');
+    if (initialLogEl) initialLogEl.textContent = initialTime;
+
+    /* ==================================================
+       2. BROADCAST CHANNEL & ECOSYSTEM SYNC
+       ================================================== */
+    let emergencyChannel;
+    try {
+      emergencyChannel = new BroadcastChannel('sahara_emergency_sync');
+    } catch(e) {
+      console.warn('BroadcastChannel not supported in this environment');
+    }
+
+    function broadcastEvent(type, data) {
+      if (emergencyChannel) {
+        emergencyChannel.postMessage({ type, data, timestamp: new Date().toISOString() });
+      }
+      try {
+        localStorage.setItem('sahara_wearable_telemetry', JSON.stringify({
+          bpm: currentBpm,
+          scenario: currentScenarioId,
+          timestamp: Date.now()
+        }));
+      } catch(e) {}
+    }
+
+    /* ==================================================
+       3. DETERMINISTIC SCENARIO DEFINITIONS
+       ================================================== */
+    const SCENARIOS = {
+      NORMAL: {
+        id: 'NORMAL',
+        name: 'Normal Walk',
+        bpm: 78,
+        bp: '118/76',
+        spo2: '98%',
+        stressIndex: '18',
+        stressLevel: 'LOW',
+        stressProb: '4.2%',
+        stressProbVal: 4.2,
+        probColor: '#10b981',
+        bannerClass: 'sos-banner-bar standby',
+        bannerText: 'WEARABLE TELEMETRY LINKED — Physiological Monitoring & Safety Fusion Active',
+        statusText: 'NORMAL',
+        statusClass: 'status',
+        screenClass: 'watch-screen',
+        ecgStatusText: 'Normal Rhythm',
+        simStatusText: 'Live Baseline',
+        signalDetail: 'Telemetry steady. Baseline vital signs within standard reference intervals.',
+        logMsg: 'Scenario reset to Normal Walk. Baseline metrics restored (4.2% distress probability).',
+        logType: 'ok',
+        autoEscalate: false
+      },
+      RUNNING: {
+        id: 'RUNNING',
+        name: 'Running Workout',
+        bpm: 142,
+        bp: '135/84',
+        spo2: '99%',
+        stressIndex: '32',
+        stressLevel: 'MODERATE',
+        stressProb: '14.8%',
+        stressProbVal: 14.8,
+        probColor: '#0284c7',
+        bannerClass: 'sos-banner-bar standby',
+        bannerText: 'PHYSICAL EXERCISE DETECTED — Motion pattern correlated with running workout',
+        statusText: 'WORKOUT',
+        statusClass: 'status workout',
+        screenClass: 'watch-screen workout-mode',
+        ecgStatusText: 'Sinus Tachycardia',
+        simStatusText: 'Active Workout',
+        signalDetail: 'Safety Fusion Model #3 Filter: High cadence motion correlated with physical exertion (Not Danger).',
+        logMsg: 'Scenario set: Running Workout. Heart rate elevated to 142 BPM, safely classified as workout (14.8%).',
+        logType: 'info',
+        autoEscalate: false
+      },
+      STRESS: {
+        id: 'STRESS',
+        name: 'Acute Distress',
+        bpm: 138,
+        bp: '142/95',
+        spo2: '95%',
+        stressIndex: '89',
+        stressLevel: 'CRITICAL',
+        stressProb: '88.7%',
+        stressProbVal: 88.7,
+        probColor: '#dc2626',
+        bannerClass: 'sos-banner-bar active',
+        bannerText: 'POSSIBLE DISTRESS DETECTED — Acute tachycardia without exercise motion. Safety check active.',
+        statusText: 'POSSIBLE DISTRESS',
+        statusClass: 'status distress',
+        screenClass: 'watch-screen distress-mode',
+        ecgStatusText: 'Distress Tachycardia',
+        simStatusText: 'Distress Active',
+        signalDetail: 'CRITICAL: Tachycardia spike without exercise acceleration pattern. Safety Fusion trigger active.',
+        logMsg: 'Scenario set: Acute Distress. Stress probability 88.7% with acute tachycardia (138 BPM).',
+        logType: 'alert',
+        autoEscalate: true
+      },
+      FALL: {
+        id: 'FALL',
+        name: 'Hard Fall Event',
+        bpm: 128,
+        bp: '146/96',
+        spo2: '94%',
+        stressIndex: '94',
+        stressLevel: 'EMERGENCY',
+        stressProb: '92.4%',
+        stressProbVal: 92.4,
+        probColor: '#dc2626',
+        bannerClass: 'sos-banner-bar active',
+        bannerText: 'HARD FALL EVENT CONFIRMED — Impact shock > 6.8g. Emergency contact dispatch countdown.',
+        statusText: 'FALL DETECTED',
+        statusClass: 'status distress',
+        screenClass: 'watch-screen distress-mode',
+        ecgStatusText: 'Shock Rhythm',
+        simStatusText: 'Impact Anomaly',
+        signalDetail: 'EMERGENCY: Accelerometer shock > 6.8g followed by complete victim immobility.',
+        logMsg: 'Scenario set: Hard Fall Event. Accelerometer impact > 6.8g confirmed. Distress probability 92.4%.',
+        logType: 'alert',
+        isFall: true
+      },
+      NIGHT_DISTRESS: {
+        id: 'NIGHT_DISTRESS',
+        name: 'Night Journey Risk',
+        bpm: 134,
+        bp: '138/92',
+        spo2: '96%',
+        stressIndex: '86',
+        stressLevel: 'HIGH CONTEXT',
+        stressProb: '85.2%',
+        stressProbVal: 85.2,
+        probColor: '#d97706',
+        bannerClass: 'sos-banner-bar active',
+        bannerText: 'ROUTE ANOMALY DETECTED — Deviated corridor navigation with elevated adrenaline response.',
+        statusText: 'ROUTE ANOMALY',
+        statusClass: 'status distress',
+        screenClass: 'watch-screen distress-mode',
+        ecgStatusText: 'Context Rhythm',
+        simStatusText: 'Off-Route Alert',
+        signalDetail: 'HIGH RISK: Deviated corridor navigation combined with physiological adrenaline response.',
+        logMsg: 'Scenario set: Night Journey Risk. Route anomaly with 85.2% distress probability.',
+        logType: 'alert',
+        autoEscalate: true
+      },
+      FULL_SOS: {
+        id: 'FULL_SOS',
+        name: 'Full Safety Response',
+        bpm: 148,
+        bp: '155/102',
+        spo2: '93%',
+        stressIndex: '99',
+        stressLevel: 'MAX EMERGENCY',
+        stressProb: '98.5%',
+        stressProbVal: 98.5,
+        probColor: '#dc2626',
+        bannerClass: 'sos-banner-bar active',
+        bannerText: 'EMERGENCY SOS BROADCAST ACTIVE — Responders, Police & Verified Volunteers Alerted.',
+        statusText: 'EMERGENCY SOS',
+        statusClass: 'status distress',
+        screenClass: 'watch-screen calling-mode',
+        ecgStatusText: 'Critical Alert',
+        simStatusText: 'Full SOS Active',
+        signalDetail: 'MAX ESCALATION: 98.5% Emergency Priority. Automated Police & Volunteer dispatch broadcasted.',
+        logMsg: 'Scenario set: Full Safety Response. 98.5% distress priority. Responder beacon active.',
+        logType: 'alert',
+        isFullSos: true
+      }
+    };
+
+    /* ==================================================
+       4. SCENARIO STATE ENGINE (RESET-FIRST ARCHITECTURE)
+       ================================================== */
+    let currentScenarioId = 'NORMAL';
+    let currentBpm = 78;
+    let escalationCountdown = 5;
+    let escalationInterval = null;
+
+    // DOM Elements
+    const sosBanner = document.getElementById('sosBanner');
+    const sosStatusText = document.getElementById('sosStatusText');
+    const watchScreen = document.getElementById('watchScreen');
+    const watchBpmVal = document.getElementById('watchBpmVal');
+    const watchStatus = document.getElementById('watchStatus');
+    const watchBpVal = document.getElementById('watchBpVal');
+    const watchSpo2Val = document.getElementById('watchSpo2Val');
+    const watchCallingOverlay = document.getElementById('watchCallingOverlay');
+    const callingTitle = document.getElementById('callingTitle');
+    const callingSubtitle = document.getElementById('callingSubtitle');
+    const callingTimer = document.getElementById('callingTimer');
+    const hrDot = document.getElementById('hrDot');
+
+    const chipBpm = document.getElementById('chipBpm');
+    const chipBp = document.getElementById('chipBp');
+    const chipSpo2 = document.getElementById('chipSpo2');
+    const chipStress = document.getElementById('chipStress');
+    const fusionProb = document.getElementById('fusionProb');
+    const fusionBar = document.getElementById('fusionBar');
+    const fusionSignalDetail = document.getElementById('fusionSignalDetail');
+    const ecgStatusBadge = document.getElementById('ecgStatusBadge');
+    const simStatusBadge = document.getElementById('simStatusBadge');
+    const eventLogBox = document.getElementById('eventLogBox');
+
+    const simButtons = {
+      NORMAL: document.getElementById('btnNormalWalk'),
+      RUNNING: document.getElementById('btnRunning'),
+      STRESS: document.getElementById('btnTriggerStress'),
+      FALL: document.getElementById('btnTriggerFall'),
+      NIGHT_DISTRESS: document.getElementById('btnNightDistress'),
+      FULL_SOS: document.getElementById('btnFullSos')
+    };
+
+    function addLog(msg, type = 'normal') {
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+      const div = document.createElement('div');
+      div.className = `log-item ${type}`;
+      div.innerHTML = `<span class="log-time">${timeStr}</span> <span>${msg}</span>`;
+      eventLogBox.prepend(div);
+    }
+
+    /* ─── Deterministic Scenario Switcher ─── */
+    function applyScenario(scenarioKey) {
+      clearInterval(escalationInterval);
+      watchCallingOverlay.classList.remove('active');
+
+      const config = SCENARIOS[scenarioKey] || SCENARIOS.NORMAL;
+      currentScenarioId = config.id;
+      currentBpm = config.bpm;
+
+      // Update button active state
+      Object.keys(simButtons).forEach(key => {
+        if (simButtons[key]) {
+          simButtons[key].classList.toggle('active', key === scenarioKey);
+        }
+      });
+
+      // Update Banner
+      if (sosBanner && sosStatusText) {
+        sosBanner.className = config.bannerClass;
+        sosStatusText.textContent = config.bannerText;
+      }
+
+      // Update Watch UI Elements
+      watchBpmVal.textContent = Math.round(currentBpm);
+      watchStatus.textContent = config.statusText;
+      watchStatus.className = config.statusClass;
+      watchScreen.className = config.screenClass;
+      watchBpVal.textContent = config.bp;
+      watchSpo2Val.textContent = config.spo2;
+
+      // Pulse dot speed
+      if (config.bpm > 130) {
+        hrDot.style.animationDuration = '0.45s';
+      } else if (config.bpm > 100) {
+        hrDot.style.animationDuration = '0.6s';
+      } else {
+        hrDot.style.animationDuration = '0.85s';
+      }
+
+      // Update Telemetry Panel Chips
+      chipBpm.innerHTML = `${Math.round(currentBpm)} <small style="font-size: 0.72rem; color: #64748b;">BPM</small>`;
+      chipBp.innerHTML = `${config.bp} <small style="font-size: 0.72rem; color: ${config.probColor};">${config.bpm > 130 ? 'HIGH' : 'mmHg'}</small>`;
+      chipSpo2.textContent = config.spo2;
+      chipStress.innerHTML = `${config.stressIndex} <small style="font-size: 0.72rem; color: ${config.probColor}; font-weight: 700;">${config.stressLevel}</small>`;
+
+      // Update Safety Fusion Diagnostics
+      fusionProb.textContent = config.stressProb;
+      fusionProb.style.color = config.probColor;
+      fusionBar.style.width = config.stressProb;
+      fusionBar.style.background = config.probColor;
+      fusionSignalDetail.textContent = config.signalDetail;
+
+      ecgStatusBadge.innerHTML = `<span class="pulse-beacon" style="color: ${config.probColor}; width: 8px; height: 8px;"></span> ${config.ecgStatusText}`;
+      simStatusBadge.textContent = config.simStatusText;
+
+      // Add to Log & Broadcast
+      addLog(config.logMsg, config.logType);
+      broadcastEvent('WEARABLE_SCENARIO_CHANGED', {
+        scenario: config.id,
+        bpm: config.bpm,
+        stressProb: config.stressProb
+      });
+
+      // Trigger Specific Scenario Sequences
+      if (config.autoEscalate) {
+        setTimeout(() => {
+          if (currentScenarioId === config.id) {
+            triggerCallingOverlay('CALLING DAD...', 'EMERGENCY PROTOCOL', 5);
+          }
+        }, 2200);
+      } else if (config.isFall) {
+        triggerCallingOverlay('FALL DETECTED!', 'DISMISS IN 8s OR SOS', 8);
+      } else if (config.isFullSos) {
+        triggerCallingOverlay('EMERGENCY SOS', 'ALL RESPONDERS NOTIFIED', 0, true);
+      }
+    }
+
+    function triggerCallingOverlay(title, subtitle, seconds, immediate = false) {
+      watchCallingOverlay.classList.add('active');
+      callingTitle.textContent = title;
+      callingSubtitle.textContent = subtitle;
+      escalationCountdown = seconds;
+
+      if (navigator.vibrate) {
+        try { navigator.vibrate([300, 150, 300, 150, 600]); } catch(e) {}
+      }
+
+      if (immediate) {
+        callingTimer.textContent = 'BROADCAST ACTIVE';
+        addLog('Emergency SOS beacon active. High-priority dispatch sent to Volunteer Network.', 'alert');
+        return;
+      }
+
+      callingTimer.textContent = `Auto-SOS: ${escalationCountdown}s`;
+
+      escalationInterval = setInterval(() => {
+        escalationCountdown--;
+        if (escalationCountdown >= 0) {
+          callingTimer.textContent = `Auto-SOS: ${escalationCountdown}s`;
+        }
+        if (escalationCountdown <= 0) {
+          clearInterval(escalationInterval);
+          callingTitle.textContent = 'CONNECTED';
+          callingTimer.textContent = 'VOICE LINK ACTIVE';
+          addLog('Emergency call connected to Dad. Real-time GPS & telemetry streamed.', 'alert');
+          broadcastEvent('SOS_TRIGGERED', { hr: currentBpm, loc: 'Live Wearable GPS' });
+        }
+      }, 1000);
+    }
+
+    /* Baseline natural micro-jitter (Only during steady states) */
+    setInterval(() => {
+      if (currentScenarioId === 'NORMAL') {
+        const jitter = (Math.random() * 3 - 1.5);
+        currentBpm = 78 + jitter;
+        watchBpmVal.textContent = Math.round(currentBpm);
+        chipBpm.innerHTML = `${Math.round(currentBpm)} <small style="font-size: 0.72rem; color: #64748b;">BPM</small>`;
+      } else if (currentScenarioId === 'RUNNING') {
+        const jitter = (Math.random() * 4 - 2);
+        currentBpm = 142 + jitter;
+        watchBpmVal.textContent = Math.round(currentBpm);
+        chipBpm.innerHTML = `${Math.round(currentBpm)} <small style="font-size: 0.72rem; color: #64748b;">BPM</small>`;
+      }
+    }, 1500);
+
+    // Event Listeners for Scenario Buttons
+    document.getElementById('btnNormalWalk').addEventListener('click', () => applyScenario('NORMAL'));
+    document.getElementById('btnRunning').addEventListener('click', () => applyScenario('RUNNING'));
+    document.getElementById('btnTriggerStress').addEventListener('click', () => applyScenario('STRESS'));
+    document.getElementById('btnTriggerFall').addEventListener('click', () => applyScenario('FALL'));
+    document.getElementById('btnNightDistress').addEventListener('click', () => applyScenario('NIGHT_DISTRESS'));
+    document.getElementById('btnFullSos').addEventListener('click', () => applyScenario('FULL_SOS'));
+
+    document.getElementById('btnQuickNormal').addEventListener('click', () => applyScenario('NORMAL'));
+    document.getElementById('btnQuickSos').addEventListener('click', () => applyScenario('FULL_SOS'));
+
+    document.getElementById('watchHeartRate').addEventListener('click', () => {
+      if (currentScenarioId === 'NORMAL') applyScenario('STRESS');
+      else applyScenario('NORMAL');
+    });
+
+    document.getElementById('btnClearLog').addEventListener('click', () => {
+      eventLogBox.innerHTML = '';
+      addLog('Telemetry audit log reset.', 'ok');
+    });
+
+    /* ==================================================
+       5. HIGH-PERFORMANCE ECG CANVAS RENDERER
+       ================================================== */
+    const ecgCanvas = document.getElementById('ecgCanvas');
+    const ctx = ecgCanvas.getContext('2d');
+    let ecgX = 0;
+    let ecgPoints = [];
+
+    function resizeCanvas() {
+      const rect = ecgCanvas.getBoundingClientRect();
+      ecgCanvas.width = rect.width * window.devicePixelRatio;
+      ecgCanvas.height = rect.height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const normalEcgPattern = [0, 0, 0.05, 0.1, 0.05, 0, -0.05, -0.15, 1.0, -0.4, 0, 0.1, 0.2, 0.25, 0.1, 0, 0, 0, 0, 0, 0];
+    const stressEcgPattern = [0, 0.1, 0.2, -0.2, 1.2, -0.5, 0.1, 0.35, 0.15, 0, 0, 0];
+
+    let patternStep = 0;
+
+    function drawEcgFrame() {
+      const width = ecgCanvas.width / window.devicePixelRatio;
+      const height = ecgCanvas.height / window.devicePixelRatio;
+      const midY = height / 2;
+
+      const isAlertState = (currentScenarioId === 'STRESS' || currentScenarioId === 'FALL' || currentScenarioId === 'FULL_SOS' || currentScenarioId === 'NIGHT_DISTRESS');
+      const isWorkoutState = (currentScenarioId === 'RUNNING');
+      const pattern = (isAlertState || isWorkoutState) ? stressEcgPattern : normalEcgPattern;
+      const waveSpeed = (isAlertState || isWorkoutState) ? 4 : 2;
+
+      for (let i = 0; i < waveSpeed; i++) {
+        let yOffset = 0;
+        if (patternStep < pattern.length) {
+          yOffset = pattern[patternStep] * (height * 0.38);
+          patternStep++;
+        } else {
+          const beatGap = (isAlertState || isWorkoutState) ? 14 : 35;
+          if (patternStep > pattern.length + beatGap) {
+            patternStep = 0;
+          } else {
+            patternStep++;
+          }
+        }
+
+        const y = midY - yOffset + (Math.random() * 2 - 1);
+        ecgPoints.push({ x: ecgX, y: y });
+
+        ecgX += 1.5;
+        if (ecgX > width) {
+          ecgX = 0;
+          ecgPoints = [];
+        }
+      }
+
+      ctx.fillStyle = '#090d16';
+      ctx.fillRect(0, 0, width, height);
+
+      // Grid background
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
+      ctx.lineWidth = 1;
+      const gridStep = 16;
+      for (let gx = 0; gx < width; gx += gridStep) {
+        ctx.beginPath();
+        ctx.moveTo(gx, 0);
+        ctx.lineTo(gx, height);
+        ctx.stroke();
+      }
+      for (let gy = 0; gy < height; gy += gridStep) {
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(width, gy);
+        ctx.stroke();
+      }
+
+      // Draw ECG Line
+      if (ecgPoints.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(ecgPoints[0].x, ecgPoints[0].y);
+        for (let j = 1; j < ecgPoints.length; j++) {
+          ctx.lineTo(ecgPoints[j].x, ecgPoints[j].y);
+        }
+        
+        let strokeColor = '#10b981';
+        if (isAlertState) strokeColor = '#ef4444';
+        else if (isWorkoutState) strokeColor = '#38bdf8';
+
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = 2;
+        ctx.lineJoin = 'round';
+        ctx.shadowColor = strokeColor;
+        ctx.shadowBlur = 8;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+
+      requestAnimationFrame(drawEcgFrame);
+    }
+
+    requestAnimationFrame(drawEcgFrame);
+  </script>
+</body>
+</html>

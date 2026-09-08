@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAHARA — Volunteer Emergency Portal</title>
+  <link rel="shortcut icon" href="ambulance.png" type="image/x-icon" />
+  <link rel="stylesheet" href="src/css/indexmain.css">
+  <link rel="stylesheet" href="src/css/navbar.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+    body {
+      background-color: #e4eaf1;
+      color: #2c3e50;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Top Navbar Matching index.html ─── */
+    .top-navbar-card {
+      background: #ffffff;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
+      padding: 12px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .brand-letters {
+      display: flex;
+      font-weight: 800;
+      font-size: 1.6rem;
+      letter-spacing: 1px;
+    }
+
+    .brand-letters .red { color: #e63946; }
+
+    .volunteer-header-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #e8f5e9;
+      color: #10b981;
+      border: 1px solid #c8e6c9;
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .nav-pill-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      list-style: none;
+    }
+
+    .nav-pill-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 50px;
+      background: #f0f4f8;
+      color: #4a5568;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-pill-btn:hover {
+      background: #369ef9;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .nav-pill-btn.danger-sos {
+      background: #fee2e2;
+      color: #dc2626;
+      border-color: #fca5a5;
+    }
+
+    .nav-pill-btn.danger-sos:hover {
+      background: #e63946;
+      color: #ffffff;
+    }
+
+    /* ─── Incident Alert Strip ─── */
+    .incident-strip {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 14px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .incident-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .incident-tag {
+      background: #e63946;
+      color: #ffffff;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      animation: alertPulse 1.4s infinite;
+    }
+
+    @keyframes alertPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .incident-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .victim-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .victim-address-sub {
+      font-size: 0.8rem;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .incident-metrics {
+      display: flex;
+      gap: 16px;
+      background: #f8fafc;
+      padding: 8px 18px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .metric-cell { text-align: center; }
+    .metric-cell .num { font-size: 1.15rem; font-weight: 800; color: #2563eb; font-family: monospace; }
+    .metric-cell .txt { font-size: 0.68rem; color: #64748b; text-transform: uppercase; font-weight: 600; }
+
+    /* ─── Main Content Grid ─── */
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 20px auto;
+      padding: 0 20px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 440px;
+      gap: 24px;
+      flex: 1;
+    }
+
+    /* ─── Left Card: Navigation Map & Dock ─── */
+    .map-card-wrapper {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #v-map {
+      width: 100%;
+      height: 100%;
+      min-height: 480px;
+      flex: 1;
+    }
+
+    /* Map Dock */
+    .map-dock-panel {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      z-index: 450;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .dock-left-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dock-led {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulseDot 1.4s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.5; }
+    }
+
+    .dock-title { font-size: 0.9rem; font-weight: 700; color: #1e293b; }
+    .dock-sub { font-size: 0.75rem; color: #64748b; }
+
+    .dock-buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-respond {
+      padding: 10px 22px;
+      border-radius: 50px;
+      border: none;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      color: #ffffff;
+    }
+
+    .btn-respond.coming {
+      background: linear-gradient(135deg, #10b981, #059669);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-respond.coming:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.55);
+    }
+
+    .btn-respond.arrived {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    }
+
+    .btn-respond.resolve {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    }
+
+    .btn-speed {
+      padding: 10px 16px;
+      border-radius: 50px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ─── Right Card: Voice Recording & Chat ─── */
+    .sidebar-card-wrapper {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Voice Note Box */
+    .voice-note-card {
+      margin: 18px 18px 0 18px;
+      padding: 16px;
+      background: #fef2f2;
+      border-radius: 14px;
+      border: 1px solid #fee2e2;
+    }
+
+    .voice-note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .voice-note-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #dc2626;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+    }
+
+    .voice-controls-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .voice-play-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #e63946;
+      color: #ffffff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+
+    .voice-play-circle:hover { transform: scale(1.08); }
+
+    .waveform-bars {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 24px;
+    }
+
+    .wave-line {
+      width: 4px;
+      background: #cbd5e1;
+      border-radius: 2px;
+      height: 10px;
+    }
+
+    .waveform-bars.playing .wave-line {
+      background: #e63946;
+      animation: waveAnimate 0.8s ease-in-out infinite alternate;
+    }
+
+    .wave-line:nth-child(2) { animation-delay: 0.1s; height: 18px; }
+    .wave-line:nth-child(3) { animation-delay: 0.2s; height: 24px; }
+    .wave-line:nth-child(4) { animation-delay: 0.3s; height: 14px; }
+    .wave-line:nth-child(5) { animation-delay: 0.15s; height: 20px; }
+    .wave-line:nth-child(6) { animation-delay: 0.25s; height: 10px; }
+    .wave-line:nth-child(7) { animation-delay: 0.05s; height: 22px; }
+
+    @keyframes waveAnimate {
+      0% { height: 6px; }
+      100% { height: 24px; }
+    }
+
+    /* Chat Section */
+    .chat-section-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .chat-title-header {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-stream-box {
+      flex: 1;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .chat-stream-box::-webkit-scrollbar { width: 5px; }
+    .chat-stream-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+    .chat-bubble {
+      max-width: 85%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .chat-bubble.victim {
+      align-self: flex-start;
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fee2e2;
+      border-bottom-left-radius: 3px;
+    }
+
+    .chat-bubble.volunteer {
+      align-self: flex-end;
+      background: #e8f5e9;
+      color: #166534;
+      border: 1px solid #dcfce7;
+      border-bottom-right-radius: 3px;
+    }
+
+    .chat-bubble .author {
+      font-size: 0.68rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+      color: #15803d;
+    }
+
+    .chat-bubble.victim .author {
+      color: #dc2626;
+    }
+
+    .chat-bubble .timestamp {
+      font-size: 0.62rem;
+      color: #94a3b8;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    /* Quick Reply Chips */
+    .quick-chips-row {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+    }
+
+    .quick-chips-row::-webkit-scrollbar { display: none; }
+
+    .quick-pill {
+      white-space: nowrap;
+      padding: 6px 12px;
+      border-radius: 50px;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+
+    .quick-pill:hover {
+      background: #e0f2fe;
+      color: #0369a1;
+      border-color: #bae6fd;
+    }
+
+    /* Chat Send Bar */
+    .chat-send-bar {
+      display: flex;
+      gap: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #edf2f7;
+    }
+
+    .chat-send-bar input {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 50px;
+      border: 1px solid #cbd5e1;
+      outline: none;
+      font-size: 0.85rem;
+      background: #f8fafc;
+    }
+
+    .chat-send-bar input:focus { border-color: #10b981; background: #ffffff; }
+
+    .mic-button {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      color: #e63946;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .mic-button.recording {
+      background: #e63946;
+      color: #ffffff;
+      animation: pulseDot 1s infinite;
+    }
+
+    .send-icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #10b981;
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
+
+    .send-icon-btn:hover { background: #059669; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .dashboard-container { grid-template-columns: 1fr; }
+      #v-map { min-height: 340px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar Matching index.html -->
+  <header class="top-navbar-card">
+    <a href="index.html" class="brand-box">
+      <div class="brand-letters">
+        <span class="red">S</span>
+        <span class="red">A</span>
+        <span class="red">H</span>
+        <span class="red">A</span>
+        <span class="red">R</span>
+        <span class="red">A</span>
+      </div>
+      <img src="images/logo2-w.webp" alt="Logo" style="width: 45px; height: auto;" />
+    </a>
+
+    <div class="volunteer-header-badge">
+      <i class="fa-solid fa-shield-check"></i> Priya Sharma · Responder #DL-VOL-9421
+    </div>
+
+    <ul class="nav-pill-links">
+      <li><a href="profile.html" class="nav-pill-btn"><i class="fa-solid fa-user"></i> Profile</a></li>
+      <li><a href="wearable.html" class="nav-pill-btn"><i class="fa-solid fa-clock"></i> Wearable</a></li>
+      <li><a href="sos-emergency.html" target="_blank" class="nav-pill-btn danger-sos"><i class="fa-solid fa-triangle-exclamation"></i> Open Victim Tab</a></li>
+      <li><a href="index.html" class="nav-pill-btn"><i class="fa-solid fa-house"></i> Home</a></li>
+    </ul>
+  </header>
+
+  <!-- Incident Strip -->
+  <div class="incident-strip">
+    <div class="incident-left">
+      <div class="incident-tag">
+        <i class="fa-solid fa-triangle-exclamation"></i> LIVE SOS ALERT
+      </div>
+      <div class="incident-meta">
+        <div class="victim-title">
+          Ananya S. <span style="font-size: 0.72rem; background: #fee2e2; color: #dc2626; padding: 2px 8px; border-radius: 4px; font-weight: 700;">PRIORITY HIGH</span>
+        </div>
+        <div class="victim-address-sub">
+          <i class="fa-solid fa-location-dot" style="color: #e63946;"></i> <span id="vAddressText">Locating victim...</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="incident-metrics">
+      <div class="metric-cell">
+        <div class="num" id="displayDistance">1.1 km</div>
+        <div class="txt">Distance</div>
+      </div>
+      <div class="metric-cell" style="border-left: 1px solid #e2e8f0; padding-left: 16px;">
+        <div class="num" id="displayEta">3 min</div>
+        <div class="txt">ETA</div>
+      </div>
+      <div class="metric-cell" style="border-left: 1px solid #e2e8f0; padding-left: 16px;">
+        <div class="num" id="displaySpeed">18 km/h</div>
+        <div class="txt">Est. Speed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Grid Dashboard -->
+  <main class="dashboard-container">
+
+    <!-- Left Card: Navigation Map & Dock -->
+    <div class="map-card-wrapper">
+      <div id="v-map"></div>
+
+      <!-- Floating Map Dock -->
+      <div class="map-dock-panel">
+        <div class="dock-left-status">
+          <div class="dock-led" id="statusIndicator"></div>
+          <div>
+            <div class="dock-title" id="dockStatusTitle">SOS Alert Received · Ready to Respond</div>
+            <div class="dock-sub" id="dockStatusSub">Tap "Accept & I'm Coming" to start navigation pipeline</div>
+          </div>
+        </div>
+
+        <div class="dock-buttons">
+          <button class="btn-respond coming" id="comingBtn" onclick="handleComingClick()">
+            <i class="fa-solid fa-person-running"></i> Accept & I'm Coming
+          </button>
+          <button class="btn-speed" id="speedBtn" onclick="toggleSpeed()" title="Demo simulation speed">
+            ⚡ 1x Speed
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Card: Voice Recording & Chat -->
+    <div class="sidebar-card-wrapper">
+
+      <!-- Emergency Voice Recording Box -->
+      <div class="voice-note-card">
+        <div class="voice-note-header">
+          <div class="voice-note-title">
+            <i class="fa-solid fa-microphone-lines"></i> Victim's Voice Note
+          </div>
+          <span style="font-size: 0.72rem; color: #64748b;">0:06 Audio</span>
+        </div>
+
+        <div class="voice-controls-row">
+          <button class="voice-play-circle" id="voicePlayBtn" onclick="toggleAudioPlayback()">
+            <i class="fa-solid fa-play" id="playIcon"></i>
+          </button>
+
+          <div style="flex: 1;">
+            <div class="waveform-bars" id="waveVisualizer">
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+            </div>
+            <div style="font-size: 0.72rem; color: #475569; font-style: italic; margin-top: 4px;" id="vTranscriptText">
+              "Please help, I am near my location, someone is following me..."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Chat Pipeline -->
+      <div class="chat-section-container">
+        <div class="chat-title-header">
+          <span><i class="fa-solid fa-comments" style="color: #10b981;"></i> Two-Way Responder Chat</span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button onclick="clearVolunteerChat()" style="background: none; border: none; font-size: 0.72rem; color: #64748b; cursor: pointer; text-decoration: underline;">
+              <i class="fa-solid fa-rotate-right"></i> Clear Chat
+            </button>
+            <span style="font-size: 0.72rem; color: #10b981; font-weight: 600;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Live Sync</span>
+          </div>
+        </div>
+
+        <div class="chat-stream-box" id="vChatMessages">
+          <div class="chat-bubble victim">
+            <div class="author">🚨 Ananya S. (Victim)</div>
+            <div>SOS Activated! Please help, I need assistance.</div>
+            <div class="timestamp">Just now</div>
+          </div>
+        </div>
+
+        <!-- Quick Response Chips -->
+        <div class="quick-chips-row">
+          <div class="quick-pill" onclick="sendQuickReply('I am on my way! Stay in a well-lit area.')">🏃 On my way!</div>
+          <div class="quick-pill" onclick="sendQuickReply('I am 2 minutes away. Can you see the main road?')">📍 2 mins away</div>
+          <div class="quick-pill" onclick="sendQuickReply('I have arrived near your location!')">✅ Arrived near you</div>
+          <div class="quick-pill" onclick="sendQuickReply('Stay calm. Police has also been alerted.')">🛡️ Police alerted</div>
+        </div>
+
+        <!-- Send Bar -->
+        <div class="chat-send-bar">
+          <button class="mic-button" id="micBtn" onclick="toggleVolunteerMic()" title="Record voice note">
+            <i class="fa-solid fa-microphone"></i>
+          </button>
+          <input type="text" id="vChatInput" placeholder="Message Ananya..." onkeypress="if(event.key==='Enter')sendVolunteerMsg()">
+          <button class="send-icon-btn" onclick="sendVolunteerMsg()">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    // ─── Broadcast Channel ───
+    const emergencyChannel = new BroadcastChannel('sahara_emergency_sync');
+
+    // Dynamic Coordinates
+    let victimLat = 28.5921;
+    let victimLng = 77.0460;
+    let victimAddress = "Dwarka, New Delhi, Delhi, India";
+    let volunteerLat = 28.5851;
+    let volunteerLng = 77.0400;
+
+    // State
+    let map;
+    let victimMarker, volunteerMarker, routePolyline;
+    let isComing = false;
+    let isArrived = false;
+    let moveInterval = null;
+    let currentStep = 0;
+    let simSpeed = 1;
+    let isPlayingAudio = false;
+    let routePoints = [];
+
+    // ─── Map Initialization ───
+    function initVolunteerMap() {
+      loadVictimLocation();
+
+      map = L.map('v-map', {
+        center: [(victimLat + volunteerLat)/2, (victimLng + volunteerLng)/2],
+        zoom: 15,
+        zoomControl: false
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      L.control.zoom({ position: 'topright' }).addTo(map);
+
+      // Victim Marker
+      const victimIcon = L.divIcon({
+        html: `<div style="position:relative;width:24px;height:24px;">
+                <div style="position:absolute;inset:0;background:#e63946;border-radius:50%;border:3px solid #fff;box-shadow:0 0 16px #e63946;"></div>
+                <div style="position:absolute;inset:-6px;border:2px solid #e63946;border-radius:50%;animation:pulseDot 1.2s infinite;"></div>
+               </div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+        className: ''
+      });
+
+      // Volunteer Marker
+      const volIcon = L.divIcon({
+        html: `<div style="position:relative;width:34px;height:34px;background:#10b981;border:3px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;box-shadow:0 0 18px rgba(16,185,129,0.5);">
+                <i class="fa-solid fa-person-running"></i>
+               </div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 17],
+        className: ''
+      });
+
+      victimMarker = L.marker([victimLat, victimLng], { icon: victimIcon }).addTo(map);
+      victimMarker.bindPopup(`<b>🚨 Victim: Ananya S.</b><br>${victimAddress}`).openPopup();
+
+      volunteerMarker = L.marker([volunteerLat, volunteerLng], { icon: volIcon }).addTo(map);
+      volunteerMarker.bindPopup('<b>🟢 You (Priya Sharma)</b><br>Responding Volunteer');
+
+      buildRouteWaypoints();
+    }
+
+    function loadVictimLocation() {
+      try {
+        const saved = localStorage.getItem('sahara_victim_location');
+        if (saved) {
+          const loc = JSON.parse(saved);
+          if (loc.lat && loc.lng) {
+            victimLat = loc.lat;
+            victimLng = loc.lng;
+            victimAddress = loc.address || victimAddress;
+          }
+        }
+      } catch(e) {}
+
+      volunteerLat = victimLat - 0.007;
+      volunteerLng = victimLng - 0.006;
+      document.getElementById('vAddressText').textContent = victimAddress;
+    }
+
+    function buildRouteWaypoints() {
+      routePoints = [
+        [volunteerLat, volunteerLng],
+        [volunteerLat + 0.0015, volunteerLng + 0.0010],
+        [volunteerLat + 0.0030, volunteerLng + 0.0022],
+        [volunteerLat + 0.0045, volunteerLng + 0.0035],
+        [volunteerLat + 0.0058, volunteerLng + 0.0048],
+        [volunteerLat + 0.0065, volunteerLng + 0.0055],
+        [victimLat, victimLng]
+      ];
+
+      if (routePolyline) map.removeLayer(routePolyline);
+      routePolyline = L.polyline(routePoints, {
+        color: '#10b981',
+        weight: 5,
+        opacity: 0.85,
+        dashArray: '8, 8'
+      }).addTo(map);
+
+      map.fitBounds(routePolyline.getBounds(), { padding: [50, 50] });
+    }
+
+    // ─── Respond & Move ───
+    function handleComingClick() {
+      const btn = document.getElementById('comingBtn');
+
+      if (isArrived) {
+        btn.className = 'btn-respond resolve';
+        btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> SOS Resolved';
+        document.getElementById('dockStatusTitle').textContent = 'Emergency Safely Resolved';
+        document.getElementById('dockStatusSub').textContent = 'Victim secured · Incident logged';
+        document.getElementById('statusIndicator').style.background = '#8b5cf6';
+
+        localStorage.setItem('sahara_sos_state', JSON.stringify({ status: 'RESOLVED', active: false }));
+        emergencyChannel.postMessage({
+          type: 'SOS_STATUS_UPDATE',
+          status: 'RESOLVED',
+          message: 'Volunteer Priya Sharma has resolved the emergency.'
+        });
+        return;
+      }
+
+      if (!isComing) {
+        isComing = true;
+        btn.className = 'btn-respond arrived';
+        btn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> En Route (Moving)';
+        document.getElementById('dockStatusTitle').textContent = 'Responding · Navigating to Victim';
+        document.getElementById('dockStatusSub').textContent = 'Live telemetry streaming to victim';
+
+        localStorage.setItem('sahara_sos_state', JSON.stringify({
+          active: true,
+          status: 'RESPONDING',
+          volunteerName: 'Priya Sharma',
+          volunteerCoords: [volunteerLat, volunteerLng],
+          distance: '1.1 km',
+          eta: '3 min'
+        }));
+
+        emergencyChannel.postMessage({
+          type: 'VOLUNTEER_COMING',
+          volunteerName: 'Priya Sharma',
+          distance: '1.1 km',
+          eta: '3 min',
+          coords: [volunteerLat, volunteerLng]
+        });
+
+        sendVolunteerMsg('I have accepted your SOS and am coming right now! ETA: 3 minutes.');
+        startVolunteerMovement();
+      }
+    }
+
+    function startVolunteerMovement() {
+      if (moveInterval) clearInterval(moveInterval);
+
+      const totalSteps = routePoints.length - 1;
+      const stepIntervalTime = 2200 / simSpeed;
+
+      moveInterval = setInterval(() => {
+        if (currentStep < totalSteps) {
+          currentStep++;
+          const pos = routePoints[currentStep];
+          volunteerMarker.setLatLng(pos);
+
+          const remainingPct = (totalSteps - currentStep) / totalSteps;
+          const distKm = (1.1 * remainingPct).toFixed(1);
+          const etaMins = Math.max(1, Math.ceil(3 * remainingPct));
+
+          document.getElementById('displayDistance').textContent = distKm + ' km';
+          document.getElementById('displayEta').textContent = etaMins + ' min';
+          document.getElementById('dockStatusSub').textContent = `En route · ${distKm} km away (ETA ${etaMins} mins)`;
+
+          localStorage.setItem('sahara_sos_state', JSON.stringify({
+            active: true,
+            status: 'RESPONDING',
+            volunteerName: 'Priya Sharma',
+            volunteerCoords: pos,
+            distance: distKm + ' km',
+            eta: etaMins + ' min'
+          }));
+
+          emergencyChannel.postMessage({
+            type: 'VOLUNTEER_MOVED',
+            coords: pos,
+            distance: distKm + ' km',
+            eta: etaMins + ' min'
+          });
+        } else {
+          clearInterval(moveInterval);
+          isArrived = true;
+          document.getElementById('displayDistance').textContent = '0.0 km';
+          document.getElementById('displayEta').textContent = 'ARRIVED';
+          document.getElementById('dockStatusTitle').textContent = 'You have Arrived at Victim Location!';
+          document.getElementById('dockStatusSub').textContent = 'Confirm victim safety and verify surroundings';
+          document.getElementById('statusIndicator').style.background = '#3b82f6';
+
+          const btn = document.getElementById('comingBtn');
+          btn.className = 'btn-respond resolve';
+          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Mark Emergency Resolved';
+
+          localStorage.setItem('sahara_sos_state', JSON.stringify({
+            active: true,
+            status: 'ARRIVED',
+            volunteerName: 'Priya Sharma'
+          }));
+
+          emergencyChannel.postMessage({
+            type: 'VOLUNTEER_ARRIVED',
+            volunteerName: 'Priya Sharma'
+          });
+
+          sendVolunteerMsg("I have arrived at your location!");
+        }
+      }, stepIntervalTime);
+    }
+
+    function toggleSpeed() {
+      if (simSpeed === 1) simSpeed = 2;
+      else if (simSpeed === 2) simSpeed = 5;
+      else simSpeed = 1;
+
+      document.getElementById('speedBtn').textContent = `⚡ ${simSpeed}x Speed`;
+      if (isComing && !isArrived) {
+        startVolunteerMovement();
+      }
+    }
+
+    // ─── Voice Note Playback ───
+    function toggleAudioPlayback() {
+      const icon = document.getElementById('playIcon');
+      const wave = document.getElementById('waveVisualizer');
+
+      if (!isPlayingAudio) {
+        isPlayingAudio = true;
+        icon.className = 'fa-solid fa-pause';
+        wave.classList.add('playing');
+
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance("Please help, I am near my location, someone is following me.");
+          utterance.onend = () => {
+            isPlayingAudio = false;
+            icon.className = 'fa-solid fa-play';
+            wave.classList.remove('playing');
+          };
+          window.speechSynthesis.speak(utterance);
+        } else {
+          setTimeout(() => {
+            isPlayingAudio = false;
+            icon.className = 'fa-solid fa-play';
+            wave.classList.remove('playing');
+          }, 4000);
+        }
+      } else {
+        isPlayingAudio = false;
+        icon.className = 'fa-solid fa-play';
+        wave.classList.remove('playing');
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    }
+
+    function toggleVolunteerMic() {
+      const btn = document.getElementById('micBtn');
+      btn.classList.toggle('recording');
+      if (btn.classList.contains('recording')) {
+        setTimeout(() => {
+          btn.classList.remove('recording');
+          sendVolunteerMsg('🎤 [Voice Note 0:04] "Priya here, I can see your area, coming right now."');
+        }, 2000);
+      }
+    }
+
+    // ─── Chat Functions ───
+    function sendVolunteerMsg(customText) {
+      const input = document.getElementById('vChatInput');
+      const msg = customText || input.value.trim();
+      if (!msg) return;
+
+      const time = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      const container = document.getElementById('vChatMessages');
+
+      container.innerHTML += `
+        <div class="chat-bubble volunteer">
+          <div class="author">🟢 You (Priya Sharma)</div>
+          <div>${msg}</div>
+          <div class="timestamp">${time}</div>
+        </div>`;
+
+      if (!customText) input.value = '';
+      container.scrollTop = container.scrollHeight;
+
+      saveChatMessage({ sender: 'volunteer', senderName: 'Priya Sharma', message: msg, time: time });
+
+      emergencyChannel.postMessage({
+        type: 'CHAT_MESSAGE',
+        sender: 'volunteer',
+        senderName: 'Priya Sharma',
+        message: msg,
+        time: time
+      });
+    }
+
+    function sendQuickReply(text) { sendVolunteerMsg(text); }
+
+    function saveChatMessage(item) {
+      let history = [];
+      try { history = JSON.parse(localStorage.getItem('sahara_chat_history')) || []; } catch(e) {}
+      history.push(item);
+      localStorage.setItem('sahara_chat_history', JSON.stringify(history));
+    }
+
+    function loadChatHistory() {
+      try {
+        const history = JSON.parse(localStorage.getItem('sahara_chat_history')) || [];
+        if (history.length > 0) {
+          const container = document.getElementById('vChatMessages');
+          container.innerHTML = '';
+          history.forEach(item => {
+            if (item.sender === 'victim') {
+              container.innerHTML += `
+                <div class="chat-bubble victim">
+                  <div class="author">🚨 ${item.senderName || 'Ananya S. (Victim)'}</div>
+                  <div>${item.message}</div>
+                  <div class="timestamp">${item.time}</div>
+                </div>`;
+            } else {
+              container.innerHTML += `
+                <div class="chat-bubble volunteer">
+                  <div class="author">🟢 You (Priya Sharma)</div>
+                  <div>${item.message}</div>
+                  <div class="timestamp">${item.time}</div>
+                </div>`;
+            }
+          });
+          container.scrollTop = container.scrollHeight;
+        }
+      } catch(e) {}
+    }
+
+    function clearVolunteerChat() {
+      localStorage.removeItem('sahara_chat_history');
+      const container = document.getElementById('vChatMessages');
+      if (container) {
+        container.innerHTML = `
+          <div class="chat-bubble victim">
+            <div class="author">🚨 Ananya S. (Victim)</div>
+            <div>SOS Activated! Please help, I need assistance.</div>
+            <div class="timestamp">Just now</div>
+          </div>`;
+      }
+      emergencyChannel.postMessage({ type: 'CLEAR_CHAT' });
+    }
+
+    // ─── Broadcast Listeners ───
+    emergencyChannel.onmessage = (event) => {
+      const data = event.data;
+      if (!data) return;
+
+      if (data.type === 'VICTIM_LOCATION_UPDATE' || data.type === 'SOS_ACTIVATED') {
+        if (data.lat && data.lng) {
+          victimLat = data.lat;
+          victimLng = data.lng;
+          victimAddress = data.address || data.userAddress || victimAddress;
+          document.getElementById('vAddressText').textContent = victimAddress;
+
+          if (victimMarker) {
+            victimMarker.setLatLng([victimLat, victimLng]);
+            victimMarker.bindPopup(`<b>🚨 Victim: Ananya S.</b><br>${victimAddress}`);
+          }
+          volunteerLat = victimLat - 0.007;
+          volunteerLng = victimLng - 0.006;
+          if (volunteerMarker && !isComing) {
+            volunteerMarker.setLatLng([volunteerLat, volunteerLng]);
+          }
+          buildRouteWaypoints();
+        }
+      }
+
+      if (data.type === 'CHAT_MESSAGE' && data.sender === 'victim') {
+        const container = document.getElementById('vChatMessages');
+        container.innerHTML += `
+          <div class="chat-bubble victim">
+            <div class="author">🚨 ${data.senderName || 'Ananya S. (Victim)'}</div>
+            <div>${data.message}</div>
+            <div class="timestamp">${data.time || 'Just now'}</div>
+          </div>`;
+        container.scrollTop = container.scrollHeight;
+        saveChatMessage(data);
+      }
+
+      if (data.type === 'CLEAR_CHAT') {
+        const container = document.getElementById('vChatMessages');
+        if (container) {
+          container.innerHTML = `
+            <div class="chat-bubble victim">
+              <div class="author">🚨 Ananya S. (Victim)</div>
+              <div>SOS Activated! Please help, I need assistance.</div>
+              <div class="timestamp">Just now</div>
+            </div>`;
+        }
+      }
+
+      if (data.type === 'SOS_CANCELLED') {
+        document.getElementById('dockStatusTitle').textContent = 'SOS Cancelled by User';
+        document.getElementById('dockStatusSub').textContent = 'Emergency resolved';
+        if (moveInterval) clearInterval(moveInterval);
+        clearVolunteerChat();
+      }
+    };
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'sahara_chat_history') loadChatHistory();
+      if (e.key === 'sahara_victim_location') {
+        loadVictimLocation();
+        if (victimMarker) victimMarker.setLatLng([victimLat, victimLng]);
+        buildRouteWaypoints();
+      }
+    });
+
+    // ─── Init ───
+    window.addEventListener('DOMContentLoaded', () => {
+      initVolunteerMap();
+      loadChatHistory();
+
+      try {
+        const stateStr = localStorage.getItem('sahara_sos_state');
+        if (stateStr) {
+          const state = JSON.parse(stateStr);
+          if (state && state.status === 'RESPONDING') {
+            isComing = true;
+            const btn = document.getElementById('comingBtn');
+            btn.className = 'btn-respond arrived';
+            btn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> En Route (Moving)';
+            startVolunteerMovement();
+          }
+        }
+      } catch(e) {}
+    });
+  </script>
+</body>
+</html>

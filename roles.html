@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Your Role</title>
+    <link rel="stylesheet" href="src/css/roles.css">
+    <link rel="shortcut icon" href="ambulance.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo">
+            <a href="./index.html"><i class="fa-solid fa-truck-medical"></i></a>
+            <a href="index.html" class="logo">AmbuFlow </a>
+            
+        </div>
+        <nav class="navbar">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="login.html">Login</a></li>
+                
+            </ul>
+        </nav>
+        <div class="cta-button">
+            <a href="get-started.html" class="btn">Get Started</a>
+        </div>
+    </div>
+
+    </div>
+    <div class="role-selection">
+        <h1>Select Your Role</h1>
+        <div class="role-buttons">
+            <div class="role">
+                <i class="fa-solid fa-user"></i>
+                <a href="user.html" class="role-btn user-btn">User</a>
+                <p class="role-description">Track ambulances and get updates.</p>
+            </div>
+            <div class="role">
+                <i class="fa-solid fa-hospital"></i>
+                <a href="hospital.html" class="role-btn hospital-btn">Hospital</a>
+                <p class="role-description">Manage patient notifications.</p>
+            </div>
+            <div class="role">
+                <i class="fa-solid fa-car"></i>
+                <a href="driver.html" class="role-btn driver-btn">Driver</a>
+                <p class="role-description">Optimize routes with real-time data.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <section class="faq" id="faq"></section>
+    <div class="container_1">
+        <div class="accordion__wrapper">
+            <h1 class="accordion__title">Frequently Asked Questions</h1>
+            <br>
+            <div class="accordion">
+                <div class="accordion__header">
+                    <h2 class="accordion__question">How does SAHARA's SafeMap help me find safer routes?</h2>
+                    <span class="accordion__icon">
+                        <i id="accordion-icon" class="ri-add-line"></i>
+                    </span>
+                </div>
+                <div class="accordion__content">
+                    <p class="accordion__answer">SafeMap uses AI-powered safety risk prediction and route optimization to analyze road segments based on streetlight coverage, CCTV availability, police proximity, and community-reported incidents. It generates Safest, Balanced, and Fastest route options so you can make informed travel decisions.</p>
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion__header">
+                    <h2 class="accordion__question">What happens when I trigger an SOS?</h2>
+                    <span class="accordion__icon">
+                        <i id="accordion-icon" class="ri-add-line"></i>
+                    </span>
+                </div>
+                <div class="accordion__content">
+                    <p class="accordion__answer">Your live location is immediately captured, trusted contacts are notified, and the nearest verified volunteer is matched to respond. The entire process — from volunteer acceptance to arrival to resolution — is tracked in real-time with live status updates.</p>
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion__header">
+                    <h2 class="accordion__question">How does the Volunteer verification process work?</h2>
+                    <span class="accordion__icon">
+                        <i id="accordion-icon" class="ri-add-line"></i>
+                    </span>
+                </div>
+                <div class="accordion__content">
+                    <p class="accordion__answer">Volunteers register through the app, submit their details for admin review, and once verified, can set their availability status. Only verified and available volunteers are matched for SOS requests. Unverified or suspended volunteers cannot accept emergency assignments.</p>
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion__header">
+                    <h2 class="accordion__question">Can the AI detect distress without me manually activating SOS?</h2>
+                    <span class="accordion__icon">
+                        <i id="accordion-icon" class="ri-add-line"></i>
+                    </span>
+                </div>
+                <div class="accordion__content">
+                    <p class="accordion__answer">Yes, SAHARA's Safety Fusion system combines signals from journey anomaly detection, wearable distress monitoring, and voice analysis. If multiple signals suggest possible distress, the system asks "Are you okay?" before escalating. Normal activities like running do not automatically trigger emergencies.</p>
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion__header">
+                    <h2 class="accordion__question">How do I contact support or report an issue?</h2>
+                    <span class="accordion__icon">
+                        <i id="accordion-icon" class="ri-add-line"></i>
+                    </span>
+                </div>
+                <div class="accordion__content">
+                    <p class="accordion__answer">You can reach our support team through the Contact page in the app, submit community safety reports, or use the in-app feedback system. For technical issues, report through the system and our team will respond promptly.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

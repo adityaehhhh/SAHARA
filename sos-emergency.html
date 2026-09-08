@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAHARA — Emergency SOS</title>
+  <link rel="shortcut icon" href="ambulance.png" type="image/x-icon" />
+  <link rel="stylesheet" href="src/css/indexmain.css">
+  <link rel="stylesheet" href="src/css/navbar.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+    body {
+      background-color: #e4eaf1;
+      color: #2c3e50;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Top Brand Header ─── */
+    .top-navbar-card {
+      background: #ffffff;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
+      padding: 12px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .brand-letters {
+      display: flex;
+      font-weight: 800;
+      font-size: 1.6rem;
+      letter-spacing: 1px;
+    }
+
+    .brand-letters .red { color: #e63946; }
+
+    .nav-pill-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      list-style: none;
+    }
+
+    .nav-pill-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 50px;
+      background: #f0f4f8;
+      color: #4a5568;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-pill-btn:hover {
+      background: #369ef9;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .nav-pill-btn.primary-vol {
+      background: #10b981;
+      color: #ffffff;
+    }
+
+    .nav-pill-btn.primary-vol:hover {
+      background: #059669;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+    }
+
+    /* ─── Status Banner ─── */
+    .sos-banner-bar {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .sos-banner-bar.standby {
+      background: #e7f3fe;
+      color: #2980b9;
+      border-bottom: 1px solid #c4d7ff;
+    }
+
+    .sos-banner-bar.active {
+      background: #ffebee;
+      color: #c62828;
+      border-bottom: 1px solid #ffcdd2;
+      animation: alertPulse 1.8s infinite;
+    }
+
+    .sos-banner-bar.responding {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-bottom: 1px solid #c8e6c9;
+    }
+
+    .sos-banner-bar.resolved {
+      background: #f3e5f5;
+      color: #6a1b9a;
+      border-bottom: 1px solid #e1bee7;
+    }
+
+    @keyframes alertPulse {
+      0%, 100% { background: #ffebee; }
+      50% { background: #ffcdd2; }
+    }
+
+    .pulse-beacon {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulseDot 1.4s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.6); opacity: 0.4; }
+    }
+
+    /* ─── Main Content Container ─── */
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 20px auto;
+      padding: 0 20px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 440px;
+      gap: 24px;
+      flex: 1;
+    }
+
+    /* ─── Left Side: Map & Trigger Card ─── */
+    .map-card-wrapper {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .map-header-bar {
+      padding: 16px 22px;
+      background: #ffffff;
+      border-bottom: 1px solid #f0f4f8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .map-header-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .location-badge {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 6px 14px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .map-viewport-box {
+      flex: 1;
+      min-height: 440px;
+      position: relative;
+    }
+
+    #sos-map {
+      width: 100%;
+      height: 100%;
+      min-height: 440px;
+    }
+
+    /* Responder Live ETA floating badge */
+    .live-eta-float {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 500;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 10px 18px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      border: 2px solid #10b981;
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .live-eta-float .icon-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #e8f5e9;
+      color: #10b981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    /* SOS Activation Dock */
+    .sos-dock-area {
+      padding: 24px;
+      background: #fafcff;
+      border-top: 1px solid #edf2f7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .main-sos-btn {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.35s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .main-sos-btn.ready {
+      background: linear-gradient(145deg, #e63946, #c1121f);
+      color: #ffffff;
+      box-shadow: 0 8px 30px rgba(230, 57, 70, 0.45);
+    }
+
+    .main-sos-btn.ready:hover {
+      transform: scale(1.06);
+      box-shadow: 0 12px 40px rgba(230, 57, 70, 0.6);
+    }
+
+    .main-sos-btn.counting {
+      background: linear-gradient(145deg, #ff9800, #e63946);
+      color: #ffffff;
+      animation: alertPulse 0.8s infinite;
+      box-shadow: 0 8px 35px rgba(255, 152, 0, 0.5);
+    }
+
+    .main-sos-btn.active-state {
+      background: linear-gradient(145deg, #10b981, #059669);
+      color: #ffffff;
+      box-shadow: 0 8px 30px rgba(16, 185, 129, 0.45);
+    }
+
+    .main-sos-btn .btn-icon { font-size: 1.8rem; }
+    .main-sos-btn .btn-sub { font-size: 0.65rem; font-weight: 500; opacity: 0.9; }
+
+    .sos-actions-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .action-pill {
+      padding: 10px 20px;
+      border-radius: 50px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: #334155;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: all 0.2s ease;
+    }
+
+    .action-pill:hover {
+      background: #f8fafc;
+      transform: translateY(-1px);
+    }
+
+    .action-pill.danger {
+      border-color: #fecaca;
+      color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .action-pill.danger:hover {
+      background: #fee2e2;
+    }
+
+    /* ─── Right Side: Tabs, Chat & Volunteers ─── */
+    .sidebar-card-wrapper {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Voice Recording Box */
+    .voice-note-card {
+      margin: 18px 18px 0 18px;
+      padding: 16px;
+      background: #fef2f2;
+      border-radius: 14px;
+      border: 1px solid #fee2e2;
+    }
+
+    .voice-note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .voice-note-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #dc2626;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+    }
+
+    .voice-controls-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .voice-play-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #e63946;
+      color: #ffffff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+
+    .voice-play-circle:hover { transform: scale(1.08); }
+
+    .waveform-bars {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 24px;
+    }
+
+    .wave-line {
+      width: 4px;
+      background: #cbd5e1;
+      border-radius: 2px;
+      height: 10px;
+    }
+
+    .waveform-bars.playing .wave-line {
+      background: #e63946;
+      animation: waveAnimate 0.8s ease-in-out infinite alternate;
+    }
+
+    .wave-line:nth-child(2) { animation-delay: 0.1s; height: 18px; }
+    .wave-line:nth-child(3) { animation-delay: 0.2s; height: 24px; }
+    .wave-line:nth-child(4) { animation-delay: 0.3s; height: 14px; }
+    .wave-line:nth-child(5) { animation-delay: 0.15s; height: 20px; }
+    .wave-line:nth-child(6) { animation-delay: 0.25s; height: 10px; }
+    .wave-line:nth-child(7) { animation-delay: 0.05s; height: 22px; }
+
+    @keyframes waveAnimate {
+      0% { height: 6px; }
+      100% { height: 24px; }
+    }
+
+    /* Tabs Bar */
+    .tab-nav-bar {
+      display: flex;
+      background: #f8fafc;
+      border-bottom: 1px solid #edf2f7;
+      border-top: 1px solid #edf2f7;
+      margin-top: 16px;
+    }
+
+    .tab-nav-btn {
+      flex: 1;
+      padding: 12px 6px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      border: none;
+      background: none;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab-nav-btn.active {
+      color: #369ef9;
+      border-bottom-color: #369ef9;
+      background: #ffffff;
+    }
+
+    .tab-content-area {
+      flex: 1;
+      padding: 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tab-content-area::-webkit-scrollbar { width: 5px; }
+    .tab-content-area::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+    .tab-view { display: none; }
+    .tab-view.active { display: flex; flex-direction: column; flex: 1; }
+
+    /* Chat Elements */
+    .chat-stream-box {
+      flex: 1;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+      overflow-y: auto;
+    }
+
+    .chat-bubble {
+      max-width: 85%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .chat-bubble.victim {
+      align-self: flex-end;
+      background: #e7f3fe;
+      color: #1e3a8a;
+      border-bottom-right-radius: 3px;
+    }
+
+    .chat-bubble.volunteer {
+      align-self: flex-start;
+      background: #f1f5f9;
+      color: #1e293b;
+      border-bottom-left-radius: 3px;
+    }
+
+    .chat-bubble .author {
+      font-size: 0.68rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+      color: #2563eb;
+    }
+
+    .chat-bubble .timestamp {
+      font-size: 0.62rem;
+      color: #94a3b8;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    .chat-send-bar {
+      display: flex;
+      gap: 8px;
+      padding-top: 10px;
+      border-top: 1px solid #edf2f7;
+    }
+
+    .chat-send-bar input {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 50px;
+      border: 1px solid #cbd5e1;
+      outline: none;
+      font-size: 0.85rem;
+      background: #f8fafc;
+    }
+
+    .chat-send-bar input:focus { border-color: #369ef9; background: #ffffff; }
+
+    .mic-button {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      color: #e63946;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .mic-button.recording {
+      background: #e63946;
+      color: #ffffff;
+      animation: pulseDot 1s infinite;
+    }
+
+    .send-icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #369ef9;
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
+
+    .send-icon-btn:hover { background: #2563eb; }
+
+    /* Volunteer Card in Tab */
+    .vol-profile-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 10px;
+    }
+
+    .vol-avatar-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #10b981;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .vol-card-info { flex: 1; }
+    .vol-card-name { font-size: 0.85rem; font-weight: 700; color: #1e293b; }
+    .vol-card-sub { font-size: 0.72rem; color: #64748b; }
+    .vol-card-dist { font-size: 0.72rem; color: #10b981; font-weight: 600; margin-top: 2px; }
+
+    .vol-status-chip {
+      padding: 4px 10px;
+      border-radius: 50px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .vol-status-chip.available { background: #d1fae5; color: #065f46; }
+    .vol-status-chip.responding { background: #fef3c7; color: #92400e; animation: alertPulse 1.4s infinite; }
+
+    /* Alerts & Timeline */
+    .alert-row-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 8px;
+    }
+
+    .alert-row-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .alert-row-icon.police { background: #dbeafe; color: #1e40af; }
+    .alert-row-icon.contact { background: #fef3c7; color: #b45309; }
+    .alert-row-icon.sos { background: #fee2e2; color: #b91c1c; }
+
+    .tl-row {
+      display: flex;
+      gap: 12px;
+      padding-bottom: 16px;
+      position: relative;
+    }
+
+    .tl-row:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 14px;
+      top: 28px;
+      bottom: 0;
+      width: 2px;
+      background: #e2e8f0;
+    }
+
+    .tl-node {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      flex-shrink: 0;
+    }
+
+    .tl-node.done { background: #d1fae5; color: #065f46; }
+    .tl-node.active { background: #fef3c7; color: #b45309; animation: pulseDot 1.4s infinite; }
+    .tl-node.pending { background: #f1f5f9; color: #94a3b8; }
+
+    /* Empty state */
+    .empty-placeholder {
+      text-align: center;
+      padding: 30px 16px;
+      color: #94a3b8;
+    }
+
+    .empty-placeholder i { font-size: 2rem; margin-bottom: 8px; opacity: 0.5; }
+
+    /* Cancel Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(3px);
+    }
+
+    .modal-backdrop.visible { display: flex; }
+
+    .modal-dialog {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 28px;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-dialog h3 { font-size: 1.2rem; color: #e63946; margin-bottom: 8px; }
+    .modal-dialog p { font-size: 0.85rem; color: #64748b; margin-bottom: 22px; line-height: 1.5; }
+
+    .modal-btn-row { display: flex; gap: 10px; }
+    .modal-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+    }
+
+    .modal-btn.cancel { background: #f1f5f9; color: #475569; }
+    .modal-btn.confirm { background: #e63946; color: #ffffff; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .dashboard-container { grid-template-columns: 1fr; }
+      .map-viewport-box { min-height: 320px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar Matching index.html -->
+  <header class="top-navbar-card">
+    <a href="index.html" class="brand-box">
+      <div class="brand-letters">
+        <span class="red">S</span>
+        <span class="red">A</span>
+        <span class="red">H</span>
+        <span class="red">A</span>
+        <span class="red">R</span>
+        <span class="red">A</span>
+      </div>
+      <img src="images/logo2-w.webp" alt="Logo" style="width: 45px; height: auto;" />
+    </a>
+
+    <ul class="nav-pill-links">
+      <li><a href="index.html" class="nav-pill-btn"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="map.html" class="nav-pill-btn"><i class="fa-solid fa-map-location-dot"></i> SafeMap</a></li>
+      <li><a href="wearable.html" class="nav-pill-btn"><i class="fa-solid fa-clock"></i> Wearable</a></li>
+      <li><a href="volunteer-portal.html" target="_blank" class="nav-pill-btn primary-vol"><i class="fa-solid fa-users"></i> Volunteer Portal</a></li>
+      <li><a href="profile.html" class="nav-pill-btn"><i class="fa-solid fa-user"></i> Profile</a></li>
+    </ul>
+  </header>
+
+  <!-- Status Banner -->
+  <div class="sos-banner-bar standby" id="sosBanner">
+    <span class="pulse-beacon"></span>
+    <span id="sosStatusText">SOS STANDBY — Press the Emergency button to notify Police & Nearby Volunteers</span>
+  </div>
+
+  <!-- Main Grid Dashboard -->
+  <main class="dashboard-container">
+
+    <!-- Left Card: Live Map & Activation Area -->
+    <div class="map-card-wrapper">
+      <div class="map-header-bar">
+        <div class="map-header-title">
+          <i class="fa-solid fa-location-crosshairs" style="color: #e63946;"></i> Live Safety Radar
+        </div>
+        <div class="location-badge" id="userAddressBadge">
+          <i class="fa-solid fa-map-pin" style="color: #369ef9;"></i>
+          <span id="userAddressText">Locating address...</span>
+        </div>
+      </div>
+
+      <div class="map-viewport-box">
+        <div id="sos-map"></div>
+
+        <!-- Floating Live Responder Card -->
+        <div class="live-eta-float" id="responderEtaBadge">
+          <div class="icon-box"><i class="fa-solid fa-person-running"></i></div>
+          <div>
+            <div style="font-weight: 700; color: #1e293b;" id="etaResponderName">Priya Sharma</div>
+            <div style="font-size: 0.75rem; color: #10b981; font-weight: 600;" id="etaResponderDetail">En route · ETA 3 mins</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activation Dock -->
+      <div class="sos-dock-area">
+        <button class="main-sos-btn ready" id="sosBtn" onclick="handleSOSClick()">
+          <span class="btn-icon">🚨</span>
+          <span>SOS</span>
+          <span class="btn-sub">Tap to Activate</span>
+        </button>
+
+        <div class="sos-actions-group" id="sosActions" style="display: none;">
+          <button class="action-pill" onclick="callPolice()">
+            <i class="fa-solid fa-shield-halved" style="color: #2563eb;"></i> Call Police (100)
+          </button>
+          <button class="action-pill" onclick="shareLocation()">
+            <i class="fa-solid fa-share-nodes" style="color: #10b981;"></i> Share GPS Location
+          </button>
+          <button class="action-pill danger" onclick="showCancelModal()">
+            <i class="fa-solid fa-xmark"></i> Cancel SOS Alarm
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Card: Voice Note, Chat, Volunteers & Timeline -->
+    <div class="sidebar-card-wrapper">
+
+      <!-- Emergency Voice Recording Card -->
+      <div class="voice-note-card">
+        <div class="voice-note-header">
+          <div class="voice-note-title">
+            <i class="fa-solid fa-microphone-lines"></i> Distress Voice Clip
+          </div>
+          <span style="font-size: 0.72rem; color: #64748b;">0:06 Audio</span>
+        </div>
+
+        <div class="voice-controls-row">
+          <button class="voice-play-circle" id="sosVoiceBtn" onclick="toggleVictimVoicePlay()">
+            <i class="fa-solid fa-play" id="sosPlayIcon"></i>
+          </button>
+          <div style="flex: 1;">
+            <div class="waveform-bars" id="victimWaveform">
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+            </div>
+            <div style="font-size: 0.72rem; color: #475569; font-style: italic; margin-top: 4px;" id="voiceTranscriptText">
+              "Please help, I am near my location, someone is following me..."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tab-nav-bar">
+        <button class="tab-nav-btn active" data-tab="chat" onclick="switchTab('chat', this)">
+          <i class="fa-solid fa-comments"></i> Chat
+        </button>
+        <button class="tab-nav-btn" data-tab="volunteers" onclick="switchTab('volunteers', this)">
+          <i class="fa-solid fa-users"></i> Volunteers
+        </button>
+        <button class="tab-nav-btn" data-tab="alerts" onclick="switchTab('alerts', this)">
+          <i class="fa-solid fa-bell"></i> Alerts
+        </button>
+        <button class="tab-nav-btn" data-tab="timeline" onclick="switchTab('timeline', this)">
+          <i class="fa-solid fa-timeline"></i> Timeline
+        </button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="tab-content-area">
+
+        <!-- Chat View -->
+        <div class="tab-view active" id="view-chat">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: #1e293b;">Responder Chat Stream</span>
+            <button onclick="clearChatSession()" style="background: none; border: none; font-size: 0.72rem; color: #64748b; cursor: pointer; text-decoration: underline;">
+              <i class="fa-solid fa-rotate-right"></i> Clear Chat
+            </button>
+          </div>
+          <div class="chat-stream-box" id="chatMessages">
+            <div class="empty-placeholder" id="chatEmpty">
+              <i class="fa-solid fa-comment-dots"></i>
+              <p>Activate SOS to begin real-time conversation with responding volunteers.</p>
+            </div>
+          </div>
+
+          <div class="chat-send-bar" id="chatInputBar" style="display: none;">
+            <button class="mic-button" id="victimMicBtn" onclick="recordVictimMic()" title="Record voice message">
+              <i class="fa-solid fa-microphone"></i>
+            </button>
+            <input type="text" id="chatInput" placeholder="Message responder..." onkeypress="if(event.key==='Enter')sendVictimChat()">
+            <button class="send-icon-btn" onclick="sendVictimChat()">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Volunteers View -->
+        <div class="tab-view" id="view-volunteers">
+          <div class="empty-placeholder" id="volunteerEmpty">
+            <i class="fa-solid fa-users-slash"></i>
+            <p>Nearby verified volunteers will appear here once SOS is activated.</p>
+          </div>
+          <div id="volunteerList" style="display: none;"></div>
+        </div>
+
+        <!-- Alerts View -->
+        <div class="tab-view" id="view-alerts">
+          <div class="empty-placeholder" id="notifEmpty">
+            <i class="fa-solid fa-bell-slash"></i>
+            <p>No active alerts yet.<br>Press SOS to dispatch emergency signals.</p>
+          </div>
+          <div id="notifList" style="display: none;"></div>
+        </div>
+
+        <!-- Timeline View -->
+        <div class="tab-view" id="view-timeline">
+          <div class="empty-placeholder" id="timelineEmpty">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <p>Incident timeline tracks the end-to-end response workflow.</p>
+          </div>
+          <div id="timelineList" style="display: none;"></div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Cancel Confirmation Modal -->
+  <div class="modal-backdrop" id="cancelModal">
+    <div class="modal-dialog">
+      <h3>⚠️ Cancel SOS Alert?</h3>
+      <p>Are you sure you want to cancel the emergency alarm? This will immediately notify volunteers and responders that the situation is resolved.</p>
+      <div class="modal-btn-row">
+        <button class="modal-btn cancel" onclick="hideCancelModal()">Keep Active</button>
+        <button class="modal-btn confirm" onclick="confirmCancelSOS()">Yes, Cancel SOS</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    // ─── Broadcast Channel ───
+    const emergencyChannel = new BroadcastChannel('sahara_emergency_sync');
+
+    // Location State
+    let userLat = 28.5921;
+    let userLng = 77.0460;
+    let userAddress = "Dwarka, New Delhi, Delhi, India";
+
+    // App State
+    let sosActive = false;
+    let countdownTimer = null;
+    let countdownVal = 5;
+    let map, userMarker, activeRouteLine;
+    let volunteerMarkers = [];
+    let isPlayingVoice = false;
+    let dynamicVolunteers = [];
+
+    // ─── Map & Geolocation ───
+    function initMap() {
+      const savedLoc = localStorage.getItem('sahara_victim_location');
+      if (savedLoc) {
+        try {
+          const parsed = JSON.parse(savedLoc);
+          userLat = parsed.lat || userLat;
+          userLng = parsed.lng || userLng;
+          userAddress = parsed.address || userAddress;
+        } catch(e) {}
+      }
+
+      map = L.map('sos-map', {
+        center: [userLat, userLng],
+        zoom: 15,
+        zoomControl: false
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      L.control.zoom({ position: 'topright' }).addTo(map);
+
+      // Victim Marker
+      const userIcon = L.divIcon({
+        html: `<div style="position:relative;width:24px;height:24px;">
+                <div style="position:absolute;inset:0;background:#e63946;border-radius:50%;border:3px solid #fff;box-shadow:0 0 16px #e63946;"></div>
+                <div style="position:absolute;inset:-6px;border:2px solid #e63946;border-radius:50%;animation:pulseDot 1.2s infinite;"></div>
+               </div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+        className: ''
+      });
+
+      userMarker = L.marker([userLat, userLng], { icon: userIcon }).addTo(map);
+      updateLocationDisplay();
+
+      // Real Device GPS
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          userLat = pos.coords.latitude;
+          userLng = pos.coords.longitude;
+          map.setView([userLat, userLng], 15);
+          userMarker.setLatLng([userLat, userLng]);
+
+          fetch(`https://nominatim.openstreetmap.org/reverse?lat=${userLat}&lon=${userLng}&format=json`)
+            .then(r => r.json())
+            .then(d => {
+              if (d && d.display_name) userAddress = d.display_name;
+              saveAndBroadcastLocation();
+              updateLocationDisplay();
+            })
+            .catch(() => {
+              saveAndBroadcastLocation();
+              updateLocationDisplay();
+            });
+        }, () => {
+          saveAndBroadcastLocation();
+          updateLocationDisplay();
+        }, { enableHighAccuracy: true, timeout: 8000 });
+      } else {
+        saveAndBroadcastLocation();
+        updateLocationDisplay();
+      }
+
+      generateNearbyVolunteers();
+    }
+
+    function saveAndBroadcastLocation() {
+      localStorage.setItem('sahara_victim_location', JSON.stringify({
+        lat: userLat,
+        lng: userLng,
+        address: userAddress
+      }));
+
+      emergencyChannel.postMessage({
+        type: 'VICTIM_LOCATION_UPDATE',
+        lat: userLat,
+        lng: userLng,
+        address: userAddress
+      });
+    }
+
+    function updateLocationDisplay() {
+      document.getElementById('userAddressText').textContent = userAddress.length > 35 ? userAddress.substring(0, 35) + '...' : userAddress;
+      if (userMarker) {
+        userMarker.bindPopup(`<b>📍 Your Location</b><br>${userAddress}`).openPopup();
+      }
+    }
+
+    function generateNearbyVolunteers() {
+      dynamicVolunteers = [
+        { id: 1, name: 'Priya Sharma', initials: 'PS', distance: '1.1 km', eta: '3 min', status: 'available', lat: userLat - 0.007, lng: userLng - 0.006 },
+        { id: 2, name: 'Rahul Verma', initials: 'RV', distance: '1.6 km', eta: '5 min', status: 'available', lat: userLat + 0.009, lng: userLng + 0.005 },
+        { id: 3, name: 'Anjali Gupta', initials: 'AG', distance: '2.2 km', eta: '7 min', status: 'available', lat: userLat - 0.005, lng: userLng + 0.012 },
+      ];
+    }
+
+    // ─── Tabs ───
+    function switchTab(tabName, btn) {
+      document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('view-' + tabName).classList.add('active');
+    }
+
+    // ─── SOS Trigger ───
+    function handleSOSClick() {
+      if (sosActive) return;
+
+      const btn = document.getElementById('sosBtn');
+      if (countdownTimer) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+        countdownVal = 5;
+        btn.className = 'main-sos-btn ready';
+        btn.innerHTML = '<span class="btn-icon">🚨</span><span>SOS</span><span class="btn-sub">Tap to Activate</span>';
+        return;
+      }
+
+      btn.className = 'main-sos-btn counting';
+      countdownVal = 5;
+      btn.innerHTML = `<span style="font-size: 2.8rem; font-weight: 800;">${countdownVal}</span><span class="btn-sub">Tap to Cancel</span>`;
+
+      countdownTimer = setInterval(() => {
+        countdownVal--;
+        if (countdownVal <= 0) {
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+          activateSOS();
+        } else {
+          btn.innerHTML = `<span style="font-size: 2.8rem; font-weight: 800;">${countdownVal}</span><span class="btn-sub">Tap to Cancel</span>`;
+        }
+      }, 1000);
+    }
+
+    function activateSOS(skipSave = false) {
+      sosActive = true;
+      const btn = document.getElementById('sosBtn');
+      btn.className = 'main-sos-btn active-state';
+      btn.innerHTML = '<span class="btn-icon">✅</span><span>ACTIVE</span><span class="btn-sub">Dispatched</span>';
+
+      document.getElementById('sosActions').style.display = 'flex';
+      const banner = document.getElementById('sosBanner');
+      banner.className = 'sos-banner-bar active';
+      document.getElementById('sosStatusText').textContent = '🚨 SOS ACTIVE — Alert dispatched to Police & Nearby Volunteers';
+
+      document.getElementById('chatInputBar').style.display = 'flex';
+      document.getElementById('chatEmpty').style.display = 'none';
+
+      showVolunteersOnMap();
+      simulateNotifications();
+      showTimeline();
+
+      if (!skipSave) {
+        localStorage.setItem('sahara_sos_state', JSON.stringify({
+          active: true,
+          status: 'ACTIVE',
+          startTime: Date.now(),
+          userLat: userLat,
+          userLng: userLng,
+          userAddress: userAddress
+        }));
+
+        emergencyChannel.postMessage({
+          type: 'SOS_ACTIVATED',
+          userLat: userLat,
+          userLng: userLng,
+          userAddress: userAddress,
+          victimName: 'Ananya S.'
+        });
+      }
+    }
+
+    function showVolunteersOnMap() {
+      document.getElementById('volunteerEmpty').style.display = 'none';
+      const vList = document.getElementById('volunteerList');
+      vList.style.display = 'block';
+      vList.innerHTML = '';
+
+      volunteerMarkers.forEach(m => map.removeLayer(m));
+      volunteerMarkers = [];
+
+      const volIcon = L.divIcon({
+        html: `<div style="width:30px;height:30px;background:#10b981;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;box-shadow:0 0 14px rgba(16,185,129,0.5);">
+                <i class="fa-solid fa-person-running"></i>
+               </div>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
+        className: ''
+      });
+
+      dynamicVolunteers.forEach((v) => {
+        const m = L.marker([v.lat, v.lng], { icon: volIcon }).addTo(map);
+        m.bindPopup(`<b>${v.name}</b><br>Distance: ${v.distance}`);
+        volunteerMarkers.push(m);
+
+        vList.innerHTML += `
+          <div class="vol-profile-card" id="vol-card-${v.id}">
+            <div class="vol-avatar-circle">${v.initials}</div>
+            <div class="vol-card-info">
+              <div class="vol-card-name">${v.name}</div>
+              <div class="vol-card-sub">Verified Responder</div>
+              <div class="vol-card-dist" id="vol-dist-${v.id}">📍 ${v.distance} away · ETA ${v.eta}</div>
+            </div>
+            <span class="vol-status-chip available" id="vol-status-${v.id}">${v.status.toUpperCase()}</span>
+          </div>`;
+      });
+    }
+
+    function simulateNotifications() {
+      document.getElementById('notifEmpty').style.display = 'none';
+      const nList = document.getElementById('notifList');
+      nList.style.display = 'block';
+      nList.innerHTML = '';
+
+      addAlert('sos', 'SOS Dispatched', 'GPS coordinates sent to emergency cloud.');
+      setTimeout(() => addAlert('police', 'Police Alerted', 'Nearest police control room notified.'), 1000);
+      setTimeout(() => addAlert('contact', 'Contacts Notified', 'SMS sent to 3 trusted contacts.'), 1800);
+    }
+
+    function addAlert(type, title, desc) {
+      const nList = document.getElementById('notifList');
+      const time = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+      const iconMap = {
+        police: '<i class="fa-solid fa-shield-halved"></i>',
+        contact: '<i class="fa-solid fa-users"></i>',
+        sos: '<i class="fa-solid fa-triangle-exclamation"></i>',
+      };
+
+      nList.insertAdjacentHTML('afterbegin', `
+        <div class="alert-row-item">
+          <div class="alert-row-icon ${type}">${iconMap[type]}</div>
+          <div style="flex:1;">
+            <div style="font-size:0.82rem; font-weight:700; color:#1e293b;">${title}</div>
+            <div style="font-size:0.72rem; color:#64748b;">${desc}</div>
+            <div style="font-size:0.65rem; color:#94a3b8; margin-top:3px;">${time}</div>
+          </div>
+        </div>`);
+    }
+
+    function showTimeline() {
+      document.getElementById('timelineEmpty').style.display = 'none';
+      const tList = document.getElementById('timelineList');
+      tList.style.display = 'block';
+      const now = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+      tList.innerHTML = `
+        <div class="tl-row">
+          <div class="tl-node done"><i class="fa-solid fa-check"></i></div>
+          <div><div style="font-size:0.82rem; font-weight:700;">SOS Activated</div><div style="font-size:0.68rem; color:#64748b;">${now}</div></div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-node done"><i class="fa-solid fa-check"></i></div>
+          <div><div style="font-size:0.82rem; font-weight:700;">Police & Contacts Alerted</div><div style="font-size:0.68rem; color:#64748b;">${now}</div></div>
+        </div>
+        <div class="tl-row" id="tl-vol-match">
+          <div class="tl-node active"><i class="fa-solid fa-spinner fa-spin"></i></div>
+          <div><div style="font-size:0.82rem; font-weight:700;">Volunteer Matched (Priya Sharma)</div><div style="font-size:0.68rem; color:#64748b;">In progress...</div></div>
+        </div>
+        <div class="tl-row" id="tl-responder-move">
+          <div class="tl-node pending"><i class="fa-solid fa-car"></i></div>
+          <div><div style="font-size:0.82rem; font-weight:700;">Responder En Route</div><div style="font-size:0.68rem; color:#64748b;">Waiting...</div></div>
+        </div>
+        <div class="tl-row" id="tl-arrived">
+          <div class="tl-node pending"><i class="fa-solid fa-location-dot"></i></div>
+          <div><div style="font-size:0.82rem; font-weight:700;">Responder Arrived</div><div style="font-size:0.68rem; color:#64748b;">Waiting...</div></div>
+        </div>
+        <div class="tl-row" id="tl-resolved">
+          <div class="tl-node pending"><i class="fa-solid fa-circle-check"></i></div>
+          <div><div style="font-size:0.82rem; font-weight:700;">Emergency Resolved</div><div style="font-size:0.68rem; color:#64748b;">Waiting...</div></div>
+        </div>`;
+    }
+
+    // ─── Voice Note Playback ───
+    function toggleVictimVoicePlay() {
+      const icon = document.getElementById('sosPlayIcon');
+      const wave = document.getElementById('victimWaveform');
+
+      if (!isPlayingVoice) {
+        isPlayingVoice = true;
+        icon.className = 'fa-solid fa-pause';
+        wave.classList.add('playing');
+
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance("Please help, I am near my location, someone is following me.");
+          utterance.onend = () => {
+            isPlayingVoice = false;
+            icon.className = 'fa-solid fa-play';
+            wave.classList.remove('playing');
+          };
+          window.speechSynthesis.speak(utterance);
+        } else {
+          setTimeout(() => {
+            isPlayingVoice = false;
+            icon.className = 'fa-solid fa-play';
+            wave.classList.remove('playing');
+          }, 4000);
+        }
+      } else {
+        isPlayingVoice = false;
+        icon.className = 'fa-solid fa-play';
+        wave.classList.remove('playing');
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    }
+
+    function recordVictimMic() {
+      const btn = document.getElementById('victimMicBtn');
+      btn.classList.toggle('recording');
+      if (btn.classList.contains('recording')) {
+        setTimeout(() => {
+          btn.classList.remove('recording');
+          sendVictimChat('🎤 [Voice Note 0:05] "I am standing near the main gate."');
+        }, 2000);
+      }
+    }
+
+    // ─── Chat with Persistence ───
+    function sendVictimChat(customMsg) {
+      const input = document.getElementById('chatInput');
+      const msg = customMsg || input.value.trim();
+      if (!msg) return;
+
+      const time = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      const container = document.getElementById('chatMessages');
+
+      container.innerHTML += `
+        <div class="chat-bubble victim">
+          <div class="author">You (Victim)</div>
+          <div>${msg}</div>
+          <div class="timestamp">${time}</div>
+        </div>`;
+
+      if (!customMsg) input.value = '';
+      container.scrollTop = container.scrollHeight;
+
+      saveChatMessage({ sender: 'victim', senderName: 'Ananya S.', message: msg, time: time });
+
+      emergencyChannel.postMessage({
+        type: 'CHAT_MESSAGE',
+        sender: 'victim',
+        senderName: 'Ananya S.',
+        message: msg,
+        time: time
+      });
+    }
+
+    function saveChatMessage(item) {
+      let history = [];
+      try { history = JSON.parse(localStorage.getItem('sahara_chat_history')) || []; } catch(e) {}
+      history.push(item);
+      localStorage.setItem('sahara_chat_history', JSON.stringify(history));
+    }
+
+    function loadChatHistory() {
+      try {
+        const history = JSON.parse(localStorage.getItem('sahara_chat_history')) || [];
+        const container = document.getElementById('chatMessages');
+        if (history.length > 0 && sosActive) {
+          container.innerHTML = '';
+          history.forEach(item => {
+            if (item.sender === 'victim') {
+              container.innerHTML += `
+                <div class="chat-bubble victim">
+                  <div class="author">You (Victim)</div>
+                  <div>${item.message}</div>
+                  <div class="timestamp">${item.time}</div>
+                </div>`;
+            } else {
+              container.innerHTML += `
+                <div class="chat-bubble volunteer">
+                  <div class="author">🟢 ${item.senderName || 'Priya Sharma'}</div>
+                  <div>${item.message}</div>
+                  <div class="timestamp">${item.time}</div>
+                </div>`;
+            }
+          });
+          container.scrollTop = container.scrollHeight;
+        } else if (!sosActive) {
+          container.innerHTML = `
+            <div class="empty-placeholder" id="chatEmpty">
+              <i class="fa-solid fa-comment-dots"></i>
+              <p>Activate SOS to begin real-time conversation with responding volunteers.</p>
+            </div>`;
+        }
+      } catch(e) {}
+    }
+
+    function clearChatSession() {
+      localStorage.removeItem('sahara_chat_history');
+      const container = document.getElementById('chatMessages');
+      if (container) {
+        container.innerHTML = `
+          <div class="empty-placeholder" id="chatEmpty">
+            <i class="fa-solid fa-comment-dots"></i>
+            <p>Chat cleared. Send a message or record a note below.</p>
+          </div>`;
+      }
+      emergencyChannel.postMessage({ type: 'CLEAR_CHAT' });
+    }
+
+    // ─── State Persistence ───
+    function restoreSessionState() {
+      try {
+        const stateStr = localStorage.getItem('sahara_sos_state');
+        if (stateStr) {
+          const state = JSON.parse(stateStr);
+          if (state && state.active) {
+            activateSOS(true);
+            loadChatHistory();
+
+            if (state.status === 'RESPONDING') {
+              applyVolunteerComing(state.volunteerName || 'Priya Sharma', state.distance || '1.1 km', state.eta || '3 min', state.volunteerCoords);
+            } else if (state.status === 'ARRIVED') {
+              applyVolunteerArrived(state.volunteerName || 'Priya Sharma');
+            } else if (state.status === 'RESOLVED') {
+              applyResolvedState();
+            }
+          }
+        }
+      } catch(e) {}
+    }
+
+    function applyVolunteerComing(vName, dist, eta, coords) {
+      const banner = document.getElementById('sosBanner');
+      banner.className = 'sos-banner-bar responding';
+      document.getElementById('sosStatusText').textContent = `🏃 ${vName} HAS ACCEPTED AND IS COMING (ETA ${eta})`;
+
+      document.getElementById('responderEtaBadge').style.display = 'flex';
+      document.getElementById('etaResponderName').textContent = vName;
+      document.getElementById('etaResponderDetail').textContent = `En route · Distance: ${dist} · ETA ${eta}`;
+
+      const statusEl = document.getElementById('vol-status-1');
+      if (statusEl) {
+        statusEl.className = 'vol-status-chip responding';
+        statusEl.textContent = 'RESPONDING';
+      }
+
+      const vPos = coords || [userLat - 0.007, userLng - 0.006];
+      if (!activeRouteLine) {
+        activeRouteLine = L.polyline([vPos, [userLat, userLng]], {
+          color: '#10b981',
+          weight: 4,
+          dashArray: '6, 6'
+        }).addTo(map);
+      }
+
+      const matchTl = document.querySelector('#tl-vol-match .tl-node');
+      if (matchTl) { matchTl.className = 'tl-node done'; matchTl.innerHTML = '<i class="fa-solid fa-check"></i>'; }
+      const moveTl = document.querySelector('#tl-responder-move .tl-node');
+      if (moveTl) { moveTl.className = 'tl-node active'; moveTl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; }
+    }
+
+    function applyVolunteerArrived(vName) {
+      const banner = document.getElementById('sosBanner');
+      banner.className = 'sos-banner-bar responding';
+      document.getElementById('sosStatusText').textContent = `✅ ${vName} HAS ARRIVED AT YOUR LOCATION!`;
+      document.getElementById('etaResponderDetail').textContent = `Arrived at your location`;
+
+      const moveTl = document.querySelector('#tl-responder-move .tl-node');
+      if (moveTl) { moveTl.className = 'tl-node done'; moveTl.innerHTML = '<i class="fa-solid fa-check"></i>'; }
+      const arrTl = document.querySelector('#tl-arrived .tl-node');
+      if (arrTl) { arrTl.className = 'tl-node done'; arrTl.innerHTML = '<i class="fa-solid fa-check"></i>'; }
+    }
+
+    function applyResolvedState() {
+      const banner = document.getElementById('sosBanner');
+      banner.className = 'sos-banner-bar resolved';
+      document.getElementById('sosStatusText').textContent = '✅ SOS RESOLVED — Emergency safely closed by responder';
+    }
+
+    // ─── Broadcast Listeners ───
+    emergencyChannel.onmessage = (event) => {
+      const data = event.data;
+      if (!data) return;
+
+      if (data.type === 'CHAT_MESSAGE' && data.sender === 'volunteer') {
+        const container = document.getElementById('chatMessages');
+        container.innerHTML += `
+          <div class="chat-bubble volunteer">
+            <div class="author">🟢 ${data.senderName || 'Priya Sharma'}</div>
+            <div>${data.message}</div>
+            <div class="timestamp">${data.time || 'Just now'}</div>
+          </div>`;
+        container.scrollTop = container.scrollHeight;
+        saveChatMessage(data);
+      }
+
+      if (data.type === 'VOLUNTEER_COMING') {
+        applyVolunteerComing(data.volunteerName, data.distance, data.eta, data.coords);
+      }
+
+      if (data.type === 'VOLUNTEER_MOVED') {
+        if (volunteerMarkers.length > 0) {
+          volunteerMarkers[0].setLatLng(data.coords);
+        }
+        document.getElementById('etaResponderDetail').textContent = `En route · Distance: ${data.distance} · ETA ${data.eta}`;
+        const distEl = document.getElementById('vol-dist-1');
+        if (distEl) distEl.textContent = `📍 ${data.distance} away · ETA ${data.eta}`;
+      }
+
+      if (data.type === 'VOLUNTEER_ARRIVED') {
+        applyVolunteerArrived(data.volunteerName);
+      }
+
+      if (data.type === 'CLEAR_CHAT') {
+        const container = document.getElementById('chatMessages');
+        if (container) {
+          container.innerHTML = `
+            <div class="empty-placeholder" id="chatEmpty">
+              <i class="fa-solid fa-comment-dots"></i>
+              <p>Chat cleared. Send a message or record a note below.</p>
+            </div>`;
+        }
+      }
+
+      if (data.type === 'SOS_STATUS_UPDATE' && data.status === 'RESOLVED') {
+        applyResolvedState();
+      }
+    };
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'sahara_sos_state' || e.key === 'sahara_chat_history') {
+        restoreSessionState();
+      }
+    });
+
+    // ─── Cancel Modal ───
+    function showCancelModal() { document.getElementById('cancelModal').classList.add('visible'); }
+    function hideCancelModal() { document.getElementById('cancelModal').classList.remove('visible'); }
+
+    function confirmCancelSOS() {
+      sosActive = false;
+      hideCancelModal();
+
+      const btn = document.getElementById('sosBtn');
+      btn.className = 'main-sos-btn ready';
+      btn.innerHTML = '<span class="btn-icon">🚨</span><span>SOS</span><span class="btn-sub">Tap to Activate</span>';
+
+      document.getElementById('sosActions').style.display = 'none';
+      document.getElementById('responderEtaBadge').style.display = 'none';
+
+      const banner = document.getElementById('sosBanner');
+      banner.className = 'sos-banner-bar standby';
+      document.getElementById('sosStatusText').textContent = 'SOS CANCELLED — Emergency state deactivated';
+
+      localStorage.removeItem('sahara_sos_state');
+      localStorage.removeItem('sahara_chat_history');
+      
+      const container = document.getElementById('chatMessages');
+      if (container) {
+        container.innerHTML = `
+          <div class="empty-placeholder" id="chatEmpty">
+            <i class="fa-solid fa-comment-dots"></i>
+            <p>Activate SOS to begin real-time conversation with responding volunteers.</p>
+          </div>`;
+      }
+
+      emergencyChannel.postMessage({ type: 'CLEAR_CHAT' });
+      emergencyChannel.postMessage({ type: 'SOS_CANCELLED' });
+
+      if (activeRouteLine) {
+        map.removeLayer(activeRouteLine);
+        activeRouteLine = null;
+      }
+    }
+
+    function callPolice() {
+      alert('⚠️ PROTOTYPE SIMULATION\n\nIn a real emergency, this connects to 100 (Police).\nSimulation active — no real call dispatched.');
+    }
+
+    function shareLocation() {
+      const url = `https://www.google.com/maps?q=${userLat},${userLng}`;
+      navigator.clipboard.writeText(url).then(() => {
+        alert('📍 Location link copied to clipboard!\n\n' + url);
+      });
+    }
+
+    // ─── Init ───
+    window.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      restoreSessionState();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('autotrigger') === 'true') {
+        setTimeout(() => activateSOS(), 600);
+      }
+    });
+  </script>
+</body>
+</html>

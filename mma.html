@@ -1,0 +1,2866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAHARA — MMA & Safety Workshops</title>
+  <link rel="shortcut icon" href="ambulance.png" type="image/x-icon" />
+
+  <!-- Preconnect and Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500;1,700&family=JetBrains+Mono:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&family=Poppins:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    /* ==========================================================================
+       SAHARA DESIGN SYSTEM & CSS VARIABLES (MATCHING sos-emergency.html)
+       ========================================================================== */
+    :root {
+      --sahara-bg: #e8e6df;
+      --sahara-card: #ffffff;
+      --sahara-text: #2a2c30;
+      --sahara-muted: #5e646e;
+      --sahara-light-muted: #8b929d;
+      
+      --sahara-red: #e63946;
+      --sahara-red-hover: #c1121f;
+      --sahara-red-soft: #fef2f2;
+      --sahara-red-border: #fecaca;
+
+      --sahara-blue: #369ef9;
+      --sahara-blue-hover: #2563eb;
+      --sahara-blue-soft: #e7f3fe;
+      --sahara-blue-border: #c4d7ff;
+
+      --sahara-green: #10b981;
+      --sahara-green-hover: #059669;
+      --sahara-green-soft: #e8f5e9;
+      --sahara-green-border: #c8e6c9;
+
+      --sahara-amber: #d97706;
+      --sahara-amber-soft: #fef3c7;
+      --sahara-amber-border: #fde68a;
+
+      --sahara-rose: #d9776f;
+      --sahara-rose-soft: #fdf2f0;
+
+      --sahara-border: rgba(42, 44, 48, 0.08);
+      --sahara-border-strong: rgba(42, 44, 48, 0.14);
+      --sahara-shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.04);
+      --sahara-shadow-md: 0 4px 25px rgba(0, 0, 0, 0.06);
+      --sahara-shadow-lg: 0 14px 40px rgba(0, 0, 0, 0.09);
+      --sahara-radius-sm: 10px;
+      --sahara-radius-md: 16px;
+      --sahara-radius-lg: 24px;
+      --sahara-radius-pill: 9999px;
+
+      --font-display: 'TAN Astoria', 'Playfair Display', 'Cormorant Garamond', 'Georgia', serif;
+      --font-body: 'Poppins', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: var(--font-body);
+    }
+
+    body {
+      background-color: var(--sahara-bg);
+      color: var(--sahara-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 10% 12%, rgba(217, 119, 111, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 90% 28%, rgba(54, 158, 249, 0.05) 0%, transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: var(--font-body);
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+
+    /* ─── Top Brand Header (Matched to sos-emergency.html) ─── */
+    .top-navbar-card {
+      background: var(--sahara-card);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
+      padding: 12px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid var(--sahara-border);
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand-letters {
+      display: flex;
+      font-weight: 800;
+      font-size: 1.65rem;
+      letter-spacing: 2px;
+    }
+
+    .brand-letters .red {
+      color: var(--sahara-red);
+    }
+
+    .nav-pill-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      list-style: none;
+    }
+
+    .nav-pill-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 18px;
+      border-radius: var(--sahara-radius-pill);
+      background: #f0f4f8;
+      color: #4a5568;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-pill-btn:hover {
+      background: var(--sahara-blue);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .nav-pill-btn.active {
+      background: var(--sahara-text);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(42, 44, 48, 0.25);
+    }
+
+    .nav-pill-btn.active:hover {
+      background: #1e2023;
+      color: #ffffff;
+    }
+
+    .nav-pill-btn.primary-vol {
+      background: var(--sahara-green);
+      color: #ffffff;
+    }
+
+    .nav-pill-btn.primary-vol:hover {
+      background: var(--sahara-green-hover);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+    }
+
+    .nav-pill-btn.danger-sos {
+      background: var(--sahara-red);
+      color: #ffffff;
+      font-weight: 700;
+      animation: alertPulseBtn 2.4s infinite ease-in-out;
+    }
+
+    .nav-pill-btn.danger-sos:hover {
+      background: var(--sahara-red-hover);
+      box-shadow: 0 4px 16px rgba(230, 57, 70, 0.45);
+    }
+
+    @keyframes alertPulseBtn {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(230, 57, 70, 0); }
+    }
+
+    /* Mobile Navigation Hamburger */
+    .mobile-nav-toggle {
+      display: none;
+      font-size: 1.3rem;
+      color: var(--sahara-text);
+      padding: 8px;
+    }
+
+    /* ─── Readiness / Standby Banner Bar ─── */
+    .mma-readiness-bar {
+      padding: 11px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      background: #ebf5ee;
+      color: #1b633b;
+      border-bottom: 1px solid #cce8d6;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .pulse-beacon {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--sahara-green);
+      display: inline-block;
+      animation: pulseDot 1.6s infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.6); opacity: 0.35; }
+    }
+
+    /* ─── Main Page Wrapper ─── */
+    .mma-page-container {
+      max-width: 1340px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 64px;
+    }
+
+    /* ─── Botanical Accent Details ─── */
+    .botanical-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #695d52;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(105, 93, 82, 0.2);
+      padding: 6px 16px;
+      border-radius: var(--sahara-radius-pill);
+      backdrop-filter: blur(4px);
+    }
+
+    .botanical-badge i {
+      color: #3b7a57;
+    }
+
+    /* ==========================================================================
+       HERO SECTION
+       ========================================================================== */
+    .mma-hero-card {
+      background: var(--sahara-card);
+      border-radius: var(--sahara-radius-lg);
+      box-shadow: var(--sahara-shadow-md);
+      border: 1px solid var(--sahara-border);
+      padding: 48px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 48px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Decorative background floral motif */
+    .mma-hero-card::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(217, 119, 111, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .mma-hero-left {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      z-index: 2;
+    }
+
+    .mma-hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 4.8vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.5px;
+      color: var(--sahara-text);
+    }
+
+    .mma-hero-subtitle {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(1.2rem, 2vw, 1.45rem);
+      color: #604e43;
+      font-weight: 600;
+      margin-top: -4px;
+    }
+
+    .mma-hero-desc {
+      font-size: 1rem;
+      color: var(--sahara-muted);
+      line-height: 1.65;
+      max-width: 580px;
+    }
+
+    .mma-hero-cta-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .mma-btn-primary {
+      padding: 13px 28px;
+      border-radius: var(--sahara-radius-pill);
+      background: var(--sahara-text);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.92rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 18px rgba(42, 44, 48, 0.25);
+      transition: all 0.28s ease;
+    }
+
+    .mma-btn-primary:hover {
+      background: #18191c;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(42, 44, 48, 0.35);
+    }
+
+    .mma-btn-secondary {
+      padding: 13px 26px;
+      border-radius: var(--sahara-radius-pill);
+      background: var(--sahara-blue-soft);
+      color: var(--sahara-blue-hover);
+      border: 1px solid var(--sahara-blue-border);
+      font-weight: 700;
+      font-size: 0.92rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.25s ease;
+    }
+
+    .mma-btn-secondary:hover {
+      background: var(--sahara-blue);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(54, 158, 249, 0.3);
+    }
+
+    .mma-hero-features-strip {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--sahara-border);
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--sahara-light-muted);
+      flex-wrap: wrap;
+    }
+
+    .mma-hero-features-strip span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mma-hero-features-strip i {
+      color: var(--sahara-green);
+    }
+
+    /* Hero Right Photo Container */
+    .mma-hero-right {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+
+    .mma-hero-img-frame {
+      position: relative;
+      width: 100%;
+      max-height: 480px;
+      border-radius: var(--sahara-radius-lg);
+      overflow: hidden;
+      box-shadow: var(--sahara-shadow-lg);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: #f4efe9;
+    }
+
+    .mma-hero-img {
+      width: 100%;
+      height: 100%;
+      max-height: 480px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+
+    .mma-hero-img-frame:hover .mma-hero-img {
+      transform: scale(1.03);
+    }
+
+    /* Floating Badges on Hero Image */
+    .hero-floating-pill {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: var(--sahara-radius-pill);
+      padding: 10px 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--sahara-text);
+      z-index: 3;
+    }
+
+    .hero-floating-pill.top-right {
+      top: 18px;
+      right: 18px;
+      border-color: #d1e7dd;
+    }
+
+    .hero-floating-pill.bottom-left {
+      bottom: 20px;
+      left: 18px;
+      border-color: #fde8e8;
+    }
+
+    .hero-pill-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #f0fdf4;
+      color: #15803d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+
+    .hero-floating-pill.bottom-left .hero-pill-icon {
+      background: #fff1f2;
+      color: #e11d48;
+    }
+
+    /* ==========================================================================
+       SECTION 1: YOUR SAFETY LEARNING (PROGRESS CARDS)
+       ========================================================================== */
+    .mma-section-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .mma-section-eyebrow {
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--sahara-rose);
+      text-transform: uppercase;
+    }
+
+    .mma-section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+      font-weight: 800;
+      color: var(--sahara-text);
+      letter-spacing: -0.3px;
+    }
+
+    .mma-section-subtitle {
+      font-size: 0.95rem;
+      color: var(--sahara-muted);
+      font-style: italic;
+    }
+
+    .mma-progress-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .mma-progress-card {
+      background: var(--sahara-card);
+      border-radius: var(--sahara-radius-md);
+      padding: 24px;
+      border: 1px solid var(--sahara-border);
+      box-shadow: var(--sahara-shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mma-progress-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--sahara-shadow-md);
+      border-color: var(--sahara-border-strong);
+    }
+
+    .mma-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .mma-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+    }
+
+    .mma-icon-box.red { background: #fee2e2; color: #dc2626; }
+    .mma-icon-box.blue { background: #e0f2fe; color: #0284c7; }
+    .mma-icon-box.purple { background: #f3e8ff; color: #9333ea; }
+    .mma-icon-box.emerald { background: #dcfce7; color: #16a34a; }
+
+    .mma-percent-badge {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--sahara-text);
+    }
+
+    .mma-card-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--sahara-text);
+    }
+
+    .mma-card-desc {
+      font-size: 0.85rem;
+      color: var(--sahara-muted);
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .mma-progress-track {
+      width: 100%;
+      height: 7px;
+      background: #f1f5f9;
+      border-radius: var(--sahara-radius-pill);
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .mma-progress-fill {
+      height: 100%;
+      border-radius: var(--sahara-radius-pill);
+      width: 0%;
+      transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .mma-progress-fill.red { background: linear-gradient(90deg, #f87171, #ef4444); }
+    .mma-progress-fill.blue { background: linear-gradient(90deg, #60a5fa, #3b82f6); }
+    .mma-progress-fill.purple { background: linear-gradient(90deg, #c084fc, #a855f7); }
+    .mma-progress-fill.emerald { background: linear-gradient(90deg, #4ade80, #22c55e); }
+
+    /* ==========================================================================
+       SECTION 2: FEATURED WORKSHOPS
+       ========================================================================== */
+    .mma-workshops-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .mma-filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      background: var(--sahara-card);
+      padding: 14px 20px;
+      border-radius: var(--sahara-radius-md);
+      border: 1px solid var(--sahara-border);
+      box-shadow: var(--sahara-shadow-sm);
+    }
+
+    .mma-search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--sahara-radius-pill);
+      padding: 8px 16px;
+      width: 320px;
+      max-width: 100%;
+      transition: all 0.2s ease;
+    }
+
+    .mma-search-box:focus-within {
+      border-color: var(--sahara-text);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(42, 44, 48, 0.06);
+    }
+
+    .mma-search-box input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 0.85rem;
+      width: 100%;
+      color: var(--sahara-text);
+    }
+
+    .mma-search-box i {
+      color: var(--sahara-light-muted);
+      font-size: 0.9rem;
+    }
+
+    .mma-filter-pills {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mma-filter-btn {
+      padding: 7px 16px;
+      border-radius: var(--sahara-radius-pill);
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .mma-filter-btn:hover {
+      background: #e2e8f0;
+      color: var(--sahara-text);
+    }
+
+    .mma-filter-btn.active {
+      background: var(--sahara-text);
+      color: #ffffff;
+      border-color: var(--sahara-text);
+    }
+
+    .mma-workshops-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .mma-workshop-card {
+      background: var(--sahara-card);
+      border-radius: var(--sahara-radius-lg);
+      border: 1px solid var(--sahara-border);
+      box-shadow: var(--sahara-shadow-sm);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .mma-workshop-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--sahara-shadow-lg);
+      border-color: var(--sahara-border-strong);
+    }
+
+    .mma-workshop-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mma-category-chip {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: var(--sahara-radius-pill);
+    }
+
+    .mma-category-chip.awareness { background: #fef3c7; color: #92400e; }
+    .mma-category-chip.defense { background: #fee2e2; color: #b91c1c; }
+    .mma-category-chip.cyber { background: #e0e7ff; color: #3730a3; }
+    .mma-category-chip.emergency { background: #ecfdf5; color: #065f46; }
+
+    .mma-workshop-duration-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--sahara-light-muted);
+      font-family: var(--font-mono);
+    }
+
+    .mma-workshop-num {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--sahara-rose);
+      font-weight: 700;
+    }
+
+    .mma-workshop-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--sahara-text);
+      line-height: 1.2;
+    }
+
+    .mma-workshop-desc {
+      font-size: 0.9rem;
+      color: var(--sahara-muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .mma-workshop-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 18px;
+      border-top: 1px solid var(--sahara-border);
+      margin-top: 6px;
+    }
+
+    .mma-level-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #475569;
+    }
+
+    .mma-level-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--sahara-green);
+    }
+
+    .mma-level-dot.intermediate {
+      background: var(--sahara-amber);
+    }
+
+    .mma-view-workshop-btn {
+      padding: 9px 20px;
+      border-radius: var(--sahara-radius-pill);
+      background: #f1f5f9;
+      color: var(--sahara-text);
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      border: 1px solid #e2e8f0;
+    }
+
+    .mma-view-workshop-btn:hover {
+      background: var(--sahara-text);
+      color: #ffffff;
+      border-color: var(--sahara-text);
+      transform: translateY(-1px);
+    }
+
+    .mma-empty-workshops {
+      grid-column: 1 / -1;
+      background: var(--sahara-card);
+      border-radius: var(--sahara-radius-md);
+      padding: 48px 24px;
+      text-align: center;
+      border: 1px dashed var(--sahara-border-strong);
+      display: none;
+    }
+
+    /* ==========================================================================
+       SECTION 3: DAILY MMA (MICRO-PRACTICE)
+       ========================================================================== */
+    .mma-daily-card {
+      background: #25282e;
+      color: #ffffff;
+      border-radius: var(--sahara-radius-lg);
+      padding: 48px;
+      box-shadow: 0 16px 45px rgba(26, 29, 36, 0.2);
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 40px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .mma-daily-card::after {
+      content: '🌿';
+      position: absolute;
+      bottom: -20px;
+      right: -10px;
+      font-size: 9rem;
+      opacity: 0.07;
+      pointer-events: none;
+    }
+
+    .mma-daily-left {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 1;
+    }
+
+    .mma-daily-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #f3a7a0;
+    }
+
+    .mma-daily-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.12;
+      color: #ffffff;
+    }
+
+    .mma-daily-statement {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.25rem;
+      color: #d1d5db;
+    }
+
+    .mma-daily-instruction-box {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--sahara-radius-md);
+      padding: 22px;
+      margin-top: 6px;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: #e2e8f0;
+    }
+
+    .mma-daily-instruction-box strong {
+      color: #ffffff;
+      display: block;
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+
+    .mma-daily-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: var(--sahara-radius-md);
+      padding: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 1;
+    }
+
+    .mma-daily-stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .mma-stat-box {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .mma-stat-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+
+    .mma-stat-val {
+      font-family: var(--font-mono);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .mma-stat-val.streak {
+      color: #fbbf24;
+    }
+
+    .mma-start-daily-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: var(--sahara-radius-pill);
+      background: var(--sahara-red);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 6px 20px rgba(230, 57, 70, 0.35);
+      transition: all 0.25s ease;
+    }
+
+    .mma-start-daily-btn:hover {
+      background: var(--sahara-red-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(230, 57, 70, 0.45);
+    }
+
+    .mma-start-daily-btn.completed {
+      background: var(--sahara-green);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+    }
+
+    .mma-daily-footnote {
+      font-size: 0.76rem;
+      color: #9ca3af;
+      text-align: center;
+    }
+
+    /* ==========================================================================
+       SECTION 4: LEARNING PATH (ROADMAP TIMELINE)
+       ========================================================================== */
+    .mma-path-wrapper {
+      background: var(--sahara-card);
+      border-radius: var(--sahara-radius-lg);
+      padding: 40px;
+      border: 1px solid var(--sahara-border);
+      box-shadow: var(--sahara-shadow-sm);
+    }
+
+    .mma-path-timeline {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      position: relative;
+      margin-top: 36px;
+    }
+
+    /* Connecting line across timeline items */
+    .mma-path-timeline::before {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: 5%;
+      right: 5%;
+      height: 3px;
+      background: #e2e8f0;
+      z-index: 0;
+    }
+
+    .mma-path-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mma-path-node {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #64748b;
+      transition: all 0.3s ease;
+    }
+
+    .mma-path-step.completed .mma-path-node {
+      background: #ecfdf5;
+      border-color: var(--sahara-green);
+      color: var(--sahara-green);
+    }
+
+    .mma-path-step.active .mma-path-node {
+      background: var(--sahara-text);
+      border-color: var(--sahara-text);
+      color: #ffffff;
+      transform: scale(1.15);
+      box-shadow: 0 0 0 6px rgba(42, 44, 48, 0.12);
+    }
+
+    .mma-path-step.locked .mma-path-node {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+      color: #94a3b8;
+    }
+
+    .mma-path-num {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--sahara-rose);
+      letter-spacing: 1px;
+    }
+
+    .mma-path-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--sahara-text);
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+    .mma-path-status {
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: var(--sahara-radius-pill);
+      text-transform: uppercase;
+    }
+
+    .mma-path-step.completed .mma-path-status {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .mma-path-step.active .mma-path-status {
+      background: #fee2e2;
+      color: #b91c1c;
+      animation: alertPulse 1.8s infinite;
+    }
+
+    .mma-path-step.locked .mma-path-status {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    /* ==========================================================================
+       SECTION 5: UPCOMING WORKSHOPS (COMING UP)
+       ========================================================================== */
+    .mma-upcoming-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .mma-upcoming-card {
+      background: var(--sahara-card);
+      border-radius: var(--sahara-radius-lg);
+      border: 1px solid var(--sahara-border);
+      box-shadow: var(--sahara-shadow-sm);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .mma-upcoming-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--sahara-shadow-md);
+      border-color: var(--sahara-border-strong);
+    }
+
+    .mma-date-badge-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      border-radius: 12px;
+      padding: 8px 14px;
+      color: var(--sahara-red);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.85rem;
+      width: fit-content;
+    }
+
+    .mma-upcoming-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--sahara-text);
+      line-height: 1.25;
+    }
+
+    .mma-upcoming-meta-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--sahara-muted);
+    }
+
+    .mma-upcoming-meta-list div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mma-upcoming-meta-list i {
+      color: var(--sahara-blue);
+      width: 16px;
+      text-align: center;
+    }
+
+    .mma-facilitator-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 14px;
+      border-top: 1px solid var(--sahara-border);
+      margin-top: auto;
+    }
+
+    .mma-facilitator-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: #475569;
+      font-weight: 700;
+    }
+
+    .mma-facilitator-info {
+      flex: 1;
+    }
+
+    .mma-facilitator-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--sahara-text);
+    }
+
+    .mma-facilitator-role {
+      font-size: 0.7rem;
+      color: var(--sahara-light-muted);
+    }
+
+    .mma-rsvp-btn {
+      width: 100%;
+      padding: 10px;
+      border-radius: var(--sahara-radius-pill);
+      background: #f1f5f9;
+      color: var(--sahara-text);
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .mma-rsvp-btn:hover {
+      background: var(--sahara-text);
+      color: #ffffff;
+      border-color: var(--sahara-text);
+    }
+
+    .mma-rsvp-btn.reserved {
+      background: #ecfdf5;
+      color: #065f46;
+      border-color: #a7f3d0;
+    }
+
+    /* ==========================================================================
+       SECTION 6: SAFETY CONFIDENCE (EDITORIAL MANIFESTO)
+       ========================================================================== */
+    .mma-manifesto-card {
+      background: var(--sahara-card);
+      border-radius: var(--sahara-radius-lg);
+      padding: 60px 48px;
+      border: 1px solid var(--sahara-border);
+      box-shadow: var(--sahara-shadow-md);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+      text-align: center;
+      align-items: center;
+    }
+
+    .mma-manifesto-card::before {
+      content: '🌸';
+      position: absolute;
+      top: -15px;
+      left: 30px;
+      font-size: 5rem;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    .mma-manifesto-heading {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 900;
+      color: var(--sahara-text);
+      line-height: 1.05;
+      letter-spacing: -0.5px;
+    }
+
+    .mma-manifesto-quote {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+      color: #52473f;
+      max-width: 780px;
+      line-height: 1.4;
+      position: relative;
+    }
+
+    .mma-principles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      width: 100%;
+      text-align: left;
+      margin-top: 12px;
+    }
+
+    .mma-principle-card {
+      background: #fbf9f6;
+      border-radius: var(--sahara-radius-md);
+      padding: 28px;
+      border: 1px solid rgba(105, 93, 82, 0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .mma-principle-card:hover {
+      background: #ffffff;
+      transform: translateY(-3px);
+      box-shadow: var(--sahara-shadow-sm);
+      border-color: rgba(105, 93, 82, 0.25);
+    }
+
+    .mma-principle-num {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--sahara-rose);
+      letter-spacing: 1px;
+    }
+
+    .mma-principle-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--sahara-text);
+      letter-spacing: 0.5px;
+    }
+
+    .mma-principle-desc {
+      font-size: 0.88rem;
+      color: var(--sahara-muted);
+      line-height: 1.55;
+    }
+
+    /* ==========================================================================
+       MODALS & DIALOGS
+       ========================================================================== */
+    .mma-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(30, 34, 42, 0.6);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(5px);
+      padding: 20px;
+    }
+
+    .mma-modal-backdrop.active {
+      display: flex;
+      animation: modalFadeIn 0.25s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .mma-modal-dialog {
+      background: #ffffff;
+      border-radius: var(--sahara-radius-lg);
+      max-width: 580px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--sahara-border);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
+      animation: modalScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalScaleUp {
+      from { transform: scale(0.94); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .mma-modal-header {
+      padding: 24px 28px;
+      background: #fbf9f6;
+      border-bottom: 1px solid var(--sahara-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mma-modal-title {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--sahara-text);
+    }
+
+    .mma-modal-close-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .mma-modal-close-btn:hover {
+      background: #e2e8f0;
+      color: var(--sahara-text);
+    }
+
+    .mma-modal-body {
+      padding: 28px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .mma-modal-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .mma-modal-learn-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #f8fafc;
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .mma-modal-learn-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: #334155;
+    }
+
+    .mma-modal-learn-list i {
+      color: var(--sahara-green);
+      margin-top: 3px;
+    }
+
+    .mma-modal-footer {
+      padding: 18px 28px;
+      background: #f8fafc;
+      border-top: 1px solid var(--sahara-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    /* Daily Exercise Step Interactive Layout */
+    .daily-step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .daily-step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      transition: all 0.2s ease;
+    }
+
+    .daily-step-dot.active {
+      background: var(--sahara-text);
+      transform: scale(1.3);
+    }
+
+    .daily-step-dot.done {
+      background: var(--sahara-green);
+    }
+
+    .daily-step-card {
+      background: #f8fafc;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .daily-step-num {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--sahara-rose);
+      letter-spacing: 1px;
+    }
+
+    .daily-step-instruction {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--sahara-text);
+    }
+
+    .daily-step-hint {
+      font-size: 0.88rem;
+      color: var(--sahara-muted);
+      max-width: 420px;
+    }
+
+    /* ─── Floating Toast Notification ─── */
+    .mma-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translate(-50%, 40px);
+      background: #1e293b;
+      color: #ffffff;
+      padding: 12px 24px;
+      border-radius: var(--sahara-radius-pill);
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 3000;
+    }
+
+    .mma-toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+      pointer-events: auto;
+    }
+
+    .mma-toast i {
+      color: #4ade80;
+    }
+
+    /* ─── Footer Matching SAHARA Platform ─── */
+    .mma-footer {
+      background: var(--sahara-card);
+      border-top: 1px solid var(--sahara-border);
+      padding: 48px 32px 32px;
+      margin-top: auto;
+    }
+
+    .mma-footer-inner {
+      max-width: 1340px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .mma-footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .mma-footer-brand-title {
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+    }
+
+    .mma-footer-brand-title .red {
+      color: var(--sahara-red);
+    }
+
+    .mma-footer-tagline {
+      font-size: 0.8rem;
+      color: var(--sahara-muted);
+    }
+
+    .mma-footer-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--sahara-muted);
+    }
+
+    .mma-footer-links a:hover {
+      color: var(--sahara-text);
+    }
+
+    .mma-footer-copy {
+      width: 100%;
+      text-align: center;
+      padding-top: 24px;
+      border-top: 1px solid #f1f5f9;
+      margin-top: 24px;
+      font-size: 0.75rem;
+      color: var(--sahara-light-muted);
+    }
+
+    /* ==========================================================================
+       RESPONSIVE BREAKPOINTS
+       ========================================================================== */
+    @media (max-width: 1100px) {
+      .mma-progress-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .mma-path-timeline {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .mma-path-timeline::before {
+        display: none;
+      }
+      .mma-upcoming-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .mma-principles-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .top-navbar-card {
+        padding: 12px 20px;
+      }
+      .nav-pill-links {
+        display: none;
+      }
+      .nav-pill-links.mobile-open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--sahara-card);
+        padding: 16px 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid var(--sahara-border);
+      }
+      .mobile-nav-toggle {
+        display: block;
+      }
+      .mma-hero-card {
+        grid-template-columns: 1fr;
+        padding: 32px 24px;
+      }
+      .mma-workshops-grid {
+        grid-template-columns: 1fr;
+      }
+      .mma-daily-card {
+        grid-template-columns: 1fr;
+        padding: 32px 24px;
+      }
+      .mma-upcoming-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .mma-page-container {
+        padding: 20px 16px 60px;
+        gap: 40px;
+      }
+      .mma-progress-grid {
+        grid-template-columns: 1fr;
+      }
+      .mma-path-timeline {
+        grid-template-columns: 1fr;
+      }
+      .mma-path-step {
+        flex-direction: row;
+        text-align: left;
+        gap: 16px;
+      }
+      .mma-path-node {
+        flex-shrink: 0;
+      }
+      .mma-manifesto-card {
+        padding: 40px 20px;
+      }
+      .mma-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .mma-search-box {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar Matching sos-emergency.html -->
+  <header class="top-navbar-card">
+    <a href="index.html" class="brand-box" aria-label="SAHARA Home">
+      <div class="brand-letters">
+        <span class="red">S</span>
+        <span class="red">A</span>
+        <span class="red">H</span>
+        <span class="red">A</span>
+        <span class="red">R</span>
+        <span class="red">A</span>
+      </div>
+      <img src="images/logo2-w.webp" alt="SAHARA Logo" style="width: 44px; height: auto;" />
+    </a>
+
+    <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle Navigation">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <ul class="nav-pill-links" id="navMenu">
+      <li><a href="index.html" class="nav-pill-btn"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="map.html" class="nav-pill-btn"><i class="fa-solid fa-map-location-dot"></i> SafeMap</a></li>
+      <li><a href="wearable.html" class="nav-pill-btn"><i class="fa-solid fa-clock"></i> Wearable</a></li>
+      <li><a href="mma.html" class="nav-pill-btn active"><i class="fa-solid fa-hand-fist"></i> MMA & Workshops</a></li>
+      <li><a href="volunteer-portal.html" target="_blank" class="nav-pill-btn primary-vol"><i class="fa-solid fa-users"></i> Volunteer Portal</a></li>
+      <li><a href="profile.html" class="nav-pill-btn"><i class="fa-solid fa-user"></i> Profile</a></li>
+      <li><a href="sos-emergency.html" class="nav-pill-btn danger-sos"><i class="fa-solid fa-triangle-exclamation"></i> SOS</a></li>
+    </ul>
+  </header>
+
+  <!-- Readiness / Standby Banner Bar -->
+  <div class="mma-readiness-bar">
+    <span class="pulse-beacon"></span>
+    <span>SAHARA SAFETY LEARNING & READINESS SYSTEMS ACTIVE</span>
+  </div>
+
+  <main class="mma-page-container">
+
+    <!-- ==========================================================================
+         HERO SECTION
+         ========================================================================== -->
+    <section class="mma-hero-card" aria-label="MMA & Workshops Hero">
+      <div class="mma-hero-left">
+        <div class="botanical-badge">
+          <i class="fa-solid fa-seedling"></i> SAHARA • LEARN TO FEEL READY
+        </div>
+        
+        <h1 class="mma-hero-title">MMA & WORKSHOPS</h1>
+        
+        <div class="mma-hero-subtitle">
+          “Build confidence. Learn practical skills. Stay ready.”
+        </div>
+        
+        <p class="mma-hero-desc">
+          Learn practical self-protection, situational awareness, emergency preparedness and digital safety through short, approachable sessions designed for everyday life.
+        </p>
+        
+        <div class="mma-hero-cta-group">
+          <a href="#workshops-section" class="mma-btn-primary">
+            <i class="fa-solid fa-compass"></i> EXPLORE WORKSHOPS
+          </a>
+          <button class="mma-btn-secondary" id="heroStartDailyBtn">
+            <i class="fa-solid fa-bolt"></i> START TODAY'S MMA
+          </button>
+        </div>
+
+        <div class="mma-hero-features-strip">
+          <span><i class="fa-solid fa-circle-check"></i> 4 Core Modules</span>
+          <span><i class="fa-solid fa-circle-check"></i> 10-Min Micro Habits</span>
+          <span><i class="fa-solid fa-circle-check"></i> Certified Facilitators</span>
+          <span><i class="fa-solid fa-circle-check"></i> No Medical Claims</span>
+        </div>
+      </div>
+
+      <div class="mma-hero-right">
+        <div class="mma-hero-img-frame">
+          <img src="images/mma-hero.png" alt="Confident woman in practical self-defense training stance" class="mma-hero-img" />
+          
+          <div class="hero-floating-pill top-right">
+            <div class="hero-pill-icon"><i class="fa-solid fa-shield-heart"></i></div>
+            <div>
+              <div style="font-size: 0.65rem; color: #64748b; text-transform: uppercase;">Confidence Focus</div>
+              <div>Prevention & Instinct</div>
+            </div>
+          </div>
+
+          <div class="hero-floating-pill bottom-left">
+            <div class="hero-pill-icon"><i class="fa-solid fa-star"></i></div>
+            <div>
+              <div style="font-size: 0.65rem; color: #64748b; text-transform: uppercase;">Learner Community</div>
+              <div>12,400+ Active Learners</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 1: YOUR SAFETY LEARNING (PROGRESS CARDS)
+         ========================================================================== -->
+    <section aria-labelledby="learning-heading">
+      <div class="mma-section-header">
+        <div class="mma-section-eyebrow">Continuous Preparedness</div>
+        <h2 class="mma-section-title" id="learning-heading">YOUR SAFETY LEARNING</h2>
+        <div class="mma-section-subtitle">“Small skills. Real confidence.”</div>
+      </div>
+
+      <div class="mma-progress-grid">
+        <!-- Progress Card 1 -->
+        <div class="mma-progress-card">
+          <div class="mma-card-top">
+            <div class="mma-icon-box red">
+              <i class="fa-solid fa-person-defense"></i>
+            </div>
+            <div class="mma-percent-badge">72%</div>
+          </div>
+          <div class="mma-card-title">SELF-DEFENSE</div>
+          <div class="mma-card-desc">Practical physical safety and breakaway techniques designed for everyday transit.</div>
+          <div class="mma-progress-track">
+            <div class="mma-progress-fill red" data-progress="72"></div>
+          </div>
+        </div>
+
+        <!-- Progress Card 2 -->
+        <div class="mma-progress-card">
+          <div class="mma-card-top">
+            <div class="mma-icon-box blue">
+              <i class="fa-solid fa-eye"></i>
+            </div>
+            <div class="mma-percent-badge">58%</div>
+          </div>
+          <div class="mma-card-title">SITUATIONAL AWARENESS</div>
+          <div class="mma-card-desc">Read environments better, observe crowd shifts, and identify safe hubs early.</div>
+          <div class="mma-progress-track">
+            <div class="mma-progress-fill blue" data-progress="58"></div>
+          </div>
+        </div>
+
+        <!-- Progress Card 3 -->
+        <div class="mma-progress-card">
+          <div class="mma-card-top">
+            <div class="mma-icon-box purple">
+              <i class="fa-solid fa-lock"></i>
+            </div>
+            <div class="mma-percent-badge">84%</div>
+          </div>
+          <div class="mma-card-title">DIGITAL SAFETY</div>
+          <div class="mma-card-desc">Protect your online presence, manage device telemetry, and shield social privacy.</div>
+          <div class="mma-progress-track">
+            <div class="mma-progress-fill purple" data-progress="84"></div>
+          </div>
+        </div>
+
+        <!-- Progress Card 4 -->
+        <div class="mma-progress-card">
+          <div class="mma-card-top">
+            <div class="mma-icon-box emerald">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="mma-percent-badge">46%</div>
+          </div>
+          <div class="mma-card-title">EMERGENCY PREPAREDNESS</div>
+          <div class="mma-card-desc">Know what to do under pressure, rapid distress code communication, and SAHARA SOS.</div>
+          <div class="mma-progress-track">
+            <div class="mma-progress-fill emerald" data-progress="46"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 2: FEATURED WORKSHOPS
+         ========================================================================== */
+    -->
+    <section id="workshops-section" class="mma-workshops-wrapper" aria-labelledby="workshops-heading">
+      <div class="mma-section-header">
+        <div class="mma-section-eyebrow">Curated Masterclasses</div>
+        <h2 class="mma-section-title" id="workshops-heading">WORKSHOPS WORTH SHOWING UP FOR</h2>
+        <div class="mma-section-subtitle">“Interactive, instructor-guided sessions for real-world peace of mind.”</div>
+      </div>
+
+      <!-- Workshop Filter Bar -->
+      <div class="mma-filter-bar">
+        <div class="mma-search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="workshopSearchInput" placeholder="Search workshops by title, skill, level…" aria-label="Search workshops" />
+        </div>
+
+        <div class="mma-filter-pills" role="tablist">
+          <button class="mma-filter-btn active" data-filter="all">ALL</button>
+          <button class="mma-filter-btn" data-filter="defense">SELF-DEFENSE</button>
+          <button class="mma-filter-btn" data-filter="awareness">AWARENESS</button>
+          <button class="mma-filter-btn" data-filter="cyber">CYBER SAFETY</button>
+          <button class="mma-filter-btn" data-filter="emergency">EMERGENCY</button>
+        </div>
+      </div>
+
+      <!-- Workshop Cards Grid -->
+      <div class="mma-workshops-grid" id="workshopsGrid">
+        
+        <!-- Workshop 01 -->
+        <article class="mma-workshop-card" data-category="awareness" data-title="street smart situational awareness" data-level="beginner">
+          <div class="mma-workshop-meta-row">
+            <span class="mma-category-chip awareness">SITUATIONAL AWARENESS</span>
+            <div class="mma-workshop-duration-badge">
+              <i class="fa-regular fa-clock"></i> 45 MIN
+            </div>
+          </div>
+          <div class="mma-workshop-num">WORKSHOP 01</div>
+          <h3 class="mma-workshop-title">Street Smart</h3>
+          <p class="mma-workshop-desc">
+            Learn how to identify uncomfortable situations early, maintain awareness and make safer decisions while travelling.
+          </p>
+          <div class="mma-workshop-footer">
+            <div class="mma-level-indicator">
+              <span class="mma-level-dot"></span> BEGINNER
+            </div>
+            <button class="mma-view-workshop-btn" data-workshop-id="1">
+              VIEW WORKSHOP <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </article>
+
+        <!-- Workshop 02 -->
+        <article class="mma-workshop-card" data-category="defense" data-title="know your move self-defense" data-level="beginner">
+          <div class="mma-workshop-meta-row">
+            <span class="mma-category-chip defense">SELF-DEFENSE</span>
+            <div class="mma-workshop-duration-badge">
+              <i class="fa-regular fa-clock"></i> 60 MIN
+            </div>
+          </div>
+          <div class="mma-workshop-num">WORKSHOP 02</div>
+          <h3 class="mma-workshop-title">Know Your Move</h3>
+          <p class="mma-workshop-desc">
+            Learn simple, practical defensive movements designed for everyday situations and physical breakaways.
+          </p>
+          <div class="mma-workshop-footer">
+            <div class="mma-level-indicator">
+              <span class="mma-level-dot"></span> BEGINNER
+            </div>
+            <button class="mma-view-workshop-btn" data-workshop-id="2">
+              VIEW WORKSHOP <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </article>
+
+        <!-- Workshop 03 -->
+        <article class="mma-workshop-card" data-category="cyber" data-title="digital boundaries cyber safety privacy" data-level="beginner">
+          <div class="mma-workshop-meta-row">
+            <span class="mma-category-chip cyber">CYBER SAFETY</span>
+            <div class="mma-workshop-duration-badge">
+              <i class="fa-regular fa-clock"></i> 35 MIN
+            </div>
+          </div>
+          <div class="mma-workshop-num">WORKSHOP 03</div>
+          <h3 class="mma-workshop-title">Digital Boundaries</h3>
+          <p class="mma-workshop-desc">
+            Understand harassment, stalking, phishing, impersonation and safer digital habits to secure your devices.
+          </p>
+          <div class="mma-workshop-footer">
+            <div class="mma-level-indicator">
+              <span class="mma-level-dot"></span> BEGINNER
+            </div>
+            <button class="mma-view-workshop-btn" data-workshop-id="3">
+              VIEW WORKSHOP <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </article>
+
+        <!-- Workshop 04 -->
+        <article class="mma-workshop-card" data-category="emergency" data-title="when things go wrong emergency preparedness" data-level="intermediate">
+          <div class="mma-workshop-meta-row">
+            <span class="mma-category-chip emergency">EMERGENCY PREPAREDNESS</span>
+            <div class="mma-workshop-duration-badge">
+              <i class="fa-regular fa-clock"></i> 50 MIN
+            </div>
+          </div>
+          <div class="mma-workshop-num">WORKSHOP 04</div>
+          <h3 class="mma-workshop-title">When Things Go Wrong</h3>
+          <p class="mma-workshop-desc">
+            Practice what to do during an emergency, how to communicate clearly and how SAHARA can support you in crisis.
+          </p>
+          <div class="mma-workshop-footer">
+            <div class="mma-level-indicator">
+              <span class="mma-level-dot intermediate"></span> INTERMEDIATE
+            </div>
+            <button class="mma-view-workshop-btn" data-workshop-id="4">
+              VIEW WORKSHOP <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </article>
+
+        <!-- Empty Search State -->
+        <div class="mma-empty-workshops" id="emptySearchState">
+          <i class="fa-solid fa-magnifying-glass" style="font-size: 2.2rem; color: var(--sahara-light-muted); margin-bottom: 12px;"></i>
+          <h4 style="font-size: 1.1rem; color: var(--sahara-text); margin-bottom: 6px;">No workshops found.</h4>
+          <p style="font-size: 0.88rem; color: var(--sahara-muted); margin-bottom: 16px;">Try adjusting your search terms or filter selection.</p>
+          <button class="mma-btn-secondary" id="clearSearchBtn" style="padding: 8px 18px; font-size: 0.8rem;">
+            Clear search
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 3: DAILY MMA (MICRO-EXERCISE)
+         ========================================================================== -->
+    <section class="mma-daily-card" aria-labelledby="daily-heading">
+      <div class="mma-daily-left">
+        <div class="mma-daily-tag">
+          <i class="fa-solid fa-bolt-lightning"></i> DAILY MMA
+        </div>
+        
+        <h2 class="mma-daily-title" id="daily-heading">10 minutes. One useful skill.</h2>
+        
+        <div class="mma-daily-statement">
+          TODAY'S PRACTICE: “Create an exit plan.”
+        </div>
+        
+        <div class="mma-daily-instruction-box">
+          <strong>Daily Readiness Habit:</strong>
+          “Whenever you enter a new place today, spend 10 seconds identifying:
+          <br />• your nearest exit
+          <br />• a populated area
+          <br />• one person you could approach for help”
+        </div>
+      </div>
+
+      <div class="mma-daily-right">
+        <div class="mma-daily-stats-row">
+          <div class="mma-stat-box">
+            <div class="mma-stat-label">STREAK</div>
+            <div class="mma-stat-val streak" id="dailyStreakVal">7 DAYS</div>
+          </div>
+          <div class="mma-stat-box">
+            <div class="mma-stat-label">TODAY'S SESSION</div>
+            <div class="mma-stat-val">08 MIN</div>
+          </div>
+        </div>
+
+        <button class="mma-start-daily-btn" id="startDailyPracticeBtn">
+          <i class="fa-solid fa-circle-play"></i> <span id="startDailyBtnText">START TODAY'S PRACTICE</span>
+        </button>
+
+        <div class="mma-daily-footnote">
+          Daily MMA exercises focus on mental awareness & practical habits, with zero athletic strain.
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 4: LEARNING PATH (ROADMAP TIMELINE)
+         ========================================================================== -->
+    <section class="mma-path-wrapper" aria-labelledby="path-heading">
+      <div class="mma-section-header" style="text-align: center; align-items: center;">
+        <div class="mma-section-eyebrow">Progressive Mastery</div>
+        <h2 class="mma-section-title" id="path-heading">YOUR LEARNING PATH</h2>
+        <div class="mma-section-subtitle">“Step by step from core instincts to instinctive everyday readiness.”</div>
+      </div>
+
+      <div class="mma-path-timeline">
+        <!-- Milestone 1 -->
+        <div class="mma-path-step completed">
+          <div class="mma-path-node">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <div class="mma-path-num">01</div>
+          <div class="mma-path-title">FOUNDATIONS</div>
+          <div class="mma-path-status">COMPLETED</div>
+        </div>
+
+        <!-- Milestone 2 -->
+        <div class="mma-path-step completed">
+          <div class="mma-path-node">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <div class="mma-path-num">02</div>
+          <div class="mma-path-title">AWARENESS</div>
+          <div class="mma-path-status">COMPLETED</div>
+        </div>
+
+        <!-- Milestone 3 (Active) -->
+        <div class="mma-path-step active">
+          <div class="mma-path-node">03</div>
+          <div class="mma-path-num">03</div>
+          <div class="mma-path-title">SELF-DEFENSE</div>
+          <div class="mma-path-status">ACTIVE</div>
+        </div>
+
+        <!-- Milestone 4 -->
+        <div class="mma-path-step locked">
+          <div class="mma-path-node"><i class="fa-solid fa-lock"></i></div>
+          <div class="mma-path-num">04</div>
+          <div class="mma-path-title">DIGITAL SAFETY</div>
+          <div class="mma-path-status">LOCKED</div>
+        </div>
+
+        <!-- Milestone 5 -->
+        <div class="mma-path-step locked">
+          <div class="mma-path-node"><i class="fa-solid fa-lock"></i></div>
+          <div class="mma-path-num">05</div>
+          <div class="mma-path-title">EMERGENCY RESPONSE</div>
+          <div class="mma-path-status">LOCKED</div>
+        </div>
+
+        <!-- Milestone 6 -->
+        <div class="mma-path-step locked">
+          <div class="mma-path-node"><i class="fa-solid fa-lock"></i></div>
+          <div class="mma-path-num">06</div>
+          <div class="mma-path-title">CONFIDENCE</div>
+          <div class="mma-path-status">LOCKED</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 5: UPCOMING WORKSHOPS (COMING UP)
+         ========================================================================== -->
+    <section aria-labelledby="upcoming-heading">
+      <div class="mma-section-header">
+        <div class="mma-section-eyebrow">Scheduled Demo Sessions</div>
+        <h2 class="mma-section-title" id="upcoming-heading">COMING UP</h2>
+        <div class="mma-section-subtitle">“Reserve a spot in upcoming live facilitator-led masterclasses.”</div>
+      </div>
+
+      <div class="mma-upcoming-grid">
+        <!-- Upcoming 1 -->
+        <article class="mma-upcoming-card">
+          <div class="mma-date-badge-box">
+            <i class="fa-regular fa-calendar"></i> 12 SEP · SATURDAY
+          </div>
+          <h3 class="mma-upcoming-title">Everyday Self-Defense</h3>
+          <div class="mma-upcoming-meta-list">
+            <div><i class="fa-regular fa-clock"></i> 6:00 PM (IST)</div>
+            <div><i class="fa-solid fa-stopwatch"></i> 45 MIN</div>
+            <div><i class="fa-solid fa-layer-group"></i> BEGINNER</div>
+          </div>
+          <div class="mma-facilitator-row">
+            <div class="mma-facilitator-avatar"><i class="fa-solid fa-user-shield"></i></div>
+            <div class="mma-facilitator-info">
+              <div class="mma-facilitator-name">Capt. Ananya Roy</div>
+              <div class="mma-facilitator-role">Self-Defense Specialist</div>
+            </div>
+          </div>
+          <button class="mma-rsvp-btn" data-event-id="sep12">
+            <i class="fa-regular fa-calendar-check"></i> <span>RSVP FOR DEMO</span>
+          </button>
+        </article>
+
+        <!-- Upcoming 2 -->
+        <article class="mma-upcoming-card">
+          <div class="mma-date-badge-box">
+            <i class="fa-regular fa-calendar"></i> 19 SEP · SATURDAY
+          </div>
+          <h3 class="mma-upcoming-title">Digital Safety After Dark</h3>
+          <div class="mma-upcoming-meta-list">
+            <div><i class="fa-regular fa-clock"></i> 5:30 PM (IST)</div>
+            <div><i class="fa-solid fa-stopwatch"></i> 35 MIN</div>
+            <div><i class="fa-solid fa-layer-group"></i> BEGINNER</div>
+          </div>
+          <div class="mma-facilitator-row">
+            <div class="mma-facilitator-avatar"><i class="fa-solid fa-user-lock"></i></div>
+            <div class="mma-facilitator-info">
+              <div class="mma-facilitator-name">Meera Iyer</div>
+              <div class="mma-facilitator-role">Cyber Privacy Analyst</div>
+            </div>
+          </div>
+          <button class="mma-rsvp-btn" data-event-id="sep19">
+            <i class="fa-regular fa-calendar-check"></i> <span>RSVP FOR DEMO</span>
+          </button>
+        </article>
+
+        <!-- Upcoming 3 -->
+        <article class="mma-upcoming-card">
+          <div class="mma-date-badge-box">
+            <i class="fa-regular fa-calendar"></i> 26 SEP · SATURDAY
+          </div>
+          <h3 class="mma-upcoming-title">Emergency Ready</h3>
+          <div class="mma-upcoming-meta-list">
+            <div><i class="fa-regular fa-clock"></i> 6:30 PM (IST)</div>
+            <div><i class="fa-solid fa-stopwatch"></i> 50 MIN</div>
+            <div><i class="fa-solid fa-layer-group"></i> INTERMEDIATE</div>
+          </div>
+          <div class="mma-facilitator-row">
+            <div class="mma-facilitator-avatar"><i class="fa-solid fa-user-doctor"></i></div>
+            <div class="mma-facilitator-info">
+              <div class="mma-facilitator-name">Dr. Shalini Sen</div>
+              <div class="mma-facilitator-role">Crisis Response Facilitator</div>
+            </div>
+          </div>
+          <button class="mma-rsvp-btn" data-event-id="sep26">
+            <i class="fa-regular fa-calendar-check"></i> <span>RSVP FOR DEMO</span>
+          </button>
+        </article>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 6: SAFETY CONFIDENCE (EDITORIAL MANIFESTO)
+         ========================================================================== -->
+    <section class="mma-manifesto-card" aria-label="Safety Confidence Manifesto">
+      <div class="botanical-badge">
+        <i class="fa-solid fa-flower"></i> SAHARA MANIFESTO
+      </div>
+
+      <h2 class="mma-manifesto-heading">Confidence is a skill.</h2>
+      
+      <div class="mma-manifesto-quote">
+        “You don't need to become fearless. You just need to know what to do next.”
+      </div>
+
+      <div class="mma-principles-grid">
+        <div class="mma-principle-card">
+          <div class="mma-principle-num">01</div>
+          <h3 class="mma-principle-title">NOTICE EARLIER</h3>
+          <p class="mma-principle-desc">
+            Awareness gives you time. Time gives you options. Spotting an uncomfortable situation early turns an emergency into a simple, calm decision.
+          </p>
+        </div>
+
+        <div class="mma-principle-card">
+          <div class="mma-principle-num">02</div>
+          <h3 class="mma-principle-title">MOVE SMARTER</h3>
+          <p class="mma-principle-desc">
+            Safety is not about brute physical force. It is about body language, distance management, and deliberate movement toward safety.
+          </p>
+        </div>
+
+        <div class="mma-principle-card">
+          <div class="mma-principle-num">03</div>
+          <h3 class="mma-principle-title">RESPOND CALMLY</h3>
+          <p class="mma-principle-desc">
+            Decisive action comes from clear habits. Know your boundaries, your digital safeguards, and trust SAHARA to support you anytime.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       WORKSHOP DETAILS MODAL
+       ========================================================================== -->
+  <div class="mma-modal-backdrop" id="workshopModal" role="dialog" aria-modal="true" aria-labelledby="modalWorkshopTitle">
+    <div class="mma-modal-dialog">
+      <div class="mma-modal-header">
+        <div>
+          <span class="mma-category-chip awareness" id="modalWorkshopCategory">SITUATIONAL AWARENESS</span>
+          <h3 class="mma-modal-title" id="modalWorkshopTitle" style="margin-top: 6px;">Street Smart</h3>
+        </div>
+        <button class="mma-modal-close-btn" id="closeWorkshopModalBtn" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="mma-modal-body">
+        <div class="mma-modal-meta-row">
+          <span style="font-size: 0.85rem; color: #64748b;"><i class="fa-regular fa-clock"></i> <strong id="modalWorkshopDuration">45 MIN</strong></span>
+          <span style="font-size: 0.85rem; color: #64748b;"><i class="fa-solid fa-layer-group"></i> <strong id="modalWorkshopLevel">BEGINNER</strong></span>
+          <span style="font-size: 0.85rem; color: #10b981;"><i class="fa-solid fa-shield-check"></i> Certified Content</span>
+        </div>
+
+        <p id="modalWorkshopDesc" style="font-size: 0.92rem; color: var(--sahara-muted); line-height: 1.6;">
+          Learn how to identify uncomfortable situations early, maintain awareness and make safer decisions while travelling.
+        </p>
+
+        <div>
+          <h4 style="font-size: 0.88rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: var(--sahara-text); margin-bottom: 8px;">
+            WHAT YOU'LL LEARN
+          </h4>
+          <ul class="mma-modal-learn-list" id="modalLearnList">
+            <li><i class="fa-solid fa-circle-check"></i> Identify early warning signs in public spaces</li>
+            <li><i class="fa-solid fa-circle-check"></i> Maintain situational awareness without paranoia</li>
+            <li><i class="fa-solid fa-circle-check"></i> Create distance safely and manage physical boundaries</li>
+            <li><i class="fa-solid fa-circle-check"></i> Communicate clearly with assertive voice commands</li>
+            <li><i class="fa-solid fa-circle-check"></i> Know when to seek help and trigger SAHARA SOS</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mma-modal-footer">
+        <button class="mma-btn-secondary" id="modalDismissBtn" style="padding: 10px 20px; font-size: 0.85rem;">
+          Close
+        </button>
+        <button class="mma-btn-primary" id="modalStartWorkshopBtn" style="padding: 10px 22px; font-size: 0.85rem;">
+          <i class="fa-solid fa-play"></i> START WORKSHOP
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       DAILY MMA INTERACTIVE PRACTICE MODAL
+       ========================================================================== -->
+  <div class="mma-modal-backdrop" id="dailyPracticeModal" role="dialog" aria-modal="true" aria-labelledby="dailyModalTitle">
+    <div class="mma-modal-dialog">
+      <div class="mma-modal-header">
+        <div>
+          <div style="font-size: 0.72rem; font-weight: 800; color: var(--sahara-rose); letter-spacing: 1px;">DAILY MICRO-HABIT</div>
+          <h3 class="mma-modal-title" id="dailyModalTitle">Create an Exit Plan</h3>
+        </div>
+        <button class="mma-modal-close-btn" id="closeDailyModalBtn" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="mma-modal-body">
+        <div class="daily-step-indicator">
+          <span class="daily-step-dot active" id="stepDot1"></span>
+          <span class="daily-step-dot" id="stepDot2"></span>
+          <span class="daily-step-dot" id="stepDot3"></span>
+          <span class="daily-step-dot" id="stepDot4"></span>
+          <span class="daily-step-dot" id="stepDot5"></span>
+        </div>
+
+        <div class="daily-step-card" id="dailyStepContent">
+          <!-- Step content injected dynamically via JS -->
+        </div>
+      </div>
+
+      <div class="mma-modal-footer" id="dailyModalFooter">
+        <button class="mma-btn-secondary" id="dailyPrevBtn" style="display: none; padding: 10px 18px; font-size: 0.85rem;">
+          Previous
+        </button>
+        <button class="mma-btn-primary" id="dailyNextBtn" style="padding: 10px 24px; font-size: 0.85rem;">
+          NEXT <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="mma-toast" id="saharaToast">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toastMessage">Notification</span>
+  </div>
+
+  <!-- Footer Matching SAHARA Platform -->
+  <footer class="mma-footer">
+    <div class="mma-footer-inner">
+      <div class="mma-footer-brand">
+        <div class="mma-footer-brand-title">
+          <span class="red">S</span><span class="red">A</span><span class="red">H</span><span class="red">A</span><span class="red">R</span><span class="red">A</span>
+        </div>
+        <div class="mma-footer-tagline">Integrated Safety Ecosystem for Women</div>
+      </div>
+
+      <ul class="mma-footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="map.html">SafeMap</a></li>
+        <li><a href="wearable.html">Wearable</a></li>
+        <li><a href="volunteer-portal.html">Volunteer Portal</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="sos-emergency.html">Emergency SOS</a></li>
+      </ul>
+
+      <div class="mma-footer-copy">
+        &copy; 2026 SAHARA Platform. Educational safety and confidence modules. No medical advice or fitness tracking implied.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC & LOCALSTORAGE PERSISTENCE
+       ========================================================================== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ------------------------------------------------------------------------
+      // DATA DEFINITIONS & CONSTANTS
+      // ------------------------------------------------------------------------
+      const WORKSHOP_DATA = {
+        "1": {
+          title: "Street Smart",
+          category: "SITUATIONAL AWARENESS",
+          categoryClass: "awareness",
+          duration: "45 MIN",
+          level: "BEGINNER",
+          desc: "Learn how to identify uncomfortable situations early, maintain awareness and make safer decisions while travelling.",
+          points: [
+            "Identify early warning signs in transit & public spaces",
+            "Maintain relaxed situational awareness without feeling stressed",
+            "Create distance safely and command personal boundaries",
+            "Communicate clearly and assertively",
+            "Know when to seek immediate help or activate SAHARA SOS"
+          ]
+        },
+        "2": {
+          title: "Know Your Move",
+          category: "SELF-DEFENSE",
+          categoryClass: "defense",
+          duration: "60 MIN",
+          level: "BEGINNER",
+          desc: "Learn simple, practical defensive movements designed for everyday situations and physical breakaways.",
+          points: [
+            "Effective palm heel and boundary strikes",
+            "Leverage-based wrist and clothing release techniques",
+            "Maintaining balance and rapid recovery on moving transit",
+            "Using everyday objects for distance creation",
+            "De-escalation tactics and safe breakaway sprints"
+          ]
+        },
+        "3": {
+          title: "Digital Boundaries",
+          category: "CYBER SAFETY",
+          categoryClass: "cyber",
+          duration: "35 MIN",
+          level: "BEGINNER",
+          desc: "Understand harassment, stalking, phishing, impersonation and safer digital habits to secure your devices.",
+          points: [
+            "Recognize digital stalking, AirTag tracking, and geo-leaks",
+            "Hardening phone location services and social metadata",
+            "Identifying phishing, impersonation, and blackmail attempts",
+            "Secure evidence gathering using SAHARA Evidence Vault",
+            "Setting up private emergency digital escalation circles"
+          ]
+        },
+        "4": {
+          title: "When Things Go Wrong",
+          category: "EMERGENCY PREPAREDNESS",
+          categoryClass: "emergency",
+          duration: "50 MIN",
+          level: "INTERMEDIATE",
+          desc: "Practice what to do during an emergency, how to communicate clearly and how SAHARA can support you in crisis.",
+          points: [
+            "Managing acute adrenaline response and staying cognitively clear",
+            "One-touch SAHARA SOS activation and live responder telemetry",
+            "Discreet code phrases and voice distress notes",
+            "Coordinating with local community volunteer responders",
+            "Post-incident trauma support and safe shelter navigation"
+          ]
+        }
+      };
+
+      const DAILY_STEPS = [
+        {
+          num: "STEP 1 OF 4",
+          instruction: "Look around your current environment.",
+          hint: "Scan the room or area calmly. Notice 3 distinct sightlines, lighting levels, and crowd density around you."
+        },
+        {
+          num: "STEP 2 OF 4",
+          instruction: "Identify one primary exit.",
+          hint: "Locate the main doorway, emergency exit, or unobstructed path to the street."
+        },
+        {
+          num: "STEP 3 OF 4",
+          instruction: "Identify one safe, populated area.",
+          hint: "Locate a well-lit reception desk, security point, transit counter, or group of friendly people."
+        },
+        {
+          num: "STEP 4 OF 4",
+          instruction: "Think about who you would contact if uncomfortable.",
+          hint: "Recall your trusted contact, local community volunteer, or the SAHARA one-tap SOS trigger."
+        },
+        {
+          num: "PRACTICE COMPLETE ✓",
+          instruction: "Good work. You know what to look for.",
+          hint: "Your situational readiness habit is complete for today. Stay observant and confident wherever you go."
+        }
+      ];
+
+      // ------------------------------------------------------------------------
+      // LOCALSTORAGE HELPERS
+      // ------------------------------------------------------------------------
+      const STORAGE_KEYS = {
+        DAILY_MMA: 'sahara_daily_mma',
+        RSVPS: 'sahara_workshop_rsvps',
+        COMPLETED_WORKSHOPS: 'sahara_completed_workshops'
+      };
+
+      function getDailyState() {
+        try {
+          const stored = localStorage.getItem(STORAGE_KEYS.DAILY_MMA);
+          if (stored) return JSON.parse(stored);
+        } catch (e) {
+          console.error(e);
+        }
+        return { streak: 7, lastCompletedDate: null };
+      }
+
+      function saveDailyState(state) {
+        try {
+          localStorage.setItem(STORAGE_KEYS.DAILY_MMA, JSON.stringify(state));
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      function getRSVPs() {
+        try {
+          const stored = localStorage.getItem(STORAGE_KEYS.RSVPS);
+          if (stored) return JSON.parse(stored);
+        } catch (e) {
+          console.error(e);
+        }
+        return {};
+      }
+
+      function saveRSVP(eventId, isReserved) {
+        try {
+          const rsvps = getRSVPs();
+          rsvps[eventId] = isReserved;
+          localStorage.setItem(STORAGE_KEYS.RSVPS, JSON.stringify(rsvps));
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // ------------------------------------------------------------------------
+      // TOAST NOTIFICATIONS
+      // ------------------------------------------------------------------------
+      const toastEl = document.getElementById('saharaToast');
+      const toastMsgEl = document.getElementById('toastMessage');
+      let toastTimer = null;
+
+      function showToast(message) {
+        if (!toastEl || !toastMsgEl) return;
+        toastMsgEl.textContent = message;
+        toastEl.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.remove('show');
+        }, 3200);
+      }
+
+      // ------------------------------------------------------------------------
+      // MOBILE NAVIGATION TOGGLE
+      // ------------------------------------------------------------------------
+      const navToggle = document.getElementById('mobileNavToggle');
+      const navMenu = document.getElementById('navMenu');
+      if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+          navMenu.classList.toggle('mobile-open');
+        });
+      }
+
+      // ------------------------------------------------------------------------
+      // PROGRESS BARS INTERSECTION OBSERVER ANIMATION
+      // ------------------------------------------------------------------------
+      const progressFills = document.querySelectorAll('.mma-progress-fill');
+      const observerOptions = { threshold: 0.2 };
+      const progressObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const target = entry.target;
+            const progress = target.getAttribute('data-progress') || '50';
+            target.style.width = progress + '%';
+            observer.unobserve(target);
+          }
+        });
+      }, observerOptions);
+
+      progressFills.forEach(fill => progressObserver.observe(fill));
+
+      // ------------------------------------------------------------------------
+      // WORKSHOP SEARCH & FILTER LOGIC
+      // ------------------------------------------------------------------------
+      const searchInput = document.getElementById('workshopSearchInput');
+      const filterBtns = document.querySelectorAll('.mma-filter-btn');
+      const workshopCards = document.querySelectorAll('.mma-workshop-card');
+      const emptySearchState = document.getElementById('emptySearchState');
+      const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+      let currentFilter = 'all';
+
+      function filterWorkshops() {
+        const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        let visibleCount = 0;
+
+        workshopCards.forEach(card => {
+          const category = card.getAttribute('data-category') || '';
+          const title = card.getAttribute('data-title') || '';
+          const level = card.getAttribute('data-level') || '';
+          const desc = card.querySelector('.mma-workshop-desc')?.textContent.toLowerCase() || '';
+
+          const matchesCategory = (currentFilter === 'all') || (category === currentFilter);
+          const matchesQuery = !query || 
+            title.toLowerCase().includes(query) || 
+            desc.includes(query) || 
+            category.toLowerCase().includes(query) ||
+            level.toLowerCase().includes(query);
+
+          if (matchesCategory && matchesQuery) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        if (emptySearchState) {
+          emptySearchState.style.display = (visibleCount === 0) ? 'block' : 'none';
+        }
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', filterWorkshops);
+      }
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.getAttribute('data-filter') || 'all';
+          filterWorkshops();
+        });
+      });
+
+      if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', () => {
+          if (searchInput) searchInput.value = '';
+          currentFilter = 'all';
+          filterBtns.forEach(b => b.classList.remove('active'));
+          const allBtn = document.querySelector('.mma-filter-btn[data-filter="all"]');
+          if (allBtn) allBtn.classList.add('active');
+          filterWorkshops();
+        });
+      }
+
+      // ------------------------------------------------------------------------
+      // WORKSHOP DETAILS MODAL
+      // ------------------------------------------------------------------------
+      const workshopModal = document.getElementById('workshopModal');
+      const closeWorkshopModalBtn = document.getElementById('closeWorkshopModalBtn');
+      const modalDismissBtn = document.getElementById('modalDismissBtn');
+      const modalStartWorkshopBtn = document.getElementById('modalStartWorkshopBtn');
+      
+      const modalCategory = document.getElementById('modalWorkshopCategory');
+      const modalTitle = document.getElementById('modalWorkshopTitle');
+      const modalDuration = document.getElementById('modalWorkshopDuration');
+      const modalLevel = document.getElementById('modalWorkshopLevel');
+      const modalDesc = document.getElementById('modalWorkshopDesc');
+      const modalLearnList = document.getElementById('modalLearnList');
+
+      let activeWorkshopId = null;
+
+      function openWorkshopModal(id) {
+        const data = WORKSHOP_DATA[id];
+        if (!data || !workshopModal) return;
+
+        activeWorkshopId = id;
+        modalTitle.textContent = data.title;
+        modalCategory.textContent = data.category;
+        modalCategory.className = `mma-category-chip ${data.categoryClass}`;
+        modalDuration.textContent = data.duration;
+        modalLevel.textContent = data.level;
+        modalDesc.textContent = data.desc;
+
+        modalLearnList.innerHTML = '';
+        data.points.forEach(point => {
+          const li = document.createElement('li');
+          li.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${point}`;
+          modalLearnList.appendChild(li);
+        });
+
+        workshopModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeWorkshopModal() {
+        if (!workshopModal) return;
+        workshopModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      document.querySelectorAll('.mma-view-workshop-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = btn.getAttribute('data-workshop-id');
+          openWorkshopModal(id);
+        });
+      });
+
+      if (closeWorkshopModalBtn) closeWorkshopModalBtn.addEventListener('click', closeWorkshopModal);
+      if (modalDismissBtn) modalDismissBtn.addEventListener('click', closeWorkshopModal);
+
+      if (workshopModal) {
+        workshopModal.addEventListener('click', (e) => {
+          if (e.target === workshopModal) closeWorkshopModal();
+        });
+      }
+
+      if (modalStartWorkshopBtn) {
+        modalStartWorkshopBtn.addEventListener('click', () => {
+          closeWorkshopModal();
+          showToast(`Started "${modalTitle.textContent}" workshop demo session!`);
+        });
+      }
+
+      // ------------------------------------------------------------------------
+      // DAILY MMA INTERACTION & STREAK PERSISTENCE
+      // ------------------------------------------------------------------------
+      const dailyModal = document.getElementById('dailyPracticeModal');
+      const closeDailyModalBtn = document.getElementById('closeDailyModalBtn');
+      const startDailyPracticeBtn = document.getElementById('startDailyPracticeBtn');
+      const heroStartDailyBtn = document.getElementById('heroStartDailyBtn');
+      const dailyStreakVal = document.getElementById('dailyStreakVal');
+      const startDailyBtnText = document.getElementById('startDailyBtnText');
+
+      const dailyStepContent = document.getElementById('dailyStepContent');
+      const dailyNextBtn = document.getElementById('dailyNextBtn');
+      const dailyPrevBtn = document.getElementById('dailyPrevBtn');
+
+      let currentStepIndex = 0;
+      const todayDateString = new Date().toISOString().split('T')[0];
+
+      function updateDailyStreakUI() {
+        const state = getDailyState();
+        if (dailyStreakVal) {
+          dailyStreakVal.textContent = `${state.streak} DAYS`;
+        }
+        if (state.lastCompletedDate === todayDateString) {
+          if (startDailyBtnText) startDailyBtnText.textContent = "COMPLETED TODAY ✓";
+          if (startDailyPracticeBtn) startDailyPracticeBtn.classList.add('completed');
+        } else {
+          if (startDailyBtnText) startDailyBtnText.textContent = "START TODAY'S PRACTICE";
+          if (startDailyPracticeBtn) startDailyPracticeBtn.classList.remove('completed');
+        }
+      }
+
+      updateDailyStreakUI();
+
+      function renderDailyStep(index) {
+        const step = DAILY_STEPS[index];
+        if (!step || !dailyStepContent) return;
+
+        dailyStepContent.innerHTML = `
+          <div class="daily-step-num">${step.num}</div>
+          <div class="daily-step-instruction">${step.instruction}</div>
+          <div class="daily-step-hint">${step.hint}</div>
+        `;
+
+        for (let i = 1; i <= 5; i++) {
+          const dot = document.getElementById(`stepDot${i}`);
+          if (!dot) continue;
+          dot.className = 'daily-step-dot';
+          if (i - 1 === index) {
+            dot.classList.add('active');
+          } else if (i - 1 < index) {
+            dot.classList.add('done');
+          }
+        }
+
+        if (index === 0) {
+          if (dailyPrevBtn) dailyPrevBtn.style.display = 'none';
+        } else {
+          if (dailyPrevBtn) dailyPrevBtn.style.display = 'inline-block';
+        }
+
+        if (index === DAILY_STEPS.length - 1) {
+          if (dailyNextBtn) dailyNextBtn.innerHTML = `<i class="fa-solid fa-check"></i> DONE`;
+        } else {
+          if (dailyNextBtn) dailyNextBtn.innerHTML = `NEXT <i class="fa-solid fa-arrow-right"></i>`;
+        }
+      }
+
+      function openDailyModal() {
+        currentStepIndex = 0;
+        renderDailyStep(0);
+        if (dailyModal) dailyModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeDailyModal() {
+        if (!dailyModal) return;
+        dailyModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      if (startDailyPracticeBtn) startDailyPracticeBtn.addEventListener('click', openDailyModal);
+      if (heroStartDailyBtn) heroStartDailyBtn.addEventListener('click', openDailyModal);
+      if (closeDailyModalBtn) closeDailyModalBtn.addEventListener('click', closeDailyModal);
+
+      if (dailyModal) {
+        dailyModal.addEventListener('click', (e) => {
+          if (e.target === dailyModal) closeDailyModal();
+        });
+      }
+
+      if (dailyPrevBtn) {
+        dailyPrevBtn.addEventListener('click', () => {
+          if (currentStepIndex > 0) {
+            currentStepIndex--;
+            renderDailyStep(currentStepIndex);
+          }
+        });
+      }
+
+      if (dailyNextBtn) {
+        dailyNextBtn.addEventListener('click', () => {
+          if (currentStepIndex < DAILY_STEPS.length - 1) {
+            currentStepIndex++;
+            renderDailyStep(currentStepIndex);
+          } else {
+            // Completed! Increment streak once per day
+            const state = getDailyState();
+            if (state.lastCompletedDate !== todayDateString) {
+              state.streak += 1;
+              state.lastCompletedDate = todayDateString;
+              saveDailyState(state);
+            }
+            updateDailyStreakUI();
+            closeDailyModal();
+            showToast("Practice complete! +1 Day added to your SAHARA streak.");
+          }
+        });
+      }
+
+      // ------------------------------------------------------------------------
+      // UPCOMING WORKSHOPS RSVP PERSISTENCE
+      // ------------------------------------------------------------------------
+      const rsvps = getRSVPs();
+      const rsvpBtns = document.querySelectorAll('.mma-rsvp-btn');
+
+      rsvpBtns.forEach(btn => {
+        const eventId = btn.getAttribute('data-event-id');
+        if (rsvps[eventId]) {
+          btn.classList.add('reserved');
+          btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>✓ RSVP CONFIRMED</span>`;
+        }
+
+        btn.addEventListener('click', () => {
+          const currentReserved = btn.classList.contains('reserved');
+          if (currentReserved) {
+            btn.classList.remove('reserved');
+            btn.innerHTML = `<i class="fa-regular fa-calendar-check"></i> <span>RSVP FOR DEMO</span>`;
+            saveRSVP(eventId, false);
+            showToast("RSVP cancelled for demo session.");
+          } else {
+            btn.classList.add('reserved');
+            btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>✓ RSVP CONFIRMED</span>`;
+            saveRSVP(eventId, true);
+            showToast("RSVP saved for the demo workshop.");
+          }
+        });
+      });
+
+      // ------------------------------------------------------------------------
+      // GLOBAL KEYBOARD ACCESSIBILITY (ESC TO CLOSE MODALS)
+      // ------------------------------------------------------------------------
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeWorkshopModal();
+          closeDailyModal();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

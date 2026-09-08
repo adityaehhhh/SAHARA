@@ -1,0 +1,2564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAHARA — Safety Assistant</title>
+  <link rel="shortcut icon" href="ambulance.png" type="image/x-icon" />
+
+  <!-- Preconnect & Fonts Matching SAHARA Ecosystem -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Poppins:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- FontAwesome 6.5.2 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    /* ==========================================================================
+       SAHARA DESIGN SYSTEM (MATCHING sos-emergency.html & mma.html)
+       ========================================================================== */
+    :root {
+      --sahara-bg: #e8e6df;
+      --sahara-card: #ffffff;
+      --sahara-text: #2a2c30;
+      --sahara-muted: #5e646e;
+      --sahara-light-muted: #8b929d;
+
+      --sahara-red: #e63946;
+      --sahara-red-hover: #c1121f;
+      --sahara-red-soft: #fef2f2;
+      --sahara-red-border: #fecaca;
+
+      --sahara-blue: #369ef9;
+      --sahara-blue-hover: #2563eb;
+      --sahara-blue-soft: #e7f3fe;
+      --sahara-blue-border: #c4d7ff;
+
+      --sahara-green: #10b981;
+      --sahara-green-hover: #059669;
+      --sahara-green-soft: #e8f5e9;
+      --sahara-green-border: #c8e6c9;
+
+      --sahara-amber: #d97706;
+      --sahara-amber-soft: #fef3c7;
+
+      --sahara-rose: #d9776f;
+      --sahara-rose-soft: #fdf2f0;
+
+      --sahara-border: rgba(42, 44, 48, 0.08);
+      --sahara-border-strong: rgba(42, 44, 48, 0.15);
+      --sahara-shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.04);
+      --sahara-shadow-md: 0 4px 25px rgba(0, 0, 0, 0.06);
+      --sahara-shadow-lg: 0 14px 40px rgba(0, 0, 0, 0.09);
+
+      --sahara-radius-sm: 10px;
+      --sahara-radius-md: 16px;
+      --sahara-radius-lg: 24px;
+      --sahara-radius-pill: 9999px;
+
+      --font-display: 'TAN Astoria', 'Playfair Display', 'Cormorant Garamond', 'Georgia', serif;
+      --font-body: 'Poppins', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: var(--font-body);
+    }
+
+    body {
+      background-color: var(--sahara-bg);
+      color: var(--sahara-text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background-image:
+        radial-gradient(circle at 12% 15%, rgba(217, 119, 111, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 88% 30%, rgba(54, 158, 249, 0.05) 0%, transparent 45%),
+        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: var(--font-body);
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+
+    /* ─── Top Brand Header (Matched to sos-emergency.html) ─── */
+    .top-navbar-card {
+      background: var(--sahara-card);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
+      padding: 10px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 1000;
+      border-bottom: 1px solid var(--sahara-border);
+      flex-shrink: 0;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand-letters {
+      display: flex;
+      font-weight: 800;
+      font-size: 1.55rem;
+      letter-spacing: 2px;
+    }
+
+    .brand-letters .red {
+      color: var(--sahara-red);
+    }
+
+    .nav-pill-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .nav-pill-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      border-radius: var(--sahara-radius-pill);
+      background: #f0f4f8;
+      color: #4a5568;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-pill-btn:hover {
+      background: var(--sahara-blue);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .nav-pill-btn.active {
+      background: var(--sahara-text);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(42, 44, 48, 0.25);
+    }
+
+    .nav-pill-btn.primary-vol {
+      background: var(--sahara-green);
+      color: #ffffff;
+    }
+
+    .nav-pill-btn.primary-vol:hover {
+      background: var(--sahara-green-hover);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+    }
+
+    .nav-pill-btn.danger-sos {
+      background: var(--sahara-red);
+      color: #ffffff;
+      font-weight: 700;
+      animation: alertPulseBtn 2.4s infinite ease-in-out;
+    }
+
+    .nav-pill-btn.danger-sos:hover {
+      background: var(--sahara-red-hover);
+      box-shadow: 0 4px 16px rgba(230, 57, 70, 0.45);
+    }
+
+    @keyframes alertPulseBtn {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(230, 57, 70, 0); }
+    }
+
+    /* ─── Status / Concierge Banner Bar ─── */
+    .assistant-status-bar {
+      padding: 9px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      background: #ebf5ee;
+      color: #1b633b;
+      border-bottom: 1px solid #cce8d6;
+      flex-shrink: 0;
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pulse-beacon {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--sahara-green);
+      display: inline-block;
+      animation: pulseDot 1.6s infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.6); opacity: 0.35; }
+    }
+
+    /* Language Selector & Controls */
+    .status-controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .lang-select-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      padding: 4px 12px;
+      border-radius: var(--sahara-radius-pill);
+      border: 1px solid #cce8d6;
+      font-size: 0.8rem;
+      color: var(--sahara-text);
+      font-weight: 700;
+    }
+
+    .lang-select-wrapper select {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--sahara-text);
+      cursor: pointer;
+    }
+
+    .voice-toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      padding: 4px 12px;
+      border-radius: var(--sahara-radius-pill);
+      border: 1px solid #cce8d6;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .voice-toggle-btn.active {
+      background: #1b633b;
+      color: #ffffff;
+      border-color: #1b633b;
+    }
+
+    /* ==========================================================================
+       CHATBOT MAIN LAYOUT
+       ========================================================================== */
+    .chatbot-app-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px 24px 20px;
+      gap: 20px;
+      min-height: 0; /* important for flex/grid scroll child */
+    }
+
+    /* ─── Left Sidebar (History & Prompts) ─── */
+    .chat-sidebar {
+      background: var(--sahara-card);
+      border-radius: var(--sahara-radius-lg);
+      border: 1px solid var(--sahara-border);
+      box-shadow: var(--sahara-shadow-sm);
+      display: flex;
+      flex-direction: column;
+      padding: 18px;
+      gap: 16px;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .new-chat-btn {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: var(--sahara-radius-pill);
+      background: var(--sahara-text);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(42, 44, 48, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .new-chat-btn:hover {
+      background: #18191c;
+      transform: translateY(-1px);
+    }
+
+    .sidebar-section-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--sahara-light-muted);
+      padding: 0 4px;
+    }
+
+    .history-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-right: 4px;
+    }
+
+    .history-item {
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid #f1f5f9;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .history-item:hover {
+      background: #e2e8f0;
+      color: var(--sahara-text);
+      border-color: #cbd5e1;
+    }
+
+    .history-item.active {
+      background: var(--sahara-blue-soft);
+      color: var(--sahara-blue-hover);
+      border-color: var(--sahara-blue-border);
+    }
+
+    .history-item i {
+      font-size: 0.85rem;
+      color: var(--sahara-light-muted);
+      flex-shrink: 0;
+    }
+
+    .history-empty {
+      font-size: 0.8rem;
+      color: var(--sahara-light-muted);
+      padding: 12px;
+      text-align: center;
+      font-style: italic;
+    }
+
+    .sidebar-system-badge {
+      background: #fbf9f6;
+      border: 1px solid rgba(105, 93, 82, 0.15);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.75rem;
+      color: #695d52;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-system-badge strong {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--sahara-text);
+    }
+
+    /* ─── Main Chat Stage ─── */
+    .chat-main-card {
+      background: var(--sahara-card);
+      border-radius: var(--sahara-radius-lg);
+      border: 1px solid var(--sahara-border);
+      box-shadow: var(--sahara-shadow-md);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Chat Messages Container */
+    .chat-messages-viewport {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      scroll-behavior: smooth;
+    }
+
+    /* Welcome / Concierge Hero Card */
+    .chat-welcome-card {
+      background: #fbf9f6;
+      border-radius: var(--sahara-radius-lg);
+      border: 1px solid rgba(105, 93, 82, 0.15);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: var(--sahara-shadow-sm);
+    }
+
+    .welcome-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .sahara-avatar-large {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #25282e;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+      flex-shrink: 0;
+    }
+
+    .welcome-title-box h2 {
+      font-family: var(--font-display);
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--sahara-text);
+      line-height: 1.15;
+    }
+
+    .welcome-title-box p {
+      font-size: 0.88rem;
+      color: var(--sahara-muted);
+    }
+
+    .quick-actions-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--sahara-rose);
+      margin-top: 4px;
+    }
+
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+    }
+
+    .quick-chip {
+      padding: 10px 14px;
+      border-radius: var(--sahara-radius-md);
+      background: #ffffff;
+      border: 1px solid var(--sahara-border);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--sahara-text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .quick-chip:hover {
+      background: #f8fafc;
+      border-color: var(--sahara-text);
+      transform: translateY(-2px);
+      box-shadow: var(--sahara-shadow-sm);
+    }
+
+    .quick-chip.sos {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: var(--sahara-red);
+    }
+
+    .quick-chip.sos:hover {
+      background: var(--sahara-red);
+      color: #ffffff;
+    }
+
+    .quick-chip i {
+      font-size: 0.9rem;
+    }
+
+    .suggested-prompts-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(105, 93, 82, 0.12);
+    }
+
+    .prompt-bubble {
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: #475569;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--sahara-radius-pill);
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .prompt-bubble:hover {
+      background: var(--sahara-blue-soft);
+      border-color: var(--sahara-blue-border);
+      color: var(--sahara-blue-hover);
+    }
+
+    /* ─── Message Rows ─── */
+    .message-row {
+      display: flex;
+      gap: 12px;
+      max-width: 88%;
+      animation: msgFadeIn 0.25s ease;
+    }
+
+    @keyframes msgFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message-row.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-row.assistant {
+      align-self: flex-start;
+    }
+
+    .msg-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .msg-avatar.assistant {
+      background: #25282e;
+      color: #ffffff;
+    }
+
+    .msg-avatar.user {
+      background: var(--sahara-blue);
+      color: #ffffff;
+    }
+
+    .msg-bubble-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .msg-bubble {
+      padding: 14px 18px;
+      border-radius: 18px;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      box-shadow: var(--sahara-shadow-sm);
+    }
+
+    .message-row.user .msg-bubble {
+      background: var(--sahara-text);
+      color: #ffffff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message-row.assistant .msg-bubble {
+      background: #fbf9f6;
+      color: var(--sahara-text);
+      border: 1px solid rgba(105, 93, 82, 0.15);
+      border-bottom-left-radius: 4px;
+    }
+
+    .msg-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.7rem;
+      color: var(--sahara-light-muted);
+      padding: 0 4px;
+    }
+
+    .message-row.user .msg-meta-row {
+      justify-content: flex-end;
+    }
+
+    .speak-btn {
+      color: var(--sahara-light-muted);
+      font-size: 0.78rem;
+      transition: color 0.2s;
+    }
+
+    .speak-btn:hover {
+      color: var(--sahara-text);
+    }
+
+    /* ─── Action Cards (Rendered inside Assistant Response) ─── */
+    .intent-action-card {
+      background: #ffffff;
+      border-radius: var(--sahara-radius-md);
+      border: 1px solid var(--sahara-border);
+      padding: 18px;
+      margin-top: 10px;
+      box-shadow: var(--sahara-shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-left: 4px solid var(--sahara-blue);
+    }
+
+    .intent-action-card.emergency {
+      border-left-color: var(--sahara-red);
+      background: #fffafa;
+    }
+
+    .action-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .action-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--sahara-radius-pill);
+      background: var(--sahara-blue-soft);
+      color: var(--sahara-blue-hover);
+    }
+
+    .intent-action-card.emergency .action-badge {
+      background: var(--sahara-red-soft);
+      color: var(--sahara-red);
+    }
+
+    .action-card-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--sahara-text);
+    }
+
+    .action-card-desc {
+      font-size: 0.82rem;
+      color: var(--sahara-muted);
+      line-height: 1.45;
+    }
+
+    .action-card-btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .action-route-btn {
+      padding: 9px 18px;
+      border-radius: var(--sahara-radius-pill);
+      background: var(--sahara-text);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.82rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .action-route-btn:hover {
+      background: #18191c;
+      transform: translateY(-1px);
+    }
+
+    .action-route-btn.emergency {
+      background: var(--sahara-red);
+      box-shadow: 0 4px 14px rgba(230, 57, 70, 0.35);
+    }
+
+    .action-route-btn.emergency:hover {
+      background: var(--sahara-red-hover);
+    }
+
+    .action-route-btn.secondary {
+      background: #f1f5f9;
+      color: var(--sahara-text);
+      border: 1px solid #e2e8f0;
+    }
+
+    .action-route-btn.secondary:hover {
+      background: #e2e8f0;
+    }
+
+    /* ─── Typing / Analyzing Indicator ─── */
+    .typing-indicator {
+      display: none;
+      align-self: flex-start;
+      background: #fbf9f6;
+      border: 1px solid rgba(105, 93, 82, 0.15);
+      border-radius: var(--sahara-radius-pill);
+      padding: 8px 18px;
+      font-size: 0.8rem;
+      color: var(--sahara-muted);
+      align-items: center;
+      gap: 8px;
+    }
+
+    .typing-indicator.active {
+      display: flex;
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--sahara-light-muted);
+      animation: typingBounce 1.2s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-5px); }
+    }
+
+    /* ─── Bottom Chat Input Area ─── */
+    .chat-input-wrapper {
+      padding: 16px 24px;
+      background: var(--sahara-card);
+      border-top: 1px solid var(--sahara-border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .chat-mic-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .chat-mic-btn:hover {
+      background: #e2e8f0;
+      color: var(--sahara-text);
+    }
+
+    .chat-mic-btn.listening {
+      background: #fee2e2;
+      border-color: #fecaca;
+      color: var(--sahara-red);
+      animation: pulseMic 1.2s infinite;
+    }
+
+    @keyframes pulseMic {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.4); }
+      50% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(230, 57, 70, 0); }
+    }
+
+    .chat-input-box {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--sahara-radius-pill);
+      padding: 6px 18px;
+      transition: all 0.2s ease;
+    }
+
+    .chat-input-box:focus-within {
+      border-color: var(--sahara-text);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(42, 44, 48, 0.06);
+    }
+
+    .chat-input-box input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 0.92rem;
+      color: var(--sahara-text);
+      padding: 8px 4px;
+    }
+
+    .input-clear-btn {
+      color: var(--sahara-light-muted);
+      font-size: 0.9rem;
+      padding: 4px;
+      display: none;
+    }
+
+    .input-clear-btn:hover {
+      color: var(--sahara-text);
+    }
+
+    .chat-send-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--sahara-text);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(42, 44, 48, 0.2);
+    }
+
+    .chat-send-btn:hover:not(:disabled) {
+      background: #18191c;
+      transform: translateY(-1px);
+    }
+
+    .chat-send-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* ─── New Chat Modal ─── */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(30, 34, 42, 0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      padding: 20px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+      animation: modalFadeIn 0.2s ease;
+    }
+
+    .modal-dialog {
+      background: #ffffff;
+      border-radius: var(--sahara-radius-lg);
+      padding: 28px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--sahara-border);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-dialog h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--sahara-text);
+    }
+
+    .modal-dialog p {
+      font-size: 0.88rem;
+      color: var(--sahara-muted);
+      line-height: 1.5;
+    }
+
+    .modal-btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 11px;
+      border-radius: var(--sahara-radius-pill);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .modal-btn.cancel {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .modal-btn.confirm {
+      background: var(--sahara-text);
+      color: #ffffff;
+    }
+
+    /* ─── Floating Toast Notification ─── */
+    .mma-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translate(-50%, 40px);
+      background: #1e293b;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: var(--sahara-radius-pill);
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 3000;
+    }
+
+    .mma-toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+      pointer-events: auto;
+    }
+
+    /* ==========================================================================
+       RESPONSIVE DESIGN
+       ========================================================================== */
+    @media (max-width: 960px) {
+      .chatbot-app-container {
+        grid-template-columns: 1fr;
+        padding: 12px 16px;
+      }
+      .chat-sidebar {
+        display: none;
+      }
+      .chat-sidebar.mobile-open {
+        display: flex;
+        position: fixed;
+        inset: 60px 16px 16px;
+        z-index: 1500;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      }
+      .quick-actions-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .top-navbar-card {
+        padding: 10px 16px;
+      }
+      .nav-pill-links {
+        display: none;
+      }
+      .assistant-status-bar {
+        padding: 8px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .chat-messages-viewport {
+        padding: 16px;
+      }
+      .message-row {
+        max-width: 96%;
+      }
+      .quick-actions-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar Matching sos-emergency.html & mma.html -->
+  <header class="top-navbar-card">
+    <a href="index.html" class="brand-box" aria-label="SAHARA Home">
+      <div class="brand-letters">
+        <span class="red">S</span>
+        <span class="red">A</span>
+        <span class="red">H</span>
+        <span class="red">A</span>
+        <span class="red">R</span>
+        <span class="red">A</span>
+      </div>
+      <img src="images/logo2-w.webp" alt="SAHARA Logo" style="width: 44px; height: auto;" />
+    </a>
+
+    <ul class="nav-pill-links">
+      <li><a href="index.html" class="nav-pill-btn"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="map.html" class="nav-pill-btn"><i class="fa-solid fa-map-location-dot"></i> SafeMap</a></li>
+      <li><a href="wearable.html" class="nav-pill-btn"><i class="fa-solid fa-clock"></i> Wearable</a></li>
+      <li><a href="mma.html" class="nav-pill-btn"><i class="fa-solid fa-hand-fist"></i> MMA & Workshops</a></li>
+      <li><a href="chatbot.html" class="nav-pill-btn active"><i class="fa-solid fa-sparkles"></i> Safety Assistant</a></li>
+      <li><a href="volunteer-portal.html" target="_blank" class="nav-pill-btn primary-vol"><i class="fa-solid fa-users"></i> Volunteer Portal</a></li>
+      <li><a href="profile.html" class="nav-pill-btn"><i class="fa-solid fa-user"></i> Profile</a></li>
+      <li><a href="sos-emergency.html" class="nav-pill-btn danger-sos"><i class="fa-solid fa-triangle-exclamation"></i> SOS</a></li>
+    </ul>
+  </header>
+
+  <!-- Readiness & Language Bar -->
+  <div class="assistant-status-bar">
+    <div class="status-left">
+      <span class="pulse-beacon"></span>
+      <span id="statusBarText">SAHARA SAFETY ASSISTANT · Deterministic Multilingual Intent Concierge</span>
+    </div>
+
+    <div class="status-controls">
+      <div class="lang-select-wrapper">
+        <i class="fa-solid fa-globe" style="color: var(--sahara-rose);"></i>
+        <select id="languageSelect" aria-label="Select Language">
+          <option value="en">English</option>
+          <option value="hi">हिन्दी (Hindi)</option>
+          <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+          <option value="mr">मराठी (Marathi)</option>
+        </select>
+      </div>
+
+      <button class="voice-toggle-btn" id="voiceToggleBtn" title="Toggle voice narration">
+        <i class="fa-solid fa-volume-high"></i> <span id="voiceToggleText">Voice OFF</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Chatbot Application Layout -->
+  <main class="chatbot-app-container">
+    
+    <!-- Left Sidebar: Recent History & System Details -->
+    <aside class="chat-sidebar" id="chatSidebar">
+      <button class="new-chat-btn" id="newChatBtn">
+        <i class="fa-solid fa-plus"></i> <span id="newChatBtnText">New Conversation</span>
+      </button>
+
+      <div class="sidebar-section-title" id="recentChatsTitle">RECENT CONVERSATIONS</div>
+      <div class="history-list" id="historyList">
+        <!-- Injected via JS -->
+      </div>
+
+      <div class="sidebar-system-badge">
+        <strong><i class="fa-solid fa-shield-halved" style="color: var(--sahara-green);"></i> Local Intent Engine</strong>
+        <span>100% Client-Side • Zero External APIs • Instant Multilingual Routing</span>
+      </div>
+    </aside>
+
+    <!-- Main Chat Window -->
+    <section class="chat-main-card">
+      <div class="chat-messages-viewport" id="chatViewport">
+        <!-- Welcome Screen & Quick Action Chips -->
+        <div class="chat-welcome-card" id="welcomeCard">
+          <div class="welcome-header">
+            <div class="sahara-avatar-large">
+              <i class="fa-solid fa-shield-heart"></i>
+            </div>
+            <div class="welcome-title-box">
+              <h2 id="welcomeGreeting">Hi, I'm SAHARA.</h2>
+              <p id="welcomeSubtitle">Tell me what you need, and I'll take you directly to the right safety tool.</p>
+            </div>
+          </div>
+
+          <div class="quick-actions-title" id="quickActionsTitle">WHAT CAN I HELP WITH?</div>
+          
+          <div class="quick-actions-grid" id="quickActionsGrid">
+            <button class="quick-chip sos" data-intent="EMERGENCY_SOS">
+              <i class="fa-solid fa-triangle-exclamation"></i> <span class="chip-label">Activate SOS</span>
+            </button>
+            <button class="quick-chip" data-intent="SAFE_MAP">
+              <i class="fa-solid fa-map-location-dot" style="color: var(--sahara-blue);"></i> <span class="chip-label">Find Safe Route</span>
+            </button>
+            <button class="quick-chip" data-intent="SAFE_JOURNEY">
+              <i class="fa-solid fa-route" style="color: #0284c7;"></i> <span class="chip-label">Start SafeJourney</span>
+            </button>
+            <button class="quick-chip" data-intent="COMMUNITY">
+              <i class="fa-solid fa-bullhorn" style="color: var(--sahara-amber);"></i> <span class="chip-label">Report Incident</span>
+            </button>
+            <button class="quick-chip" data-intent="CYBER_SAFETY">
+              <i class="fa-solid fa-lock" style="color: #9333ea;"></i> <span class="chip-label">Cyber Safety</span>
+            </button>
+            <button class="quick-chip" data-intent="WEARABLE">
+              <i class="fa-solid fa-clock" style="color: var(--sahara-green);"></i> <span class="chip-label">Wearable Lab</span>
+            </button>
+            <button class="quick-chip" data-intent="EVIDENCE_VAULT">
+              <i class="fa-solid fa-vault" style="color: #c026d3;"></i> <span class="chip-label">Evidence Vault</span>
+            </button>
+            <button class="quick-chip" data-intent="MMA_WORKSHOPS">
+              <i class="fa-solid fa-hand-fist" style="color: var(--sahara-rose);"></i> <span class="chip-label">MMA & Workshops</span>
+            </button>
+          </div>
+
+          <div class="quick-actions-title" id="suggestedPromptsTitle" style="margin-top: 6px;">SUGGESTED PROMPTS</div>
+          <div class="suggested-prompts-row" id="suggestedPromptsRow">
+            <span class="prompt-bubble" data-prompt="Mujhe safest raasta batao">“Mujhe safest raasta batao”</span>
+            <span class="prompt-bubble" data-prompt="Mujhe bachao, emergency hai">“Mujhe bachao”</span>
+            <span class="prompt-bubble" data-prompt="Online harassment ho raha hai">“Online harassment ho raha hai”</span>
+            <span class="prompt-bubble" data-prompt="Self defence seekhna hai">“Self defence seekhna hai”</span>
+            <span class="prompt-bubble" data-prompt="Ghar safely jaana hai">“Ghar safely jaana hai”</span>
+          </div>
+        </div>
+
+        <!-- Chat Messages Injected Here -->
+        <div id="messagesContainer" style="display: flex; flex-direction: column; gap: 18px;"></div>
+
+        <!-- Typing Indicator -->
+        <div class="typing-indicator" id="typingIndicator">
+          <div class="typing-dots">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+          <span id="typingIndicatorText">SAHARA is checking safety tools…</span>
+        </div>
+      </div>
+
+      <!-- Bottom Chat Input Bar -->
+      <div class="chat-input-wrapper">
+        <button class="chat-mic-btn" id="micBtn" title="Click to speak in selected language" aria-label="Voice input">
+          <i class="fa-solid fa-microphone"></i>
+        </button>
+
+        <div class="chat-input-box">
+          <input type="text" id="chatInput" placeholder="Ask SAHARA anything… (e.g., 'Safest route dikhao', 'Emergency help')" autocomplete="off" />
+          <button class="input-clear-btn" id="inputClearBtn" title="Clear text"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <button class="chat-send-btn" id="sendBtn" title="Send message" disabled>
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- New Chat Confirmation Modal -->
+  <div class="modal-backdrop" id="newChatModal" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+      <i class="fa-solid fa-rotate-left" style="font-size: 2.2rem; color: var(--sahara-rose);"></i>
+      <h3 id="newChatModalTitle">Start New Conversation?</h3>
+      <p id="newChatModalDesc">This will archive your active session and reset the assistant view.</p>
+      <div class="modal-btn-row">
+        <button class="modal-btn cancel" id="cancelNewChatBtn">Cancel</button>
+        <button class="modal-btn confirm" id="confirmNewChatBtn">Start New Chat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="mma-toast" id="saharaToast">
+    <i class="fa-solid fa-circle-check" style="color: #4ade80;"></i>
+    <span id="toastMessage">Action recorded</span>
+  </div>
+
+  <!-- ==========================================================================
+       CENTRALIZED DETERMINISTIC MULTILINGUAL INTENT ROUTING ENGINE
+       ========================================================================== -->
+  <script>
+    /**
+     * SAHARA LOCAL INTENT-ROUTING ENGINE
+     * 100% Client-Side • Zero External APIs • Multilingual • Deterministic
+     */
+    const SAHARA_ACTION_REGISTRY = {
+      ACTIVATE_SOS: {
+        id: "ACTIVATE_SOS",
+        label: "ACTIVATE EMERGENCY SOS",
+        route: "sos-emergency.html",
+        badge: "IMMEDIATE ASSISTANCE",
+        isEmergency: true,
+        icon: "fa-solid fa-triangle-exclamation",
+        desc: "Connect directly to live emergency dispatch, nearby responders & siren triggers."
+      },
+      OPEN_SAFE_MAP: {
+        id: "OPEN_SAFE_MAP",
+        label: "OPEN SAFEMAP",
+        route: "map.html",
+        badge: "SAFETY NAVIGATION",
+        icon: "fa-solid fa-map-location-dot",
+        desc: "Explore safety-aware routes, lit streets, verified safe zones & hazard markers."
+      },
+      OPEN_SAFE_JOURNEY: {
+        id: "OPEN_SAFE_JOURNEY",
+        label: "START SAFEJOURNEY",
+        route: "ambtracker.html",
+        badge: "LIVE TRIP MONITORING",
+        icon: "fa-solid fa-route",
+        desc: "Share your live trip progress, set check-in alarms, and monitor travel telemetry."
+      },
+      OPEN_COMMUNITY: {
+        id: "OPEN_COMMUNITY",
+        label: "OPEN COMMUNITY REPORTS",
+        route: "Feedback.html",
+        badge: "COMMUNITY INTELLIGENCE",
+        icon: "fa-solid fa-bullhorn",
+        desc: "Report broken streetlights, suspicious incidents, or dark transit hubs."
+      },
+      OPEN_CYBER_SAFETY: {
+        id: "OPEN_CYBER_SAFETY",
+        label: "OPEN CYBER SAFETY",
+        route: "privacy.html",
+        badge: "DIGITAL PRIVACY",
+        icon: "fa-solid fa-lock",
+        desc: "Assess online harassment, stalkerware, phishing alerts, and digital shielding."
+      },
+      OPEN_WEARABLE: {
+        id: "OPEN_WEARABLE",
+        label: "OPEN WEARABLE LAB",
+        route: "wearable.html",
+        badge: "BIOMETRIC INTELLIGENCE",
+        icon: "fa-solid fa-clock",
+        desc: "Simulate smart wearable sensors, heart rate spikes, and fall detection triggers."
+      },
+      OPEN_EVIDENCE_VAULT: {
+        id: "OPEN_EVIDENCE_VAULT",
+        label: "OPEN EVIDENCE VAULT",
+        route: "manage.html",
+        badge: "SECURE PROOF VAULT",
+        icon: "fa-solid fa-vault",
+        desc: "Store encrypted screenshots, recordings, and incident logs securely."
+      },
+      OPEN_MMA_WORKSHOPS: {
+        id: "OPEN_MMA_WORKSHOPS",
+        label: "OPEN MMA & WORKSHOPS",
+        route: "mma.html",
+        badge: "PRACTICAL SELF-DEFENSE",
+        icon: "fa-solid fa-hand-fist",
+        desc: "Attend structured women's self-defense workshops and practical safety masterclasses."
+      },
+      OPEN_DAILY_MMA: {
+        id: "OPEN_DAILY_MMA",
+        label: "START TODAY'S PRACTICE",
+        route: "mma.html",
+        badge: "DAILY MICRO-HABIT",
+        icon: "fa-solid fa-bolt",
+        desc: "Complete your 10-minute mental and situational awareness micro-exercise."
+      },
+      OPEN_PROFILE: {
+        id: "OPEN_PROFILE",
+        label: "OPEN PROFILE SETTINGS",
+        route: "profile.html",
+        badge: "ACCOUNT & CONTACTS",
+        icon: "fa-solid fa-user",
+        desc: "Manage trusted guardian contacts, medical ID, and emergency SOS preferences."
+      },
+      OPEN_VOLUNTEER: {
+        id: "OPEN_VOLUNTEER",
+        label: "OPEN VOLUNTEER PORTAL",
+        route: "volunteer-portal.html",
+        badge: "COMMUNITY DEFENDER",
+        icon: "fa-solid fa-users",
+        desc: "Sign up or manage responder dashboard to assist women in your local neighborhood."
+      },
+      OPEN_HOME: {
+        id: "OPEN_HOME",
+        label: "GO TO HOMEPAGE",
+        route: "index.html",
+        badge: "SAHARA DASHBOARD",
+        icon: "fa-solid fa-house",
+        desc: "Return to the main SAHARA central hub."
+      }
+    };
+
+    /**
+     * CENTRALIZED MULTILINGUAL INTENT REGISTRY
+     */
+    const SAHARA_INTENTS = {
+      EMERGENCY_SOS: {
+        id: "EMERGENCY_SOS",
+        priority: 100,
+        primaryAction: "ACTIVATE_SOS",
+        exactPhrases: [
+          "help me", "save me", "i need help", "i am in danger", "im in danger", "i'm in danger",
+          "someone is following me", "someone is stalking me", "someone is threatening me",
+          "call for help", "send help", "activate sos", "start sos", "trigger sos", "i need rescue",
+          "emergency", "urgent help", "danger",
+          // Hindi / Hinglish
+          "mujhe bachao", "bachao", "bachaoo", "mujhe help chahiye", "mujhe madad chahiye", "madad karo",
+          "emergency hai", "main unsafe hoon", "main khatre mein hoon", "khatra hai",
+          "koi mera peecha kar raha hai", "koi peecha kar raha hai", "koi mujhe threaten kar raha hai",
+          "sos chalao", "emergency activate karo", "mujhe rescue chahiye", "madad chahiye",
+          // Hindi Devanagari
+          "मुझे बचाओ", "मुझे मदद चाहिए", "मैं खतरे में हूँ", "कोई मेरा पीछा कर रहा है", "मुझे तुरंत मदद चाहिए",
+          "इमरजेंसी", "खतरा है", "मदद करो",
+          // Punjabi
+          "ਮੈਨੂੰ ਬਚਾਓ", "ਮੈਨੂੰ ਮਦਦ ਚਾਹੀਦੀ ਹੈ", "ਮੈਂ ਖਤਰੇ ਵਿੱਚ ਹਾਂ", "ਕੋਈ ਮੇਰਾ ਪਿੱਛਾ ਕਰ ਰਿਹਾ ਹੈ", "ਮੈਨੂੰ ਤੁਰੰਤ ਮਦਦ ਚਾਹੀਦੀ ਹੈ",
+          "ਬਚਾਓ", "ਮਦਦ ਕਰੋ",
+          // Marathi
+          "मला वाचवा", "मला मदत हवी आहे", "मी धोक्यात आहे", "कोणी माझा पाठलाग करत आहे", "मला तात्काळ मदत हवी आहे",
+          "वाचवा", "मदत करा"
+        ],
+        keywords: [
+          "sos", "emergency", "danger", "khatra", "bachao", "madad", "following", "stalker",
+          "peecha", "threat", "rescue", "attack", "unsafe", "threaten", "threatening", "distress",
+          "ਬਚਾਓ", "ਮਦਦ", "ਖਤਰਾ", "ਪਿੱਛਾ", "वाचवा", "मदत", "धोका", "पाठलाग", "खतरे"
+        ]
+      },
+
+      SAFE_MAP: {
+        id: "SAFE_MAP",
+        priority: 70,
+        primaryAction: "OPEN_SAFE_MAP",
+        exactPhrases: [
+          "show me the safest route", "find safe route", "safest route", "safe route", "safe map",
+          "which route is safer", "is this area safe", "nearby safe places", "show safe areas",
+          // Hinglish
+          "mujhe safest raasta batao", "safest route dikhao", "safe rasta chahiye", "safe raasta chahiye",
+          "kaunsa raasta safe hai", "map kholo", "safemap kholo", "mere aas paas safe jagah",
+          "is area mein safety kaisi hai", "safety score dikhao", "sabse safe rasta", "safest rasta",
+          // Hindi
+          "मुझे सबसे सुरक्षित रास्ता बताओ", "सुरक्षित रास्ता दिखाओ", "यह इलाका कितना सुरक्षित है", "सेफ मैप खोलो",
+          // Punjabi
+          "ਮੈਨੂੰ ਸਭ ਤੋਂ ਸੁਰੱਖਿਅਤ ਰਸਤਾ ਦੱਸੋ", "ਸੁਰੱਖਿਅਤ ਰਸਤਾ ਦਿਖਾਓ", "ਇਹ ਇਲਾਕਾ ਕਿੰਨਾ ਸੁਰੱਖਿਅਤ ਹੈ", "ਸੇਫ ਮੈਪ",
+          // Marathi
+          "मला सर्वात सुरक्षित मार्ग दाखवा", "सुरक्षित रस्ता दाखवा", "हा परिसर किती सुरक्षित आहे", "सेफ मॅप"
+        ],
+        keywords: [
+          "map", "route", "safemap", "raasta", "rasta", "road", "area", "navigation", "direction",
+          "surakshit", "score", "lights", "सुरक्षित", "रास्ता", "मार्ग", "ਰਸਤਾ", "ਨਕਸ਼ਾ", "रस्ता"
+        ]
+      },
+
+      SAFE_JOURNEY: {
+        id: "SAFE_JOURNEY",
+        priority: 70,
+        primaryAction: "OPEN_SAFE_JOURNEY",
+        exactPhrases: [
+          "i want to go home safely", "track my journey", "start safe journey", "journey tracking",
+          "travel safety", "track my route", "i am travelling", "start journey", "monitor my trip",
+          // Hinglish
+          "mujhe ghar jaana hai", "ghar safely jaana hai", "safe journey start karo", "journey start karni hai",
+          "trip start karo", "journey kholo", "meri journey monitor karo", "ghar tak safely jaana hai",
+          "raat ko ghar jaana hai", "safely ghar pahunchao",
+          // Hindi
+          "मुझे घर जाना है", "सुरक्षित यात्रा शुरू करो", "मेरी यात्रा ट्रैक करो", "घर सुरक्षित जाना है",
+          // Punjabi
+          "ਮੈਨੂੰ ਘਰ ਸੁਰੱਖਿਅਤ ਜਾਣਾ ਹੈ", "ਸੇਫ ਜਰਨੀ ਸ਼ੁਰੂ ਕਰੋ", "ਮੇਰੀ ਯਾਤਰਾ ਟਰੈਕ ਕਰੋ", "ਘਰ ਜਾਣਾ ਹੈ",
+          // Marathi
+          "मला घरी सुरक्षित जायचे आहे", "सुरक्षित प्रवास सुरू करा", "माझा प्रवास ट्रॅक करा", "घरी जायचे आहे"
+        ],
+        keywords: [
+          "journey", "trip", "travel", "travelling", "ghar", "home", "destination", "tracking", "track",
+          "monitor", "commute", "यात्रा", "प्रवास", "ਜਰਨੀ", "ਟਰੈਕ", "घर", "ਘਰ", "घरी"
+        ]
+      },
+
+      COMMUNITY: {
+        id: "COMMUNITY",
+        priority: 60,
+        primaryAction: "OPEN_COMMUNITY",
+        exactPhrases: [
+          "report an incident", "something suspicious happened", "community alerts", "broken streetlight",
+          "cctv missing", "report safety hazard", "unsafe area report",
+          // Hinglish
+          "incident report karna hai", "report karni hai", "kuch suspicious dekha", "suspicious activity report",
+          "community kholo", "community reports", "nearby incidents", "road light kharab hai",
+          "streetlight broken hai", "cctv nahi hai", "community alert",
+          // Hindi
+          "घटना की रिपोर्ट करनी है", "कुछ संदिग्ध देखा", "स्ट्रीट लाइट खराब है", "सीसीटीवी नहीं है",
+          // Punjabi
+          "ਘਟਨਾ ਦੀ ਰਿਪੋਰਟ ਕਰਨੀ ਹੈ", "ਕੁਝ ਸ਼ੱਕੀ ਦੇਖਿਆ", "ਸਟ੍ਰੀਟ ਲਾਈਟ ਖਰਾਬ ਹੈ",
+          // Marathi
+          "घटनेची तक्रार करायची आहे", "काहीतरी संशयास्पद पाहिले", "स्ट्रीट लाईट खराब आहे"
+        ],
+        keywords: [
+          "community", "report", "incident", "suspicious", "hazard", "streetlight", "light", "cctv",
+          "complaint", "alert", "kharaab", "तक्रार", "ਰਿਪੋਰਟ", "रिपोर्ट", "ਸੰਦਿਗਧ", "संदिग्ध"
+        ]
+      },
+
+      CYBER_SAFETY: {
+        id: "CYBER_SAFETY",
+        priority: 65,
+        primaryAction: "OPEN_CYBER_SAFETY",
+        exactPhrases: [
+          "someone is harassing me online", "online harassment", "cyber stalking", "someone is stalking me online",
+          "phishing message", "scam message", "fake account", "someone impersonated me", "online blackmail",
+          "cyber complaint", "threatening messages", "instagram harassment", "cyber safety",
+          // Hinglish
+          "online harassment ho raha hai", "koi mujhe online threaten kar raha hai", "phishing message aaya",
+          "scam message aaya", "fake account banaya", "online blackmail ho raha hai", "cyber safety kholo",
+          "digital safety", "online fraud", "threatening messages aa rahe hain",
+          // Hindi
+          "ऑनलाइन कोई मुझे परेशान कर रहा है", "मुझे ऑनलाइन धमकी मिल रही है", "फर्जी अकाउंट है", "ऑनलाइन धोखा हुआ है",
+          // Punjabi
+          "ਆਨਲਾਈਨ ਕੋਈ ਮੈਨੂੰ ਪਰੇਸ਼ਾਨ ਕਰ ਰਿਹਾ ਹੈ", "ਮੈਨੂੰ ਆਨਲਾਈਨ ਧਮਕੀ ਮਿਲ ਰਹੀ ਹੈ", "ਫਰਜ਼ੀ ਅਕਾਊਂਟ ਹੈ",
+          // Marathi
+          "ऑनलाइन कोणी मला त्रास देत आहे", "मला ऑनलाइन धमकी मिळत आहे", "फेक अकाउंट आहे"
+        ],
+        keywords: [
+          "cyber", "online", "harassment", "stalking", "phishing", "scam", "fraud", "blackmail",
+          "impersonation", "fake", "hacked", "instagram", "whatsapp", "threat", "धमकी", "ਧਮਕੀ", "परेशान", "त्रास"
+        ]
+      },
+
+      WEARABLE: {
+        id: "WEARABLE",
+        priority: 60,
+        primaryAction: "OPEN_WEARABLE",
+        exactPhrases: [
+          "check wearable", "open wearable", "wearable simulation", "heart rate check", "fall simulation",
+          "wearable status", "smart watch", "sensor telemetry",
+          // Hinglish
+          "wearable kholo", "watch check karo", "mera wearable", "wearable status", "stress simulation",
+          "watch simulation", "wearable lab", "sensor status",
+          // Hindi
+          "वियरेबल खोलो", "वॉच चेक करो", "वियरेबल की स्थिति बताओ",
+          // Punjabi
+          "ਵੇਅਰੇਬਲ ਖੋਲ੍ਹੋ", "ਵਾਚ ਚੈੱਕ ਕਰੋ", "ਸੈਂਸਰ ਸਟੇਟਸ ਦਿਖਾਓ",
+          // Marathi
+          "वेअरेबल उघडा", "वॉच तपासा", "सेन्सर स्टेटस दाखवा"
+        ],
+        keywords: [
+          "wearable", "watch", "sensor", "heartrate", "heart", "pulse", "stress", "fall", "telemetry",
+          "smartwatch", "वॉच", "ਵੇਅਰੇਬਲ", "वेअरेबल", "घड़ी"
+        ]
+      },
+
+      EVIDENCE_VAULT: {
+        id: "EVIDENCE_VAULT",
+        priority: 65,
+        primaryAction: "OPEN_EVIDENCE_VAULT",
+        exactPhrases: [
+          "save evidence", "save screenshot", "open evidence vault", "my evidence files", "evidence store",
+          "document save", "cyber evidence", "save proof",
+          // Hinglish
+          "evidence save karna hai", "screenshot save karna hai", "evidence vault kholo", "meri evidence files",
+          "proof save karo", "mere screenshots kaha hain", "evidence kholo", "saboot save karna hai",
+          // Hindi
+          "सबूत सेव करना है", "स्क्रीनशॉट सेव करना है", "एविडेंस वॉल्ट खोलो",
+          // Punjabi
+          "ਸਬੂਤ ਸੇਵ ਕਰਨਾ ਹੈ", "ਸਕ੍ਰੀਨਸ਼ਾਟ ਸੇਵ ਕਰਨਾ ਹੈ", "ਐਵੀਡੈਂਸ ਵੌਲਟ ਖੋਲ੍ਹੋ",
+          // Marathi
+          "पुरावा सेव करायचा आहे", "स्क्रीनशॉट सेव करायचा आहे", "एव्हिडन्स वॉल्ट उघडा"
+        ],
+        keywords: [
+          "evidence", "vault", "proof", "screenshot", "screenshots", "file", "record", "saboot",
+          "purava", "सबूत", "ਸਬੂਤ", "पुरावा", "दस्तावेज"
+        ]
+      },
+
+      MMA_WORKSHOPS: {
+        id: "MMA_WORKSHOPS",
+        priority: 65,
+        primaryAction: "OPEN_MMA_WORKSHOPS",
+        exactPhrases: [
+          "i want to learn self defense", "self defense classes", "open mma", "show workshops",
+          "safety workshop", "self defense training", "workshop schedule", "upcoming workshops",
+          // Hinglish
+          "self defence seekhna hai", "self defense seekhna hai", "mma kholo", "workshop dikhao",
+          "self protection seekhni hai", "mujhe self defense seekhna hai", "training chahiye", "safety training",
+          // Hindi
+          "मुझे सेल्फ डिफेंस सीखना है", "वर्कशॉप दिखाओ", "सेल्फ डिफेंस क्लास चाहिए", "आत्मरक्षा",
+          // Punjabi
+          "ਮੈਨੂੰ ਸੈਲਫ ਡਿਫੈਂਸ ਸਿੱਖਣੀ ਹੈ", "ਵਰਕਸ਼ਾਪ ਦਿਖਾਓ", "ਸੈਲਫ ਡਿਫੈਂਸ",
+          // Marathi
+          "मला सेल्फ डिफेन्स शिकायचे आहे", "वर्कशॉप दाखवा", "स्वसंरक्षण शिकायचे आहे"
+        ],
+        keywords: [
+          "mma", "defense", "defence", "workshop", "workshops", "training", "learn", "selfdefense",
+          "selfdefence", "breakaway", "martial", "स्वसंरक्षण", "आत्मरक्षा", "ਸੈਲਫ", "ਡਿਫੈਂਸ"
+        ]
+      },
+
+      DAILY_MMA: {
+        id: "DAILY_MMA",
+        priority: 65,
+        primaryAction: "OPEN_DAILY_MMA",
+        exactPhrases: [
+          "today's safety task", "daily mma", "today's practice", "today's exercise", "daily safety tip",
+          "daily challenge", "daily learning", "daily habit",
+          // Hinglish
+          "aaj ka safety task", "daily mma kholo", "aaj kya practice karna hai", "daily practice",
+          "practice start karo", "aaj ka session", "daily tip",
+          // Hindi
+          "आज का सुरक्षा अभ्यास", "आज का सेफ्टी टास्क", "आज क्या प्रैक्टिस करनी है",
+          // Punjabi
+          "ਅੱਜ ਦਾ ਸੇਫਟੀ ਟਾਸਕ", "ਅੱਜ ਕੀ ਪ੍ਰੈਕਟਿਸ ਕਰਨੀ ਹੈ",
+          // Marathi
+          "आजचा सुरक्षा सराव", "आज काय सराव करायचा आहे"
+        ],
+        keywords: [
+          "daily", "today", "practice", "streak", "micro", "exercise", "task", "habit", "aaj", "आज", "ਅੱਜ", "आजचा"
+        ]
+      },
+
+      PROFILE: {
+        id: "PROFILE",
+        priority: 55,
+        primaryAction: "OPEN_PROFILE",
+        exactPhrases: [
+          "open profile", "my account", "emergency contacts", "trusted contacts", "profile settings",
+          "account settings", "my details",
+          // Hinglish
+          "mera profile kholo", "profile dikhao", "account kholo", "trusted contacts dikhao", "meri details",
+          // Hindi
+          "मेरा प्रोफाइल खोलो", "मेरी सेटिंग्स", "मेरे ट्रस्टेड कॉन्टैक्ट्स",
+          // Punjabi
+          "ਮੇਰਾ ਪ੍ਰੋਫਾਈਲ ਖੋਲ੍ਹੋ", "ਮੇਰੀਆਂ ਸੈਟਿੰਗਾਂ", "ਮੇਰੇ ਟਰੱਸਟਡ ਕਾਂਟੈਕਟਸ",
+          // Marathi
+          "माझे प्रोफाइल उघडा", "माझ्या सेटिंग्ज", "माझे ट्रस्टेड कॉन्टॅक्ट्स"
+        ],
+        keywords: [
+          "profile", "account", "settings", "contact", "contacts", "guardian", "trusted", "details",
+          "प्रोफाइल", "ਪ੍ਰੋਫਾਈਲ"
+        ]
+      },
+
+      VOLUNTEER: {
+        id: "VOLUNTEER",
+        priority: 55,
+        primaryAction: "OPEN_VOLUNTEER",
+        exactPhrases: [
+          "become a volunteer", "volunteer portal", "volunteer dashboard", "register as volunteer",
+          // Hinglish
+          "volunteer banna hai", "volunteer dashboard", "volunteer registration", "main volunteer hoon",
+          "volunteer ke liye apply",
+          // Hindi
+          "मुझे वॉलंटियर बनना है", "वॉलंटियर रजिस्ट्रेशन", "वॉलंटियर के लिए आवेदन करना है",
+          // Punjabi
+          "ਮੈਨੂੰ ਵਲੰਟੀਅਰ ਬਣਨਾ ਹੈ", "ਵਲੰਟੀਅਰ ਰਜਿਸਟ੍ਰੇਸ਼ਨ",
+          // Marathi
+          "मला स्वयंसेवक व्हायचे आहे", "स्वयंसेवक नोंदणी"
+        ],
+        keywords: [
+          "volunteer", "responder", "volunteering", "registration", "community-help", "स्वयंसेवक", "ਵਲੰਟੀਅਰ"
+        ]
+      },
+
+      HOME: {
+        id: "HOME",
+        priority: 40,
+        primaryAction: "OPEN_HOME",
+        exactPhrases: [
+          "go home", "main page", "dashboard", "homepage", "sahara home",
+          "home kholo", "main page kholo", "होम खोलो", "ਹੋਮ ਖੋਲ੍ਹੋ", "होम उघडा"
+        ],
+        keywords: ["home", "dashboard", "main", "homepage", "होम", "ਹੋਮ"]
+      }
+    };
+
+    /**
+     * LOCALIZED RESPONSES & TRANSLATION STRINGS
+     */
+    const LOCALIZED_STRINGS = {
+      en: {
+        welcomeGreeting: "Hi, I'm SAHARA.",
+        welcomeSubtitle: "Tell me what you need, and I'll take you directly to the right safety tool.",
+        quickActionsTitle: "WHAT CAN I HELP WITH?",
+        suggestedPromptsTitle: "SUGGESTED PROMPTS",
+        statusText: "SAHARA SAFETY ASSISTANT · Deterministic Multilingual Intent Concierge",
+        inputPlaceholder: "Ask SAHARA anything… (e.g., 'Safest route', 'Emergency help')",
+        newChatBtn: "New Conversation",
+        recentChatsTitle: "RECENT CONVERSATIONS",
+        ambiguousHelp: "Is this an immediate emergency?",
+        ambiguousSafe: "What would you like to do regarding safety?",
+        ambiguousReport: "What type of report would you like to make?",
+        emergencyPrompt: "I'm here. If you're in immediate danger, you can activate Emergency SOS now.",
+        safeMapPrompt: "I'll take you to SafeMap, where you can explore safety-aware, lit routes.",
+        safeJourneyPrompt: "I can help you monitor and track your journey safely to your destination.",
+        communityPrompt: "You can report safety hazards, dark spots, or broken infrastructure to the community.",
+        cyberPrompt: "I can help you assess digital threats and shield your online privacy.",
+        wearablePrompt: "Opening SAHARA Wearable lab to check your telemetry and simulated distress signals.",
+        evidencePrompt: "I can help you securely save evidence, logs, and screenshots in your Vault.",
+        mmaPrompt: "Let's build that confidence. SAHARA has practical self-defense and safety workshops.",
+        dailyMmaPrompt: "Opening today's 10-minute situational awareness habit.",
+        profilePrompt: "Here are your SAHARA profile settings and trusted guardian contacts.",
+        volunteerPrompt: "Opening the SAHARA Volunteer Portal for community responders.",
+        homePrompt: "Navigating back to the SAHARA main hub.",
+        unrecognizedPrompt: "I'm not completely sure what you need. Here are some quick safety tools:",
+        voiceListening: "Listening in English…",
+        voiceSupportedError: "Voice input is not supported in this browser.",
+        voiceDeniedError: "Microphone permission was denied."
+      },
+      hi: {
+        welcomeGreeting: "नमस्ते, मैं SAHARA हूँ।",
+        welcomeSubtitle: "बताइए आपको क्या सहायता चाहिए, मैं आपको सही सुरक्षा टूल तक ले चलूंगी।",
+        quickActionsTitle: "मैं क्या मदद कर सकती हूँ?",
+        suggestedPromptsTitle: "सुझाए गए प्रश्न",
+        statusText: "SAHARA सुरक्षा सहायक · स्थानीय बहुभाषी सुरक्षा नेविगेटर",
+        inputPlaceholder: "SAHARA से कुछ भी पूछें… (उदा. 'सुरक्षित रास्ता बताओ', 'मदद चाहिए')",
+        newChatBtn: "नई बातचीत",
+        recentChatsTitle: "हाल की बातचीत",
+        ambiguousHelp: "क्या यह कोई आपातकालीन स्थिति (Emergency) है?",
+        ambiguousSafe: "सुरक्षा के संबंध में आप क्या करना चाहती हैं?",
+        ambiguousReport: "आप किस प्रकार की रिपोर्ट करना चाहती हैं?",
+        emergencyPrompt: "मैं यहाँ हूँ। यदि आप तुरंत खतरे में हैं, तो आप तुरंत Emergency SOS सक्रिय कर सकती हैं।",
+        safeMapPrompt: "मैं आपको SafeMap पर ले चलती हूँ, जहाँ आप सुरक्षित और प्रकाशित रास्ते देख सकती हैं।",
+        safeJourneyPrompt: "मैं आपकी सुरक्षित यात्रा को ट्रैक और मॉनिटर करने में सहायता कर सकती हूँ।",
+        communityPrompt: "आप स्ट्रीट लाइट, डार्क स्पॉट्स या संदिग्ध घटनाओं की रिपोर्ट कम्युनिटी में कर सकती हैं।",
+        cyberPrompt: "मैं ऑनलाइन उत्पीड़न और डिजिटल गोपनीयता की सुरक्षा में आपकी मदद कर सकती हूँ।",
+        wearablePrompt: "SAHARA वियरेबल लैब खोल रही हूँ जहाँ आप सेंसर व संकट सिग्नल देख सकती हैं।",
+        evidencePrompt: "आप अपने साक्ष्य, स्क्रीनशॉट और जरूरी फाइल्स को Evidence Vault में सुरक्षित रख सकती हैं।",
+        mmaPrompt: "आत्मविश्वास बढ़ाइए। SAHARA पर व्यावहारिक सेल्फ-डिफेंस और सुरक्षा वर्कशॉप उपलब्ध हैं।",
+        dailyMmaPrompt: "आज का 10-मिनट का सुरक्षा अभ्यास शुरू कर रही हूँ।",
+        profilePrompt: "यहाँ आपकी प्रोफ़ाइल सेटिंग्स और विश्वसनीय गार्जियन कॉन्टैक्ट्स हैं।",
+        volunteerPrompt: "कम्युनिटी रिस्पॉन्डर्स के लिए SAHARA वॉलंटियर पोर्टल खोल रही हूँ।",
+        homePrompt: "मुख्य SAHARA होमपेज पर ले जा रही हूँ।",
+        unrecognizedPrompt: "मैं पूरी तरह समझ नहीं पाई। क्या आप इनमें से कुछ ढूंढ रही हैं?",
+        voiceListening: "सुन रही हूँ (हिन्दी)…",
+        voiceSupportedError: "इस ब्राउज़र में वॉयस इनपुट समर्थित नहीं है।",
+        voiceDeniedError: "माइक्रोफ़ोन की अनुमति अस्वीकार कर दी गई।"
+      },
+      pa: {
+        welcomeGreeting: "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ, ਮੈਂ SAHARA ਹਾਂ।",
+        welcomeSubtitle: "ਦੱਸੋ ਤੁਹਾਨੂੰ ਕੀ ਮਦਦ ਚਾਹੀਦੀ ਹੈ, ਮੈਂ ਤੁਹਾਨੂੰ ਸਹੀ ਸੁਰੱਖਿਆ ਟੂਲ ਤੇ ਲੈ ਜਾਵਾਂਗੀ।",
+        quickActionsTitle: "ਮੈਂ ਕੀ ਮਦਦ ਕਰ ਸਕਦੀ ਹਾਂ?",
+        suggestedPromptsTitle: "ਸੁਝਾਏ ਗਏ ਸਵਾਲ",
+        statusText: "SAHARA ਸੁਰੱਖਿਆ ਸਹਾਇਕ · ਸਥਾਨਕ ਬਹੁ-ਭਾਸ਼ਾਈ ਸੁਰੱਖਿਆ ਨੇਵੀਗੇਟਰ",
+        inputPlaceholder: "SAHARA ਨੂੰ ਕੁਝ ਵੀ ਪੁੱਛੋ… (ਜਿਵੇਂ 'ਸਭ ਤੋਂ ਸੁਰੱਖਿਅਤ ਰਸਤਾ ਦੱਸੋ')",
+        newChatBtn: "ਨਵੀਂ ਗੱਲਬਾਤ",
+        recentChatsTitle: "ਹਾਲੀਆ ਗੱਲਬਾਤ",
+        ambiguousHelp: "ਕੀ ਇਹ ਕੋਈ ਐਮਰਜੈਂਸੀ ਹੈ?",
+        ambiguousSafe: "ਸੁਰੱਖਿਆ ਬਾਰੇ ਤੁਸੀਂ ਕੀ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
+        ambiguousReport: "ਤੁਸੀਂ ਕਿਸ ਤਰ੍ਹਾਂ ਦੀ ਰਿਪੋਰਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
+        emergencyPrompt: "ਮੈਂ ਇੱਥੇ ਹਾਂ। ਜੇ ਤੁਸੀਂ ਤੁਰੰਤ ਖਤਰੇ ਵਿੱਚ ਹੋ, ਤਾਂ Emergency SOS ਸਰਗਰਮ ਕਰ ਸਕਦੇ ਹੋ।",
+        safeMapPrompt: "ਮੈਂ ਤੁਹਾਨੂੰ SafeMap ਤੇ ਲੈ ਚਲਦੀ ਹਾਂ, ਜਿੱਥੇ ਤੁਸੀਂ ਸੁਰੱਖਿਅਤ ਰਸਤੇ ਦੇਖ ਸਕਦੇ ਹੋ।",
+        safeJourneyPrompt: "ਮੈਂ ਤੁਹਾਡੀ ਸੁਰੱਖਿਅਤ ਯਾਤਰਾ ਨੂੰ ਮਾਨੀਟਰ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰ ਸਕਦੀ ਹਾਂ।",
+        communityPrompt: "ਤੁਸੀਂ ਖਰਾਬ ਸਟ੍ਰੀਟ ਲਾਈਟਾਂ ਜਾਂ ਸ਼ੱਕੀ ਗਤੀਵਿਧੀਆਂ ਦੀ ਰਿਪੋਰਟ ਕਰ ਸਕਦੇ ਹੋ।",
+        cyberPrompt: "ਮੈਂ ਆਨਲਾਈਨ ਪਰੇਸ਼ਾਨੀ ਅਤੇ ਡਿਜੀਟਲ ਸੁਰੱਖਿਆ ਵਿੱਚ ਤੁਹਾਡੀ ਮਦਦ ਕਰ ਸਕਦੀ ਹਾਂ।",
+        wearablePrompt: "SAHARA ਵੇਅਰੇਬਲ ਲੈਬ ਖੋਲ੍ਹ ਰਹੀ ਹਾਂ।",
+        evidencePrompt: "ਤੁਸੀਂ ਆਪਣੇ ਸਬੂਤ ਅਤੇ ਸਕ੍ਰੀਨਸ਼ਾਟ Evidence Vault ਵਿੱਚ ਸੁਰੱਖਿਅਤ ਰੱਖ ਸਕਦੇ ਹੋ।",
+        mmaPrompt: "ਆਤਮਵਿਸ਼ਵਾਸ ਵਧਾਓ। SAHARA ਕੋਲ ਪ੍ਰੈਕਟੀਕਲ ਸੈਲਫ ਡਿਫੈਂਸ ਵਰਕਸ਼ਾਪਾਂ ਹਨ।",
+        dailyMmaPrompt: "ਅੱਜ ਦਾ 10-ਮਿੰਟ ਦਾ ਸੁਰੱਖਿਆ ਅਭਿਆਸ ਸ਼ੁਰੂ ਕਰ ਰਹੀ ਹਾਂ।",
+        profilePrompt: "ਇੱਥੇ ਤੁਹਾਡੀਆਂ ਪ੍ਰੋਫਾਈਲ ਸੈਟਿੰਗਾਂ ਅਤੇ ਟਰੱਸਟਡ ਕਾਂਟੈਕਟਸ ਹਨ।",
+        volunteerPrompt: "ਵਲੰਟੀਅਰ ਪੋਰਟਲ ਖੋਲ੍ਹ ਰਹੀ ਹਾਂ।",
+        homePrompt: "ਮੁੱਖ SAHARA ਪੇਜ ਤੇ ਵਾਪਸ ਜਾ ਰਹੇ ਹਾਂ।",
+        unrecognizedPrompt: "ਮੈਨੂੰ ਪੂਰੀ ਤਰ੍ਹਾਂ ਸਮਝ ਨਹੀਂ ਆਇਆ। ਕੀ ਤੁਸੀਂ ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੁਝ ਚਾਹੁੰਦੇ ਹੋ?",
+        voiceListening: "ਸੁਣ ਰਹੀ ਹਾਂ (ਪੰਜਾਬੀ)…",
+        voiceSupportedError: "ਇਸ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਵੌਇਸ ਇਨਪੁਟ ਸਮਰਥਿਤ ਨਹੀਂ ਹੈ।",
+        voiceDeniedError: "ਮਾਈਕ੍ਰੋਫੋਨ ਦੀ ਇਜਾਜ਼ਤ ਨਹੀਂ ਮਿਲੀ।"
+      },
+      mr: {
+        welcomeGreeting: "नमस्कार, मी SAHARA आहे.",
+        welcomeSubtitle: "तुम्हाला काय मदत हवी आहे ते सांगा, मी तुम्हाला योग्य सुरक्षा टूलवर घेऊन जाईन.",
+        quickActionsTitle: "मी काय मदत करू शकते?",
+        suggestedPromptsTitle: "सुचवलेले प्रश्न",
+        statusText: "SAHARA सुरक्षा सहाय्यक · स्थानिक बहुभाषिक सुरक्षा नेव्हिगेटर",
+        inputPlaceholder: "SAHARA ला काहीही विचारा… (उदा. 'सुरक्षित रस्ता दाखवा', 'मदत हवी आहे')",
+        newChatBtn: "नवीन संभाषण",
+        recentChatsTitle: "अलीकडील संभाषणे",
+        ambiguousHelp: "ही काही आपत्कालीन परिस्थिती (Emergency) आहे का?",
+        ambiguousSafe: "सुरक्षिततेबाबत तुम्हाला काय करायचे आहे?",
+        ambiguousReport: "तुम्हाला कशाची तक्रार करायची आहे?",
+        emergencyPrompt: "मी येथे आहे. तुम्ही तात्काळ धोक्यात असाल, तर तात्काळ Emergency SOS सक्रिय करू शकता.",
+        safeMapPrompt: "मी तुम्हाला SafeMap वर घेऊन जाते, जेथे तुम्ही सुरक्षित व प्रकाशमय रस्ते पाहू शकता.",
+        safeJourneyPrompt: "मी तुमच्या प्रवासावर सुरक्षितपणे लक्ष ठेवण्यास मदत करू शकते.",
+        communityPrompt: "तुम्ही बंद पथदिवे किंवा संशयास्पद घटनांची तक्रार नोंदवू शकता.",
+        cyberPrompt: "मी ऑनलाइन त्रासापासून संरक्षण आणि डिजिटल गोपनीयतेत मदत करू शकते.",
+        wearablePrompt: "SAHARA वेअरेबल लॅब उघडत आहे जेथे तुम्ही सेन्सर डेटा तपासू शकता.",
+        evidencePrompt: "तुम्ही तुमचे पुरावे आणि स्क्रीनशॉट Evidence Vault मध्ये सुरक्षित ठेवू शकता.",
+        mmaPrompt: "आत्मविश्वास वाढवा. SAHARA कडे व्यावहारिक स्वसंरक्षण वर्कशॉप्स आहेत.",
+        dailyMmaPrompt: "आजचा १० मिनिटांचा सुरक्षा सराव सुरू करत आहे.",
+        profilePrompt: "येथे तुमची प्रोफाइल सेटिंग्ज आणि विश्वसनीय संपर्क आहेत.",
+        volunteerPrompt: "स्वयंसेवकांसाठी SAHARA पोर्टल उघडत आहे.",
+        homePrompt: "मुख्य SAHARA होमपेजवर परत जात आहे.",
+        unrecognizedPrompt: "मला पूर्णपणे समजले नाही. तुम्हाला यापैकी काही हवे आहे का?",
+        voiceListening: "ऐकत आहे (मराठी)…",
+        voiceSupportedError: "या ब्राउझरमध्ये व्हॉइस इनपुट समर्थित नाही.",
+        voiceDeniedError: "मायक्रोफोनची परवानगी नाकारली गेली."
+      }
+    };
+
+    /**
+     * LOCAL NLP NORMALIZATION, TOKENIZATION & MATCHING PIPELINE
+     */
+    class LocalIntentEngine {
+      static normalizeText(text) {
+        if (!text) return "";
+        let str = text.toLowerCase().trim();
+        
+        // Remove accents and special characters
+        str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        
+        // Remove excessive repeated letters (e.g., 'safestttt' -> 'safest', 'bachaooo' -> 'bachao')
+        str = str.replace(/(.)\1{2,}/g, "$1$1");
+        
+        // Replace common punctuation with spaces
+        str = str.replace(/[!?,;.:"'\(\)\-_\\\/]/g, " ");
+
+        // Normalize common Hinglish & phonetic variations
+        const phoneticMap = {
+          "raasta": "rasta",
+          "rastaa": "rasta",
+          "raaste": "rasta",
+          "rastay": "rasta",
+          "bachaoo": "bachao",
+          "bachao": "bachao",
+          "bachaao": "bachao",
+          "bchao": "bachao",
+          "madad": "madad",
+          "maddad": "madad",
+          "surakshit": "safe",
+          "safest": "safe",
+          "safer": "safe",
+          "seff": "safe",
+          "seyf": "safe",
+          "khatra": "danger",
+          "khatre": "danger",
+          "peecha": "following",
+          "picha": "following",
+          "stalke": "stalking",
+          "stalk": "stalking",
+          "threaten": "threat",
+          "threats": "threat",
+          "harass": "harassment",
+          "harasment": "harassment",
+          "selfdefence": "selfdefense",
+          "defence": "defense",
+          "defens": "defense",
+          "wearble": "wearable",
+          "smartwatch": "wearable",
+          "evidnce": "evidence",
+          "jurney": "journey",
+          "travelling": "journey",
+          "travel": "journey",
+          "ghar": "home",
+          "dikhao": "show",
+          "kholo": "open",
+          "batao": "tell",
+          "chahiye": "need",
+          "seekhna": "learn",
+          "seekhni": "learn",
+          "shuru": "start"
+        };
+
+        const tokens = str.split(/\s+/).filter(Boolean);
+        const mappedTokens = tokens.map(t => phoneticMap[t] || t);
+        return mappedTokens.join(" ");
+      }
+
+      static tokenize(text) {
+        return text.split(/\s+/).filter(Boolean);
+      }
+
+      // Lightweight Stemming / Lemmatization rules
+      static stemToken(token) {
+        if (!token || token.length < 4) return token;
+        return token
+          .replace(/(ing|edly|ed|es|s|ly|ment|tion)$/, '')
+          .replace(/(na|kar|karo|raha|rahi|rahe|hoon|hai|hain|chahiye)$/, '');
+      }
+
+      // Levenshtein distance for fuzzy matching
+      static levenshteinDistance(s1, s2) {
+        if (s1 === s2) return 0;
+        if (!s1.length) return s2.length;
+        if (!s2.length) return s1.length;
+
+        const v0 = new Array(s2.length + 1);
+        const v1 = new Array(s2.length + 1);
+
+        for (let i = 0; i < v0.length; i++) v0[i] = i;
+
+        for (let i = 0; i < s1.length; i++) {
+          v1[0] = i + 1;
+          for (let j = 0; j < s2.length; j++) {
+            const cost = s1[i] === s2[j] ? 0 : 1;
+            v1[j + 1] = Math.min(v1[j] + 1, v0[j + 1] + 1, v0[j] + cost);
+          }
+          for (let j = 0; j < v0.length; j++) v0[j] = v1[j];
+        }
+        return v1[s2.length];
+      }
+
+      static isFuzzyMatch(token, target, maxDistance = 2) {
+        if (Math.abs(token.length - target.length) > maxDistance) return false;
+        return this.levenshteinDistance(token, target) <= maxDistance;
+      }
+
+      // Detect language family from text
+      static detectLanguage(text, defaultLang = "en") {
+        if (!text) return defaultLang;
+        // Check for Gurmukhi script (Punjabi)
+        if (/[\u0A00-\u0A7F]/.test(text)) return "pa";
+        // Check for Devanagari script (Hindi or Marathi)
+        if (/[\u0900-\u097F]/.test(text)) {
+          const marathiWords = ["मला", "वाचवा", "धोक्यात", "पाठलाग", "रस्ता", "दाखवा", "घरी", "जायचे", "आहे", "तक्रार", "सराव"];
+          const hasMarathi = marathiWords.some(w => text.includes(w));
+          if (hasMarathi) return "mr";
+          return "hi";
+        }
+        // Roman Hindi check
+        const hinglishMarkers = ["mujhe", "bachao", "raasta", "rasta", "khatra", "peecha", "chahiye", "kholo", "dikhao", "jaana", "aaj", "karna"];
+        const lower = text.toLowerCase();
+        const hasHinglish = hinglishMarkers.some(w => lower.includes(w));
+        if (hasHinglish) return defaultLang === "en" ? "en" : defaultLang;
+
+        return defaultLang;
+      }
+
+      // Match intent and generate confidence scores
+      static resolveIntent(rawInput) {
+        const normalized = this.normalizeText(rawInput);
+        const tokens = this.tokenize(normalized);
+        const stemmedTokens = tokens.map(t => this.stemToken(t));
+
+        // Check for Ambiguity edge cases:
+        const cleanRaw = rawInput.toLowerCase().trim();
+        if (cleanRaw === "help" || cleanRaw === "madad" || cleanRaw === "mujhe help chahiye" || cleanRaw === "help chahiye") {
+          return {
+            isAmbiguous: true,
+            ambiguityType: "HELP",
+            primaryIntent: null,
+            confidence: 0.5
+          };
+        }
+        if (cleanRaw === "safe" || cleanRaw === "surakshit" || cleanRaw === "safety") {
+          return {
+            isAmbiguous: true,
+            ambiguityType: "SAFE",
+            primaryIntent: null,
+            confidence: 0.5
+          };
+        }
+        if (cleanRaw === "report" || cleanRaw === "report karni hai") {
+          return {
+            isAmbiguous: true,
+            ambiguityType: "REPORT",
+            primaryIntent: null,
+            confidence: 0.5
+          };
+        }
+
+        const scores = {};
+        const matchedDetails = {};
+
+        // Iterate over registered intents
+        Object.keys(SAHARA_INTENTS).forEach(intentKey => {
+          const intentDef = SAHARA_INTENTS[intentKey];
+          let score = 0;
+
+          // 1. Exact phrase match (+10)
+          for (let phrase of intentDef.exactPhrases) {
+            const normPhrase = this.normalizeText(phrase);
+            if (normalized === normPhrase || normalized.includes(normPhrase)) {
+              score += 10;
+              matchedDetails[intentKey] = `Exact phrase: "${phrase}"`;
+              break;
+            }
+          }
+
+          // 2. Keyword exact match (+4) & stemmed match (+3)
+          intentDef.keywords.forEach(keyword => {
+            const normKey = this.normalizeText(keyword);
+            const stemKey = this.stemToken(normKey);
+
+            if (tokens.includes(normKey)) {
+              score += 4;
+            } else if (stemmedTokens.includes(stemKey)) {
+              score += 3;
+            } else {
+              // 3. Fuzzy match (+2)
+              for (let t of tokens) {
+                if (t.length >= 4 && this.isFuzzyMatch(t, normKey, 1)) {
+                  score += 2;
+                  break;
+                }
+              }
+            }
+          });
+
+          // Priority weight multiplier
+          scores[intentKey] = score * (intentDef.priority / 100);
+        });
+
+        // Emergency context override: Check if high-danger phrases are present
+        const dangerCues = ["following", "stalker", "threat", "danger", "khatra", "bachao", "peecha", "attack", "खतरे", "ਪਿੱਛਾ", "पाठलाਗ"];
+        const hasDangerCue = dangerCues.some(c => normalized.includes(c) || rawInput.includes(c));
+        if (hasDangerCue && scores["EMERGENCY_SOS"] > 0) {
+          scores["EMERGENCY_SOS"] += 15;
+        }
+
+        // Sort intents by score
+        const sortedIntents = Object.keys(scores)
+          .map(k => ({ intent: k, score: scores[k] }))
+          .filter(item => item.score > 0)
+          .sort((a, b) => b.score - a.score);
+
+        if (sortedIntents.length === 0) {
+          return {
+            primaryIntent: null,
+            secondaryIntent: null,
+            confidence: 0,
+            isAmbiguous: false
+          };
+        }
+
+        const primary = sortedIntents[0];
+        const secondary = (sortedIntents.length > 1 && sortedIntents[1].score >= 3.5) ? sortedIntents[1] : null;
+
+        // Normalized confidence value
+        const confidence = Math.min(1.0, primary.score / 12);
+
+        return {
+          primaryIntent: primary.intent,
+          secondaryIntent: secondary ? secondary.intent : null,
+          confidence: confidence,
+          isAmbiguous: false
+        };
+      }
+    }
+
+    /**
+     * CHATBOT CONTROLLER & UI MANAGER
+     */
+    document.addEventListener("DOMContentLoaded", () => {
+      // DOM Elements
+      const chatViewport = document.getElementById("chatViewport");
+      const messagesContainer = document.getElementById("messagesContainer");
+      const welcomeCard = document.getElementById("welcomeCard");
+      const chatInput = document.getElementById("chatInput");
+      const sendBtn = document.getElementById("sendBtn");
+      const micBtn = document.getElementById("micBtn");
+      const inputClearBtn = document.getElementById("inputClearBtn");
+      const typingIndicator = document.getElementById("typingIndicator");
+      const languageSelect = document.getElementById("languageSelect");
+      const voiceToggleBtn = document.getElementById("voiceToggleBtn");
+      const voiceToggleText = document.getElementById("voiceToggleText");
+      const newChatBtn = document.getElementById("newChatBtn");
+      const historyList = document.getElementById("historyList");
+      const newChatModal = document.getElementById("newChatModal");
+      const cancelNewChatBtn = document.getElementById("cancelNewChatBtn");
+      const confirmNewChatBtn = document.getElementById("confirmNewChatBtn");
+      const toastEl = document.getElementById("saharaToast");
+      const toastMessage = document.getElementById("toastMessage");
+
+      // App State
+      let currentLanguage = localStorage.getItem("sahara_chat_language") || "en";
+      let voiceEnabled = localStorage.getItem("sahara_voice_enabled") === "true";
+      let chatHistory = [];
+      let conversationSessions = [];
+      let recognition = null;
+      let isRecording = false;
+
+      // Language browser tags for Speech
+      const LANG_TAGS = {
+        en: "en-IN",
+        hi: "hi-IN",
+        pa: "pa-IN",
+        mr: "mr-IN"
+      };
+
+      // Set initial language UI
+      if (languageSelect) languageSelect.value = currentLanguage;
+      updateVoiceUI();
+      applyLanguageStrings(currentLanguage);
+      loadSavedHistory();
+
+      // ------------------------------------------------------------------------
+      // LANGUAGE SELECTION HANDLER
+      // ------------------------------------------------------------------------
+      if (languageSelect) {
+        languageSelect.addEventListener("change", (e) => {
+          currentLanguage = e.target.value;
+          localStorage.setItem("sahara_chat_language", currentLanguage);
+          applyLanguageStrings(currentLanguage);
+          showToast(`Language set to ${languageSelect.options[languageSelect.selectedIndex].text}`);
+        });
+      }
+
+      function applyLanguageStrings(lang) {
+        const strings = LOCALIZED_STRINGS[lang] || LOCALIZED_STRINGS.en;
+        
+        document.getElementById("welcomeGreeting").textContent = strings.welcomeGreeting;
+        document.getElementById("welcomeSubtitle").textContent = strings.welcomeSubtitle;
+        document.getElementById("quickActionsTitle").textContent = strings.quickActionsTitle;
+        document.getElementById("suggestedPromptsTitle").textContent = strings.suggestedPromptsTitle;
+        document.getElementById("statusBarText").textContent = strings.statusText;
+        document.getElementById("chatInput").placeholder = strings.inputPlaceholder;
+        document.getElementById("newChatBtnText").textContent = strings.newChatBtn;
+        document.getElementById("recentChatsTitle").textContent = strings.recentChatsTitle;
+      }
+
+      // ------------------------------------------------------------------------
+      // VOICE SYNTHESIS & TOGGLE
+      // ------------------------------------------------------------------------
+      if (voiceToggleBtn) {
+        voiceToggleBtn.addEventListener("click", () => {
+          voiceEnabled = !voiceEnabled;
+          localStorage.setItem("sahara_voice_enabled", voiceEnabled);
+          updateVoiceUI();
+          showToast(voiceEnabled ? "Voice output enabled" : "Voice output muted");
+        });
+      }
+
+      function updateVoiceUI() {
+        if (!voiceToggleBtn) return;
+        if (voiceEnabled) {
+          voiceToggleBtn.classList.add("active");
+          voiceToggleText.textContent = "Voice ON";
+        } else {
+          voiceToggleBtn.classList.remove("active");
+          voiceToggleText.textContent = "Voice OFF";
+        }
+      }
+
+      function speakResponse(text, lang) {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel(); // cancel prior speech
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = LANG_TAGS[lang] || "en-IN";
+        utterance.rate = 0.95;
+        utterance.pitch = 1.05;
+
+        // Pick suitable female / native voice if available
+        const voices = window.speechSynthesis.getVoices();
+        const targetVoice = voices.find(v => v.lang.startsWith(lang) || v.lang.startsWith(LANG_TAGS[lang]));
+        if (targetVoice) utterance.voice = targetVoice;
+
+        window.speechSynthesis.speak(utterance);
+      }
+
+      // ------------------------------------------------------------------------
+      // BROWSER-NATIVE SPEECH RECOGNITION (WEB SPEECH API)
+      // ------------------------------------------------------------------------
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onstart = () => {
+          isRecording = true;
+          micBtn.classList.add("listening");
+          const langStrings = LOCALIZED_STRINGS[currentLanguage] || LOCALIZED_STRINGS.en;
+          chatInput.placeholder = langStrings.voiceListening;
+        };
+
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          if (transcript) {
+            chatInput.value = transcript;
+            inputClearBtn.style.display = "block";
+            sendBtn.disabled = false;
+            chatInput.focus();
+          }
+        };
+
+        recognition.onerror = (event) => {
+          micBtn.classList.remove("listening");
+          isRecording = false;
+          const langStrings = LOCALIZED_STRINGS[currentLanguage] || LOCALIZED_STRINGS.en;
+          chatInput.placeholder = langStrings.inputPlaceholder;
+          if (event.error === "not-allowed") {
+            showToast(langStrings.voiceDeniedError);
+          }
+        };
+
+        recognition.onend = () => {
+          micBtn.classList.remove("listening");
+          isRecording = false;
+          const langStrings = LOCALIZED_STRINGS[currentLanguage] || LOCALIZED_STRINGS.en;
+          chatInput.placeholder = langStrings.inputPlaceholder;
+        };
+      }
+
+      if (micBtn) {
+        micBtn.addEventListener("click", () => {
+          if (!SpeechRecognition) {
+            const langStrings = LOCALIZED_STRINGS[currentLanguage] || LOCALIZED_STRINGS.en;
+            showToast(langStrings.voiceSupportedError);
+            return;
+          }
+
+          if (isRecording) {
+            recognition.stop();
+          } else {
+            recognition.lang = LANG_TAGS[currentLanguage] || "en-IN";
+            try {
+              recognition.start();
+            } catch (err) {
+              console.warn("Recognition start error:", err);
+            }
+          }
+        });
+      }
+
+      // ------------------------------------------------------------------------
+      // INPUT BOX CONTROLS & AUTO-FOCUS
+      // ------------------------------------------------------------------------
+      chatInput.addEventListener("input", () => {
+        const val = chatInput.value.trim();
+        sendBtn.disabled = val.length === 0;
+        inputClearBtn.style.display = val.length > 0 ? "block" : "none";
+      });
+
+      inputClearBtn.addEventListener("click", () => {
+        chatInput.value = "";
+        inputClearBtn.style.display = "none";
+        sendBtn.disabled = true;
+        chatInput.focus();
+      });
+
+      chatInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          if (!sendBtn.disabled) handleUserSubmit();
+        }
+      });
+
+      sendBtn.addEventListener("click", handleUserSubmit);
+
+      // Quick Chips & Suggested Prompts Clicks
+      document.querySelectorAll(".quick-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+          const intentKey = chip.getAttribute("data-intent");
+          const intentDef = SAHARA_INTENTS[intentKey];
+          if (intentDef && intentDef.exactPhrases.length > 0) {
+            const phrase = intentDef.exactPhrases[0];
+            processUserMessage(phrase);
+          }
+        });
+      });
+
+      document.querySelectorAll(".prompt-bubble").forEach(bubble => {
+        bubble.addEventListener("click", () => {
+          const prompt = bubble.getAttribute("data-prompt");
+          if (prompt) processUserMessage(prompt);
+        });
+      });
+
+      // ------------------------------------------------------------------------
+      // MESSAGE PROCESSING & INTENT ROUTING
+      // ------------------------------------------------------------------------
+      function handleUserSubmit() {
+        const text = chatInput.value.trim();
+        if (!text) return;
+
+        chatInput.value = "";
+        inputClearBtn.style.display = "none";
+        sendBtn.disabled = true;
+
+        processUserMessage(text);
+      }
+
+      function processUserMessage(text) {
+        // Hide welcome hero on first message
+        if (welcomeCard) welcomeCard.style.display = "none";
+
+        // 1. Render User Message
+        renderUserMessage(text);
+
+        // 2. Show Short Typing State
+        typingIndicator.classList.add("active");
+        chatViewport.scrollTop = chatViewport.scrollHeight;
+
+        // 3. Local Intent Resolution
+        setTimeout(() => {
+          typingIndicator.classList.remove("active");
+
+          // Detect active language from input or fallback to selected
+          const detectedLang = LocalIntentEngine.detectLanguage(text, currentLanguage);
+          const langStrings = LOCALIZED_STRINGS[detectedLang] || LOCALIZED_STRINGS[currentLanguage] || LOCALIZED_STRINGS.en;
+
+          const resolution = LocalIntentEngine.resolveIntent(text);
+
+          if (resolution.isAmbiguous) {
+            handleAmbiguity(resolution.ambiguityType, detectedLang);
+            return;
+          }
+
+          if (!resolution.primaryIntent) {
+            // Low confidence / Unrecognized fallback
+            renderAssistantMessage(langStrings.unrecognizedPrompt, [
+              SAHARA_ACTION_REGISTRY.ACTIVATE_SOS,
+              SAHARA_ACTION_REGISTRY.OPEN_SAFE_MAP,
+              SAHARA_ACTION_REGISTRY.OPEN_SAFE_JOURNEY
+            ], detectedLang);
+            return;
+          }
+
+          // Build Action List (Primary + Secondary)
+          const primaryDef = SAHARA_INTENTS[resolution.primaryIntent];
+          const actions = [SAHARA_ACTION_REGISTRY[primaryDef.primaryAction]];
+
+          if (resolution.secondaryIntent && resolution.secondaryIntent !== resolution.primaryIntent) {
+            const secDef = SAHARA_INTENTS[resolution.secondaryIntent];
+            if (secDef && SAHARA_ACTION_REGISTRY[secDef.primaryAction]) {
+              actions.push(SAHARA_ACTION_REGISTRY[secDef.primaryAction]);
+            }
+          }
+
+          // Generate response text mapped to primary intent
+          let responseText = getResponseForIntent(resolution.primaryIntent, detectedLang);
+
+          renderAssistantMessage(responseText, actions, detectedLang);
+
+        }, 320);
+      }
+
+      function getResponseForIntent(intentKey, lang) {
+        const strings = LOCALIZED_STRINGS[lang] || LOCALIZED_STRINGS.en;
+        switch (intentKey) {
+          case "EMERGENCY_SOS": return strings.emergencyPrompt;
+          case "SAFE_MAP": return strings.safeMapPrompt;
+          case "SAFE_JOURNEY": return strings.safeJourneyPrompt;
+          case "COMMUNITY": return strings.communityPrompt;
+          case "CYBER_SAFETY": return strings.cyberPrompt;
+          case "WEARABLE": return strings.wearablePrompt;
+          case "EVIDENCE_VAULT": return strings.evidencePrompt;
+          case "MMA_WORKSHOPS": return strings.mmaPrompt;
+          case "DAILY_MMA": return strings.dailyMmaPrompt;
+          case "PROFILE": return strings.profilePrompt;
+          case "VOLUNTEER": return strings.volunteerPrompt;
+          case "HOME": return strings.homePrompt;
+          default: return strings.unrecognizedPrompt;
+        }
+      }
+
+      function handleAmbiguity(type, lang) {
+        const strings = LOCALIZED_STRINGS[lang] || LOCALIZED_STRINGS.en;
+        let questionText = "";
+        let actions = [];
+
+        if (type === "HELP") {
+          questionText = strings.ambiguousHelp;
+          actions = [
+            SAHARA_ACTION_REGISTRY.ACTIVATE_SOS,
+            SAHARA_ACTION_REGISTRY.OPEN_SAFE_MAP,
+            SAHARA_ACTION_REGISTRY.OPEN_CYBER_SAFETY
+          ];
+        } else if (type === "SAFE") {
+          questionText = strings.ambiguousSafe;
+          actions = [
+            SAHARA_ACTION_REGISTRY.OPEN_SAFE_MAP,
+            SAHARA_ACTION_REGISTRY.OPEN_SAFE_JOURNEY,
+            SAHARA_ACTION_REGISTRY.OPEN_DAILY_MMA
+          ];
+        } else if (type === "REPORT") {
+          questionText = strings.ambiguousReport;
+          actions = [
+            SAHARA_ACTION_REGISTRY.OPEN_COMMUNITY,
+            SAHARA_ACTION_REGISTRY.OPEN_CYBER_SAFETY,
+            SAHARA_ACTION_REGISTRY.OPEN_EVIDENCE_VAULT
+          ];
+        }
+
+        renderAssistantMessage(questionText, actions, lang);
+      }
+
+      // ------------------------------------------------------------------------
+      // UI RENDERING HELPERS
+      // ------------------------------------------------------------------------
+      function formatTime() {
+        const d = new Date();
+        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+
+      function renderUserMessage(text) {
+        const time = formatTime();
+        const row = document.createElement("div");
+        row.className = "message-row user";
+        row.innerHTML = `
+          <div class="msg-avatar user"><i class="fa-solid fa-user"></i></div>
+          <div class="msg-bubble-wrapper">
+            <div class="msg-bubble">${escapeHtml(text)}</div>
+            <div class="msg-meta-row"><span>${time}</span></div>
+          </div>
+        `;
+        messagesContainer.appendChild(row);
+        chatViewport.scrollTop = chatViewport.scrollHeight;
+
+        // Save to chat state
+        chatHistory.push({ role: "user", text, time });
+        saveActiveSession();
+      }
+
+      function renderAssistantMessage(text, actions = [], lang = "en") {
+        const time = formatTime();
+        const row = document.createElement("div");
+        row.className = "message-row assistant";
+
+        let actionCardsHtml = "";
+        if (actions && actions.length > 0) {
+          actions.forEach(action => {
+            if (!action) return;
+            actionCardsHtml += `
+              <div class="intent-action-card ${action.isEmergency ? 'emergency' : ''}">
+                <div class="action-card-header">
+                  <span class="action-badge"><i class="${action.icon}"></i> ${action.badge}</span>
+                </div>
+                <div class="action-card-title">${action.label}</div>
+                <div class="action-card-desc">${action.desc}</div>
+                <div class="action-card-btn-row">
+                  <a href="${action.route}" class="action-route-btn ${action.isEmergency ? 'emergency' : ''}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Open ${action.label.replace('OPEN ', '').replace('ACTIVATE ', '')}
+                  </a>
+                </div>
+              </div>
+            `;
+          });
+        }
+
+        row.innerHTML = `
+          <div class="msg-avatar assistant"><i class="fa-solid fa-shield-heart"></i></div>
+          <div class="msg-bubble-wrapper">
+            <div class="msg-bubble">
+              ${escapeHtml(text)}
+              ${actionCardsHtml}
+            </div>
+            <div class="msg-meta-row">
+              <span>${time}</span>
+              <button class="speak-btn" title="Read aloud" aria-label="Read message aloud">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+          </div>
+        `;
+
+        messagesContainer.appendChild(row);
+        chatViewport.scrollTop = chatViewport.scrollHeight;
+
+        // Hook read aloud button
+        const speakBtn = row.querySelector(".speak-btn");
+        if (speakBtn) {
+          speakBtn.addEventListener("click", () => {
+            speakResponse(text, lang);
+          });
+        }
+
+        // Auto speak if Voice ON is enabled
+        if (voiceEnabled) {
+          speakResponse(text, lang);
+        }
+
+        // Save to history
+        chatHistory.push({ role: "assistant", text, actions, time, lang });
+        saveActiveSession();
+      }
+
+      function escapeHtml(str) {
+        if (!str) return "";
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      // ------------------------------------------------------------------------
+      // HISTORY & LOCALSTORAGE SESSIONS
+      // ------------------------------------------------------------------------
+      const STORAGE_KEY = "sahara_chat_history";
+      const SESSIONS_KEY = "sahara_chat_sessions";
+
+      function loadSavedHistory() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            chatHistory = JSON.parse(raw);
+            if (chatHistory.length > 0) {
+              if (welcomeCard) welcomeCard.style.display = "none";
+              chatHistory.forEach(item => {
+                if (item.role === "user") {
+                  const row = document.createElement("div");
+                  row.className = "message-row user";
+                  row.innerHTML = `
+                    <div class="msg-avatar user"><i class="fa-solid fa-user"></i></div>
+                    <div class="msg-bubble-wrapper">
+                      <div class="msg-bubble">${escapeHtml(item.text)}</div>
+                      <div class="msg-meta-row"><span>${item.time || ''}</span></div>
+                    </div>
+                  `;
+                  messagesContainer.appendChild(row);
+                } else {
+                  let actionCardsHtml = "";
+                  if (item.actions && item.actions.length > 0) {
+                    item.actions.forEach(action => {
+                      if (!action) return;
+                      actionCardsHtml += `
+                        <div class="intent-action-card ${action.isEmergency ? 'emergency' : ''}">
+                          <div class="action-card-header">
+                            <span class="action-badge"><i class="${action.icon}"></i> ${action.badge}</span>
+                          </div>
+                          <div class="action-card-title">${action.label}</div>
+                          <div class="action-card-desc">${action.desc}</div>
+                          <div class="action-card-btn-row">
+                            <a href="${action.route}" class="action-route-btn ${action.isEmergency ? 'emergency' : ''}">
+                              <i class="fa-solid fa-arrow-up-right-from-square"></i> Open ${action.label.replace('OPEN ', '').replace('ACTIVATE ', '')}
+                            </a>
+                          </div>
+                        </div>
+                      `;
+                    });
+                  }
+                  const row = document.createElement("div");
+                  row.className = "message-row assistant";
+                  row.innerHTML = `
+                    <div class="msg-avatar assistant"><i class="fa-solid fa-shield-heart"></i></div>
+                    <div class="msg-bubble-wrapper">
+                      <div class="msg-bubble">${escapeHtml(item.text)}${actionCardsHtml}</div>
+                      <div class="msg-meta-row">
+                        <span>${item.time || ''}</span>
+                        <button class="speak-btn" title="Read aloud"><i class="fa-solid fa-volume-high"></i></button>
+                      </div>
+                    </div>
+                  `;
+                  messagesContainer.appendChild(row);
+                  const speakBtn = row.querySelector(".speak-btn");
+                  if (speakBtn) {
+                    speakBtn.addEventListener("click", () => speakResponse(item.text, item.lang || currentLanguage));
+                  }
+                }
+              });
+              chatViewport.scrollTop = chatViewport.scrollHeight;
+            }
+          }
+
+          // Load sessions into sidebar
+          renderSidebarSessions();
+        } catch (e) {
+          console.error("Failed to load chat history:", e);
+        }
+      }
+
+      function saveActiveSession() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(chatHistory));
+          
+          // Update recent previews
+          const firstUserMsg = chatHistory.find(m => m.role === "user");
+          if (firstUserMsg && historyList) {
+            let sessions = JSON.parse(localStorage.getItem(SESSIONS_KEY) || "[]");
+            const previewText = firstUserMsg.text.slice(0, 28) + (firstUserMsg.text.length > 28 ? "…" : "");
+            
+            if (sessions.length === 0 || sessions[0].preview !== previewText) {
+              sessions.unshift({ id: Date.now(), preview: previewText, date: new Date().toLocaleDateString() });
+              if (sessions.length > 8) sessions.pop();
+              localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+              renderSidebarSessions();
+            }
+          }
+        } catch (e) {
+          console.error("Failed to save active session:", e);
+        }
+      }
+
+      function renderSidebarSessions() {
+        if (!historyList) return;
+        const sessions = JSON.parse(localStorage.getItem(SESSIONS_KEY) || "[]");
+        historyList.innerHTML = "";
+
+        if (sessions.length === 0) {
+          historyList.innerHTML = `<div class="history-empty">No previous chats</div>`;
+          return;
+        }
+
+        sessions.forEach(s => {
+          const div = document.createElement("div");
+          div.className = "history-item";
+          div.innerHTML = `<i class="fa-regular fa-message"></i> <span>${escapeHtml(s.preview)}</span>`;
+          historyList.appendChild(div);
+        });
+      }
+
+      // ------------------------------------------------------------------------
+      // NEW CHAT MODAL
+      // ------------------------------------------------------------------------
+      if (newChatBtn) {
+        newChatBtn.addEventListener("click", () => {
+          if (chatHistory.length === 0) return;
+          newChatModal.classList.add("active");
+        });
+      }
+
+      if (cancelNewChatBtn) {
+        cancelNewChatBtn.addEventListener("click", () => {
+          newChatModal.classList.remove("active");
+        });
+      }
+
+      if (confirmNewChatBtn) {
+        confirmNewChatBtn.addEventListener("click", () => {
+          newChatModal.classList.remove("active");
+          chatHistory = [];
+          localStorage.removeItem(STORAGE_KEY);
+          messagesContainer.innerHTML = "";
+          if (welcomeCard) welcomeCard.style.display = "flex";
+          showToast("New conversation started");
+        });
+      }
+
+      // ------------------------------------------------------------------------
+      // TOAST HELPER
+      // ------------------------------------------------------------------------
+      let toastTimer = null;
+      function showToast(msg) {
+        if (!toastEl || !toastMessage) return;
+        toastMessage.textContent = msg;
+        toastEl.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.remove("show");
+        }, 3000);
+      }
+    });
+  </script>
+</body>
+</html>
